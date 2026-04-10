@@ -1,4 +1,1115 @@
-... // Other content ...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Bill Map | Pro Native</title>
+    
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-// Transparent Hover Actions
-... // Other content ...
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #0F172A; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        
+        input, select, textarea, button { font-size: 16px !important; outline: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        @media print { .no-print { display: none !important; } body { background: white !important; } }
+        
+        @keyframes zap-pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        .zap-glow { animation: zap-pulse 2s infinite; }
+        
+        @keyframes fade-in-out { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.1); } }
+        .splash-logo { animation: fade-in-out 2s forwards; }
+        
+        .main-content { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .bill-focus { border: 2px solid #4f46e5 !important; box-shadow: 0 0 20px rgba(79, 70, 229, 0.2) !important; transform: scale(1.02); }
+        .slide-enter { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script>
+        var html = htm.bind(React.createElement);
+
+        var Icon = function(props) {
+            var n = props.name;
+            var s = props.size || 18;
+            var c = props.className || "";
+            var w = n === 'Check' ? "3" : "2.2";
+            var pData = "";
+
+            if (n === 'Plus') pData = html`<path d="M12 5v14M5 12h14" />`;
+            else if (n === 'Trash') pData = html`<polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />`;
+            else if (n === 'Edit') pData = html`<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 00 2 2h14a2 2 0 00 2-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />`;
+            else if (n === 'Zap') pData = html`<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />`;
+            else if (n === 'Printer') pData = html`<path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z" />`;
+            else if (n === 'Calendar') pData = html`<path d="M3 4h18v16H3V4zM16 2v4M8 2v4M3 10h18" />`;
+            else if (n === 'Grid') pData = html`<path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM14 14h7v7h-7v-14zM3 14h7v7H3v-7z" />`;
+            else if (n === 'List') pData = html`<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />`;
+            else if (n === 'Close') pData = html`<path d="M18 6L6 18M6 6l12 12" />`;
+            else if (n === 'Check') pData = html`<path d="M20 6L9 17l-5-5" />`;
+            else if (n === 'Alert') pData = html`<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01" />`;
+            else if (n === 'CreditCard') pData = html`<rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h22" />`;
+            else if (n === 'Home') pData = html`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10" />`;
+            else if (n === 'Clock') pData = html`<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" />`;
+            else if (n === 'Back') pData = html`<path d="M19 12H5M12 19l-7-7 7-7" />`;
+            else if (n === 'Sort') pData = html`<path d="M3 6h18M3 12h12M3 18h6" />`;
+            else if (n === 'Briefcase') pData = html`<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />`;
+            else if (n === 'Heart') pData = html`<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />`;
+            else if (n === 'Star') pData = html`<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />`;
+            else if (n === 'User') pData = html`<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />`;
+            else if (n === 'UserCheck') pData = html`<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><polyline points="17 11 19 13 23 9" />`;
+            else if (n === 'Smile') pData = html`<circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" />`;
+            else if (n === 'Search') pData = html`<circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />`;
+            else if (n === 'Eye') pData = html`<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />`;
+            else if (n === 'RotateCcw') pData = html`<polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />`;
+            else if (n === 'Archive') pData = html`<polyline points="21 8 21 21 3 21 3 8" /><rect x="1" y="3" width="22" height="5" /><line x1="10" y1="12" x2="14" y2="12" />`;
+            else if (n === 'Download') pData = html`<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />`;
+            else if (n === 'Upload') pData = html`<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />`;
+
+            return html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth=${w} strokeLinecap="round" strokeLinejoin="round" className=${c}>${pData}</svg>`;
+        };
+
+        var PRESET_KEYS = ["End Date", "Policy #", "Account ID", "Customer ID"];
+        var COLOR_PALETTE = ["bg-indigo-600", "bg-rose-500", "bg-emerald-500", "bg-sky-500", "bg-amber-500", "bg-purple-600", "bg-slate-800"];
+        var TEXT_COLORS = ["text-indigo-600", "text-rose-500", "text-emerald-500", "text-sky-500", "text-amber-500", "text-slate-800"];
+        var ICON_LIST = ["Home", "Zap", "CreditCard", "Briefcase", "Calendar", "Clock"];
+        var PROFILE_ICONS = ["User", "Briefcase", "UserCheck", "Smile", "Star"];
+
+        var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+        var App = function() {
+            var stateIsAppLoading = React.useState(true); var isAppLoading = stateIsAppLoading[0]; var setIsAppLoading = stateIsAppLoading[1];
+            var stateWorkspaces = React.useState([]); var workspaces = stateWorkspaces[0]; var setWorkspaces = stateWorkspaces[1];
+            var stateActiveId = React.useState(null); var activeId = stateActiveId[0]; var setActiveId = stateActiveId[1];
+            
+            var stateHasSeenOnboard = React.useState(localStorage.getItem('sl_onboard_v12') === 'true'); var hasSeenOnboard = stateHasSeenOnboard[0]; var setHasSeenOnboard = stateHasSeenOnboard[1];
+            var stateOnboardStep = React.useState(0); var onboardStep = stateOnboardStep[0]; var setOnboardStep = stateOnboardStep[1];
+            
+            var savedProfile = localStorage.getItem('sl_profile_v12');
+            var stateProfile = React.useState(savedProfile ? JSON.parse(savedProfile) : null); var profile = stateProfile[0]; var setProfile = stateProfile[1];
+            var stateProfDraft = React.useState({ salutation: 'Mr.', name: '', icon: 'User', color: 'text-indigo-600' }); var profDraft = stateProfDraft[0]; var setProfDraft = stateProfDraft[1];
+            var stateShowProfileEdit = React.useState(false); var showProfileEdit = stateShowProfileEdit[0]; var setShowProfileEdit = stateShowProfileEdit[1];
+
+            var stateHomeView = React.useState('grid'); var homeView = stateHomeView[0]; var setHomeView = stateHomeView[1];
+            var stateShowWsModal = React.useState(false); var showWsModal = stateShowWsModal[0]; var setShowWsModal = stateShowWsModal[1];
+            var stateWsName = React.useState(""); var wsName = stateWsName[0]; var setWsName = stateWsName[1];
+            var stateWsIcon = React.useState("Briefcase"); var wsIcon = stateWsIcon[0]; var setWsIcon = stateWsIcon[1];
+            var stateWsColor = React.useState("bg-indigo-600"); var wsColor = stateWsColor[0]; var setWsColor = stateWsColor[1];
+
+            var stateView = React.useState('board'); var view = stateView[0]; var setView = stateView[1];
+            var stateSelectedCat = React.useState('All'); var selectedCat = stateSelectedCat[0]; var setSelectedCat = stateSelectedCat[1];
+            var stateSortBy = React.useState('date_asc'); var sortBy = stateSortBy[0]; var setSortBy = stateSortBy[1];
+            var stateSearchQuery = React.useState(''); var searchQuery = stateSearchQuery[0]; var setSearchQuery = stateSearchQuery[1];
+            
+            var stateIsSimulating = React.useState(false); var isSimulating = stateIsSimulating[0]; var setIsSimulating = stateIsSimulating[1];
+            var stateCutIds = React.useState([]); var cutIds = stateCutIds[0]; var setCutIds = stateCutIds[1];
+            
+            var stateModal = React.useState(null); var modal = stateModal[0]; var setModal = stateModal[1];
+            var stateQuickLook = React.useState(null); var quickLook = stateQuickLook[0]; var setQuickLook = stateQuickLook[1];
+            var stateShowPrint = React.useState(false); var showPrint = stateShowPrint[0]; var setShowPrint = stateShowPrint[1];
+            var stateZapPopup = React.useState(false); var zapPopup = stateZapPopup[0]; var setZapPopup = stateZapPopup[1];
+            var stateCalPopup = React.useState(null); var calPopup = stateCalPopup[0]; var setCalPopup = stateCalPopup[1];
+            var stateFocusedId = React.useState(null); var focusedId = stateFocusedId[0]; var setFocusedId = stateFocusedId[1];
+            
+            var stateDeleteWsId = React.useState(null); var deleteWsId = stateDeleteWsId[0]; var setDeleteWsId = stateDeleteWsId[1];
+            var statePermDeleteWsId = React.useState(null); var permDeleteWsId = statePermDeleteWsId[0]; var setPermDeleteWsId = statePermDeleteWsId[1];
+            var stateDeleteNoteId = React.useState(null); var deleteNoteId = stateDeleteNoteId[0]; var setDeleteNoteId = stateDeleteNoteId[1];
+            var statePermDeleteNoteId = React.useState(null); var permDeleteNoteId = statePermDeleteNoteId[0]; var setPermDeleteNoteId = statePermDeleteNoteId[1];
+            
+            var stateIsScrolled = React.useState(false); var isScrolled = stateIsScrolled[0]; var setIsScrolled = stateIsScrolled[1];
+            var stateAlertPopup = React.useState(null); var alertPopup = stateAlertPopup[0]; var setAlertPopup = stateAlertPopup[1];
+            var stateShowBackupModal = React.useState(false); var showBackupModal = stateShowBackupModal[0]; var setShowBackupModal = stateShowBackupModal[1];
+            var stateBackupName = React.useState("SubLattice_Backup"); var backupName = stateBackupName[0]; var setBackupName = stateBackupName[1];
+            var stateTouchStart = React.useState(null); var touchStart = stateTouchStart[0]; var setTouchStart = stateTouchStart[1];
+
+            window._isScrolled = window._isScrolled || false;
+
+            React.useEffect(function() {
+                var timer = setTimeout(function() { setIsAppLoading(false); }, 1500);
+                var saved = localStorage.getItem('sublattice_data_v5200');
+                if (saved) { 
+                    try { 
+                        var parsed = JSON.parse(saved);
+                        var cleaned = parsed.map(function(ws) {
+                            var validBin = (ws.deletedSubs || []).filter(function(ds) {
+                                return (Date.now() - ds.deletedAt) < THIRTY_DAYS;
+                            });
+                            return Object.assign({}, ws, { deletedSubs: validBin });
+                        });
+                        setWorkspaces(cleaned); 
+                    } catch(e) {} 
+                }
+                
+                var handleScroll = function() { 
+                    var sc = window.scrollY > 40;
+                    if (sc !== window._isScrolled) {
+                        window._isScrolled = sc;
+                        setIsScrolled(sc); 
+                    }
+                };
+                window.addEventListener('scroll', handleScroll);
+                return function() { clearTimeout(timer); window.removeEventListener('scroll', handleScroll); };
+            }, []);
+
+            React.useEffect(function() { 
+                if (workspaces.length > 0) { localStorage.setItem('sublattice_data_v5200', JSON.stringify(workspaces)); }
+            }, [workspaces]);
+
+            var activeWS = React.useMemo(function() {
+                if (!activeId) return null;
+                for (var i = 0; i < workspaces.length; i++) { if (workspaces[i].id === activeId) return workspaces[i]; }
+                return null;
+            }, [workspaces, activeId]);
+
+            var updateActiveWS = function(data) {
+                var newArr = workspaces.map(function(w) { return w.id === activeId ? Object.assign({}, w, data) : w; });
+                setWorkspaces(newArr);
+            };
+
+            var getGreeting = function() {
+                var hour = new Date().getHours();
+                if (hour < 12) return "Good Morning";
+                if (hour < 18) return "Good Afternoon";
+                return "Good Evening";
+            };
+
+            var safeStr = function(val) { return val ? String(val) : ""; };
+
+            var metrics = React.useMemo(function() {
+                if (!activeWS) return { total: 0, daily: 0, saved: 0, balance: 0 };
+                var contextSubs = (activeWS.subs || []).filter(function(s) { return selectedCat === 'All' || s.cat === selectedCat; });
+                var active = contextSubs.filter(function(s) { return cutIds.indexOf(s.id) === -1; });
+                
+                var total = 0;
+                for(var i = 0; i < active.length; i++) { total += (parseFloat(active[i].amount) || 0); }
+                
+                var saved = 0;
+                if (isSimulating) {
+                    var cutSubs = contextSubs.filter(function(s) { return cutIds.indexOf(s.id) !== -1; });
+                    for(var j = 0; j < cutSubs.length; j++) { saved += (parseFloat(cutSubs[j].amount) || 0); }
+                }
+                
+                var bal = (parseFloat(activeWS.salary) || 0) - total;
+                return { total: total, daily: (total / 30).toFixed(0), saved: saved, balance: bal };
+            }, [activeWS, cutIds, isSimulating, selectedCat]);
+
+            var displaySubs = React.useMemo(function() {
+                if (!activeWS) return [];
+                if (view === 'bin') {
+                    var binned = (activeWS.deletedSubs || []).slice();
+                    binned.sort(function(a,b) { return b.deletedAt - a.deletedAt; });
+                    return binned;
+                }
+
+                var filtered = (activeWS.subs || []).filter(function(s) { return selectedCat === 'All' || s.cat === selectedCat; });
+                
+                if (searchQuery.trim()) {
+                    var sq = searchQuery.toLowerCase();
+                    filtered = filtered.filter(function(s) {
+                        return (safeStr(s.name).toLowerCase().indexOf(sq) !== -1) ||
+                               (safeStr(s.cat).toLowerCase().indexOf(sq) !== -1) ||
+                               (safeStr(s.amount).indexOf(sq) !== -1);
+                    });
+                }
+
+                var sorted = filtered.slice();
+                if (sortBy === 'amount_desc') sorted.sort(function(a,b) { return parseFloat(b.amount || 0) - parseFloat(a.amount || 0); });
+                else if (sortBy === 'amount_asc') sorted.sort(function(a,b) { return parseFloat(a.amount || 0) - parseFloat(b.amount || 0); });
+                else if (sortBy === 'date_asc') sorted.sort(function(a,b) { return parseFloat(a.day || 0) - parseFloat(b.day || 0); });
+                else if (sortBy === 'date_desc') sorted.sort(function(a,b) { return parseFloat(b.day || 0) - parseFloat(a.day || 0); });
+                else if (sortBy === 'name_asc') sorted.sort(function(a,b) { return safeStr(a.name).localeCompare(safeStr(b.name)); });
+                else if (sortBy === 'cat_asc') sorted.sort(function(a,b) { return safeStr(a.cat).localeCompare(safeStr(b.cat)); });
+                return sorted;
+            }, [activeWS, selectedCat, sortBy, searchQuery, view]);
+
+            var activeWorkspaces = workspaces.filter(function(w) { return !w.deletedAt; });
+            var binWorkspaces = workspaces.filter(function(w) { return w.deletedAt; });
+
+            // --- Handlers ---
+            var handleTouchStart = function(e) { setTouchStart(e.targetTouches[0].clientX); };
+            var handleTouchEnd = function(e) {
+                if (touchStart === null || !activeWS) return;
+                var touchEnd = e.changedTouches[0].clientX;
+                var diff = touchStart - touchEnd;
+                var catList = ['All'].concat(activeWS.categories || []);
+                var currentIndex = catList.indexOf(selectedCat);
+                
+                if (diff > 60) { // Swipe Left
+                    if (currentIndex < catList.length - 1) setSelectedCat(catList[currentIndex + 1]);
+                } else if (diff < -60) { // Swipe Right
+                    if (currentIndex > 0) setSelectedCat(catList[currentIndex - 1]);
+                }
+                setTouchStart(null);
+            };
+
+            var finishOnboarding = function() {
+                localStorage.setItem('sl_onboard_v12', 'true');
+                setHasSeenOnboard(true);
+            };
+
+            var saveProfile = function() {
+                if (!profDraft.name) return;
+                localStorage.setItem('sl_profile_v12', JSON.stringify(profDraft));
+                setProfile(profDraft);
+                setShowProfileEdit(false);
+                if (workspaces.length === 0) {
+                    setWorkspaces([{ id: 'ws1', name: 'My Daily Notes', icon: 'Briefcase', color: 'bg-indigo-600', salary: 0, categories: ["Essentials", "Personal"], subs: [], deletedSubs: [] }]);
+                }
+            };
+
+            var handleSaveWorkspace = function() {
+                if (!wsName) return;
+                var newWs = { id: 'ws-' + Date.now(), name: wsName, icon: wsIcon, color: wsColor, salary: 0, categories: ["Essentials", "Personal"], subs: [], deletedSubs: [] };
+                setWorkspaces(workspaces.concat([newWs]));
+                setShowWsModal(false);
+                setWsName("");
+            };
+
+            var moveToBinWs = function() {
+                if (deleteWsId) {
+                    var newArr = workspaces.map(function(w) {
+                        return w.id === deleteWsId ? Object.assign({}, w, { deletedAt: Date.now() }) : w;
+                    });
+                    setWorkspaces(newArr);
+                    setDeleteWsId(null);
+                }
+            };
+
+            var restoreWs = function(id) {
+                var newArr = workspaces.map(function(w) {
+                    if (w.id === id) {
+                        var restored = Object.assign({}, w);
+                        delete restored.deletedAt;
+                        return restored;
+                    }
+                    return w;
+                });
+                setWorkspaces(newArr);
+            };
+
+            var executePermDeleteWs = function() {
+                if (permDeleteWsId) {
+                    var newArr = workspaces.filter(function(w) { return w.id !== permDeleteWsId; });
+                    setWorkspaces(newArr);
+                    setPermDeleteWsId(null);
+                }
+            };
+
+            var triggerAlert = function(title, message, type) {
+                setAlertPopup({ title: title, message: message, type: type || 'info' });
+            };
+
+            var confirmBackup = function() {
+                try {
+                    var backupData = {
+                        workspaces: workspaces,
+                        profile: profile,
+                        onboard: hasSeenOnboard,
+                        timestamp: Date.now()
+                    };
+                    var jsonStr = JSON.stringify(backupData);
+                    var b64 = btoa(unescape(encodeURIComponent(jsonStr)));
+                    var encryptedStr = b64.split('').reverse().join('');
+                    
+                    var blob = new Blob([encryptedStr], { type: "text/plain" });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = (backupName || "SubLattice_Backup") + "_" + new Date().getTime() + ".txt";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    setShowBackupModal(false);
+                    triggerAlert("Backup Successful", "Encrypted backup file has been securely downloaded to your device.", "success");
+                } catch(e) {
+                    setShowBackupModal(false);
+                    triggerAlert("Backup Error", "An error occurred while encrypting and generating the backup file.", "error");
+                }
+            };
+
+            var handleRestore = function(e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        var encryptedStr = evt.target.result;
+                        var b64 = encryptedStr.split('').reverse().join('');
+                        var jsonStr = decodeURIComponent(escape(atob(b64)));
+                        var data = JSON.parse(jsonStr);
+                        
+                        if (data && data.workspaces) {
+                            setWorkspaces(data.workspaces);
+                            if (data.profile !== undefined) {
+                                setProfile(data.profile);
+                                localStorage.setItem('sl_profile_v12', JSON.stringify(data.profile));
+                            }
+                            if (data.onboard !== undefined) {
+                                setHasSeenOnboard(data.onboard);
+                                localStorage.setItem('sl_onboard_v12', 'true');
+                            }
+                            
+                            localStorage.setItem('sublattice_data_v5200', JSON.stringify(data.workspaces));
+                            triggerAlert("Restore Successful", "Your data and settings have been safely restored from the backup file.", "success");
+                        } else {
+                            triggerAlert("Invalid File", "The uploaded file format is not a valid SubLattice backup.", "error");
+                        }
+                    } catch(err) {
+                        triggerAlert("Decryption Error", "Could not decrypt the backup. Please ensure you uploaded the correct SubLattice .txt file.", "error");
+                    }
+                    e.target.value = null;
+                };
+                reader.readAsText(file);
+            };
+
+            var handleSaveNote = function() {
+                if (!modal || !modal.name) return;
+                var currentCats = (activeWS.categories || []).slice();
+                if (currentCats.indexOf(modal.cat) === -1 && modal.cat) { currentCats.push(modal.cat); }
+                
+                var newSubs = (activeWS.subs || []).slice();
+                if (modal.id) {
+                    for(var i=0; i<newSubs.length; i++) { 
+                        if(newSubs[i].id === modal.id) newSubs[i] = Object.assign({}, modal); 
+                    }
+                } else {
+                    var newNote = Object.assign({}, modal, { id: "n-" + Date.now() });
+                    newSubs.push(newNote);
+                }
+                updateActiveWS({ subs: newSubs, categories: currentCats });
+                setModal(null);
+            };
+
+            var moveToBinNote = function() {
+                if (deleteNoteId) {
+                    var targetSub = null;
+                    var newSubs = (activeWS.subs || []).filter(function(s) { 
+                        if (s.id === deleteNoteId) { targetSub = s; return false; }
+                        return true;
+                    });
+                    if (targetSub) {
+                        targetSub.deletedAt = Date.now();
+                        var newBin = (activeWS.deletedSubs || []).concat([targetSub]);
+                        updateActiveWS({ subs: newSubs, deletedSubs: newBin });
+                    }
+                    setDeleteNoteId(null);
+                }
+            };
+
+            var restoreNote = function(id) {
+                var targetSub = null;
+                var newBin = (activeWS.deletedSubs || []).filter(function(s) { 
+                    if (s.id === id) { targetSub = Object.assign({}, s); return false; }
+                    return true;
+                });
+                if (targetSub) {
+                    delete targetSub.deletedAt;
+                    var newSubs = (activeWS.subs || []).concat([targetSub]);
+                    updateActiveWS({ subs: newSubs, deletedSubs: newBin });
+                }
+                setQuickLook(null);
+            };
+
+            var executePermDeleteNote = function() {
+                if (permDeleteNoteId) {
+                    var newBin = (activeWS.deletedSubs || []).filter(function(s) { return s.id !== permDeleteNoteId; });
+                    updateActiveWS({ deletedSubs: newBin });
+                    setPermDeleteNoteId(null);
+                    setQuickLook(null);
+                }
+            };
+
+            var togglePaid = function(id) {
+                var newSubs = (activeWS.subs || []).map(function(s) {
+                    return s.id === id ? Object.assign({}, s, { isPaidManual: !s.isPaidManual }) : s;
+                });
+                updateActiveWS({ subs: newSubs });
+            };
+
+            var changeNoteCategory = function(id, newCat) {
+                var newCats = (activeWS.categories || []).slice();
+                if (newCats.indexOf(newCat) === -1) { newCats.push(newCat); }
+                var newSubs = (activeWS.subs || []).map(function(s) {
+                    return s.id === id ? Object.assign({}, s, { cat: newCat }) : s;
+                });
+                updateActiveWS({ categories: newCats, subs: newSubs });
+            };
+
+            var navigateToBill = function(id) {
+                setView('board'); setSelectedCat('All'); setCalPopup(null); setZapPopup(false); setFocusedId(id);
+                setTimeout(function() {
+                    var el = document.getElementById('bill-' + id);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(function() { setFocusedId(null); }, 2500);
+                }, 100);
+            };
+
+            var getStatus = function(sub) {
+                var today = new Date().getDate();
+                var sDay = parseInt(sub.day) || 1;
+                if (sub.isPaidManual) return { label: 'Settled', color: 'text-emerald-600 bg-emerald-50 border border-emerald-200', icon: 'Check' };
+                if (sub.isAutoPay) {
+                    if (today >= sDay && today <= sDay + 5) return { label: 'Paid', color: 'text-emerald-600 bg-emerald-50 border border-emerald-200', icon: 'Check' };
+                    return { label: 'Auto', color: 'text-indigo-600 bg-indigo-50 border border-indigo-200', icon: 'Zap' };
+                }
+                if (today >= sDay - 5 && today <= sDay) return { label: 'Due', color: 'text-rose-600 bg-rose-50 border border-rose-200 animate-pulse', icon: 'Alert' };
+                return { label: 'Track', color: 'text-slate-500 bg-slate-100 border border-slate-200', icon: 'Clock' };
+            };
+
+            var downloadPDF = function() {
+                var btn = document.getElementById('pdf-btn');
+                if (btn) btn.innerText = "Processing...";
+                var element = document.getElementById('pdf-document-content');
+                var opt = {
+                    margin: 0.5,
+                    filename: safeStr(activeWS.name || 'Map').replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_Statement.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+                if (typeof html2pdf !== 'undefined') {
+                    html2pdf().set(opt).from(element).save().then(function() {
+                        if (btn) btn.innerText = "Download PDF";
+                    });
+                } else {
+                    window.print();
+                    if (btn) btn.innerText = "Download PDF";
+                }
+            };
+
+            if (isAppLoading) {
+                return html`<div className="fixed inset-0 bg-indigo-600 flex items-center justify-center z-[500]"><div className="flex flex-col items-center splash-logo text-white"><${Icon} name="CreditCard" size=${60} /><h1 className="text-3xl font-extrabold mt-5 tracking-tight">My Bill Map</h1><p className="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mt-2">Titanium Mobile Engine</p></div></div>`;
+            }
+
+            if (!hasSeenOnboard) {
+                var slides = [
+                    { icon: 'List', title: "Track Every Detail", desc: "Organize your daily notes and records in beautiful maps and categories." },
+                    { icon: 'Zap', title: "Reduction Simulator", desc: "Test cutting out certain notes to see how it affects your monthly balance." },
+                    { icon: 'Archive', title: "Data Backup", desc: "Keep your data secure with offline backups and a 30-day recycle bin." }
+                ];
+                return html`<div className="min-h-screen bg-slate-900 flex flex-col justify-between p-8 main-content">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center slide-enter" key=${onboardStep}>
+                        <div className="w-20 h-20 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mb-6 border border-indigo-500/30"><${Icon} name=${slides[onboardStep].icon} size=${32} /></div>
+                        <h2 className="text-2xl font-black text-white mb-4">${slides[onboardStep].title}</h2>
+                        <p className="text-xs font-bold text-slate-400 px-4">${slides[onboardStep].desc}</p>
+                    </div>
+                    <div className="space-y-8">
+                        <div className="flex justify-center gap-2">
+                            ${slides.map(function(_, i){ return html`<div key=${i} className=${`h-1.5 rounded-full transition-all ${i === onboardStep ? 'w-6 bg-indigo-500' : 'w-2 bg-slate-700'}`} />`; })}
+                        </div>
+                        <div className="flex gap-4">
+                            <button onClick=${finishOnboarding} className="flex-1 py-4 text-xs font-black text-slate-400 bg-slate-800 rounded-xl active:scale-95 transition-all uppercase tracking-widest">Skip</button>
+                            <button onClick=${function(){ if(onboardStep < 2) setOnboardStep(onboardStep + 1); else finishOnboarding(); }} className="flex-1 py-4 text-xs font-black text-white bg-indigo-600 shadow-lg shadow-indigo-900 rounded-xl active:scale-95 transition-all uppercase tracking-widest">${onboardStep < 2 ? 'Next' : 'Start'}</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            if (!profile || showProfileEdit) {
+                var avatarBg = profDraft.color ? profDraft.color.replace('text-', 'bg-') : 'bg-indigo-600';
+                return html`<div className="min-h-screen bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-5 main-content z-[1000] relative">
+                    <div className="bg-white w-full max-w-[340px] p-6 rounded-[2rem] shadow-2xl animate-in zoom-in-95 relative">
+                        ${showProfileEdit ? html`<button onClick=${function(){setShowProfileEdit(false);}} className="absolute top-4 right-4 p-2 text-slate-400 bg-slate-50 rounded-full"><${Icon} name="Close" size=${14}/></button>` : null}
+                        <div className=${`w-14 h-14 rounded-[1.2rem] flex items-center justify-center mb-6 shadow-sm border border-white mx-auto text-white ${avatarBg}`}><${Icon} name=${profDraft.icon} size=${24} /></div>
+                        <h2 className="text-xl font-black text-slate-800 mb-1 text-center">Your Profile</h2>
+                        <p className="text-[10px] font-bold text-slate-400 mb-6 text-center tracking-widest uppercase">Personalize your experience</p>
+                        
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-slate-400 ml-1 block mb-1">Salutation</label>
+                                <select value=${profDraft.salutation} onChange=${function(e){setProfDraft(Object.assign({}, profDraft, {salutation: e.target.value}));}} className="w-full bg-slate-50 p-3 rounded-xl font-bold outline-none text-xs border border-slate-200">
+                                    <option value="Mr.">Mr.</option><option value="Mrs.">Mrs.</option><option value="Miss">Miss</option><option value="Sir">Sir</option><option value="Madam">Madam</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-slate-400 ml-1 block mb-1">Your Name</label>
+                                <input autoFocus value=${profDraft.name} onChange=${function(e){setProfDraft(Object.assign({}, profDraft, {name: e.target.value}));}} className="w-full bg-slate-50 p-3 rounded-xl font-bold outline-none text-xs border border-slate-200 focus:border-indigo-300" placeholder="Name..." />
+                            </div>
+                        </div>
+
+                        <label className="text-[8px] font-black uppercase text-slate-400 ml-1 block mb-1 mt-2">Avatar Icon</label>
+                        <div className="flex gap-2 bg-slate-50 p-2.5 rounded-xl mb-4 overflow-x-auto no-scrollbar border border-slate-100">
+                            ${PROFILE_ICONS.map(function(k){return html`<button key=${k} onClick=${function(){setProfDraft(Object.assign({}, profDraft, {icon: k}));}} className=${`p-2.5 rounded-lg flex shrink-0 items-center justify-center transition-all ${profDraft.icon === k ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-400 border border-slate-200'}`}><${Icon} name=${k} size=${16}/></button>`;})}
+                        </div>
+
+                        <label className="text-[8px] font-black uppercase text-slate-400 ml-1 block mb-1">Name Color</label>
+                        <div className="flex flex-wrap gap-2.5 justify-center bg-slate-50 p-3.5 rounded-xl mb-6 border border-slate-100">
+                            ${TEXT_COLORS.map(function(c){return html`<button key=${c} onClick=${function(){setProfDraft(Object.assign({}, profDraft, {color: c}));}} className=${`w-6 h-6 rounded-full ${c.replace('text-', 'bg-')} ${profDraft.color === c ? 'ring-4 ring-slate-200 scale-110' : 'opacity-40'} transition-all`} />`;})}
+                        </div>
+                        
+                        <button onClick=${saveProfile} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">Save Profile</button>
+                    </div>
+                </div>`;
+            }
+
+            var profileBg = profile && profile.color ? profile.color.replace('text-', 'bg-') : 'bg-indigo-600';
+
+            if (activeId === null) {
+                return html`
+                    <div className="min-h-screen p-5 main-content max-w-lg mx-auto flex flex-col justify-between pb-10">
+                        <div>
+                            <div className="mb-6 mt-4 cursor-pointer active:scale-95 transition-transform" onClick=${function(){ setProfDraft(profile); setShowProfileEdit(true); }}>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className=${`p-2 rounded-lg border border-white shadow-sm text-white ${profileBg}`}><${Icon} name=${profile.icon} size=${16} /></div>
+                                    <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none">${getGreeting()},</h2>
+                                </div>
+                                <h2 className=${`text-2xl font-black tracking-tight ${profile.color}`}>${profile.salutation} ${profile.name}</h2>
+                                <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Tap to edit profile</p>
+                            </div>
+                            <div className="border-b-2 border-dashed border-slate-200 mb-6"></div>
+                            
+                            <div className="flex items-center justify-between mb-4">
+                                <h1 className="text-xs font-black text-slate-800 uppercase tracking-widest">Note Maps</h1>
+                                <div className="flex gap-2">
+                                    <button onClick=${function(){setHomeView('grid');}} className=${`p-2 rounded-xl transition-all ${homeView === 'grid' ? 'bg-indigo-100 text-indigo-600 shadow-sm border border-indigo-100' : 'bg-white text-slate-400'}`}><${Icon} name="Grid" size=${14} /></button>
+                                    <button onClick=${function(){setHomeView('bin');}} className=${`p-2 rounded-xl transition-all ${homeView === 'bin' ? 'bg-rose-100 text-rose-600 shadow-sm border border-rose-100' : 'bg-white text-slate-400'}`}><${Icon} name="Trash" size=${14} /></button>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-3 mb-8">
+                                ${homeView === 'grid' ? activeWorkspaces.map(function(ws) { return html`
+                                    <div key=${ws.id} onClick=${function(){ setActiveId(ws.id); }} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between active:scale-95 transition-all cursor-pointer group hover:border-indigo-200">
+                                        <div className="flex items-center gap-4">
+                                            <div className=${`p-3 rounded-xl ${ws.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${ws.icon || 'Briefcase'} size=${16} /></div>
+                                            <div><h4 className="font-bold text-slate-800 text-sm">${ws.name || 'Map'}</h4><p className="text-[8px] text-slate-400 font-bold uppercase mt-1 tracking-widest">${(ws.subs || []).length} Records</p></div>
+                                        </div>
+                                        <button onClick=${function(e){ e.stopPropagation(); setDeleteWsId(ws.id); }} className="p-2 text-slate-300 hover:text-rose-500 bg-slate-50 rounded-lg transition-colors border border-slate-100"><${Icon} name="Trash" size=${14} /></button>
+                                    </div>
+                                `; }) : null}
+
+                                ${homeView === 'bin' ? binWorkspaces.map(function(ws) { return html`
+                                    <div key=${ws.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between transition-all group">
+                                        <div className="flex items-center gap-4 opacity-60">
+                                            <div className=${`p-3 rounded-xl ${ws.color || 'bg-indigo-600'} text-white shadow-sm grayscale`}><${Icon} name=${ws.icon || 'Briefcase'} size=${16} /></div>
+                                            <div><h4 className="font-bold text-slate-800 text-sm line-through">${ws.name || 'Map'}</h4><p className="text-[8px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Deleted</p></div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick=${function(){ restoreWs(ws.id); }} className="p-2 text-emerald-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm"><${Icon} name="Check" size=${14} /></button>
+                                            <button onClick=${function(){ setPermDeleteWsId(ws.id); }} className="p-2 text-rose-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm"><${Icon} name="Trash" size=${14} /></button>
+                                        </div>
+                                    </div>
+                                `; }) : null}
+
+                                ${homeView === 'bin' && binWorkspaces.length === 0 ? html`<div className="py-12 text-center text-slate-400 text-[11px] font-bold uppercase tracking-widest">Bin is empty</div>` : null}
+                            </div>
+                            
+                            ${homeView === 'grid' ? html`<button onClick=${function(){ setShowWsModal(true); }} className="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all text-xs uppercase tracking-widest mb-8"><${Icon} name="Plus" size=${16} /> New Note Map</button>` : null}
+                            
+                            <div className="mb-6">
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2"><${Icon} name="Archive" size=${14}/> Data Management</h3>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button onClick=${function(){ if(!workspaces || workspaces.length===0){triggerAlert("No Data","Nothing to backup","warning");} else {setShowBackupModal(true);} }} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 active:scale-95 transition-all hover:border-indigo-200 group">
+                                        <div className="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 group-hover:scale-110 transition-transform"><${Icon} name="Download" size=${18} /></div>
+                                        <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest">Take Backup</span>
+                                    </button>
+                                    <label className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-2 active:scale-95 transition-all hover:border-emerald-200 cursor-pointer group">
+                                        <div className="p-2.5 bg-emerald-50 rounded-xl text-emerald-600 group-hover:scale-110 transition-transform"><${Icon} name="Upload" size=${18} /></div>
+                                        <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest">Restore Data</span>
+                                        <input type="file" accept=".txt" onChange=${handleRestore} className="hidden" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="text-center opacity-40 mt-10">
+                            <${Icon} name="Heart" size=${14} className="text-rose-500 fill-rose-500 mx-auto mb-1.5" />
+                            <p className="text-[8px] font-bold uppercase tracking-widest text-slate-500">Built with love</p>
+                        </div>
+                        
+                        ${showWsModal ? html`
+                            <div className="fixed inset-0 z-[600] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-[310px] shadow-2xl animate-in zoom-in-95">
+                                    <div className="flex justify-between items-center mb-5"><h3 className="text-[10px] font-black uppercase text-slate-800 tracking-widest">New Note Map</h3><button onClick=${function(){setShowWsModal(false);}} className="p-1"><${Icon} name="Close" size=${14} className="text-slate-400"/></button></div>
+                                    <input autoFocus value=${wsName} onChange=${function(e){setWsName(e.target.value);}} className="w-full bg-slate-50 p-3.5 rounded-xl font-bold outline-none mb-5 text-sm border border-slate-200 focus:border-indigo-300 shadow-inner" placeholder="e.g. Office, Vacation..." />
+                                    <div className="space-y-3 mb-6">
+                                        <div className="grid grid-cols-4 gap-2 bg-slate-50 p-2 rounded-xl">${ICON_LIST.map(function(k){return html`<button key=${k} onClick=${function(){setWsIcon(k);}} className=${`p-2.5 rounded-lg flex items-center justify-center transition-all ${wsIcon === k ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-400 border border-slate-200'}`}><${Icon} name=${k} size=${14}/></button>`;})}</div>
+                                        <div className="flex flex-wrap gap-2 justify-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">${COLOR_PALETTE.map(function(c){return html`<button key=${c} onClick=${function(){setWsColor(c);}} className=${`w-5 h-5 rounded-full ${c} ${wsColor === c ? 'ring-4 ring-indigo-200 scale-110' : 'opacity-40'}`} />`;})}</div>
+                                    </div>
+                                    <button onClick=${handleSaveWorkspace} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-md active:scale-95 transition-all">Create Map</button>
+                                </div>
+                            </div>
+                        ` : null}
+
+                        ${showBackupModal ? html`
+                            <div className="fixed inset-0 z-[800] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-indigo-50 text-indigo-500 border border-indigo-100">
+                                        <${Icon} name="Download" size=${18} />
+                                    </div>
+                                    <h3 className="text-base font-black text-slate-800 mb-2">Backup Data</h3>
+                                    <p className="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest leading-relaxed">Please store this encrypted file safely. Do not modify its contents to prevent corruption.</p>
+                                    <input value=${backupName} onChange=${function(e){setBackupName(e.target.value);}} className="w-full bg-slate-50 p-3 rounded-xl font-bold outline-none mb-4 text-xs border border-slate-200 focus:border-indigo-300 text-center" placeholder="Backup File Name" />
+                                    <div className="flex gap-2">
+                                        <button onClick=${function(){setShowBackupModal(false);}} className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[11px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
+                                        <button onClick=${confirmBackup} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-black text-[11px] active:scale-95 transition-all uppercase shadow-md shadow-indigo-200">Download</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : null}
+
+                        ${deleteWsId ? html`
+                            <div className="fixed inset-0 z-[700] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                    <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-100"><${Icon} name="Archive" size=${20} /></div>
+                                    <h3 className="text-lg font-black text-slate-800 mb-2">Move to Bin?</h3>
+                                    <p className="text-[10px] font-bold text-slate-500 mb-6 uppercase tracking-widest">Kept for 30 days before deletion.</p>
+                                    <div className="flex gap-2">
+                                        <button onClick=${function(){setDeleteWsId(null);}} className="flex-1 py-3.5 bg-slate-50 text-slate-600 rounded-xl font-black text-[11px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
+                                        <button onClick=${function(){ moveToBinWs(); }} className="flex-1 py-3.5 bg-amber-500 text-white rounded-xl font-black text-[11px] shadow-md active:scale-95 transition-all uppercase">Move</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : null}
+
+                        ${permDeleteWsId ? html`
+                            <div className="fixed inset-0 z-[700] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                    <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-100"><${Icon} name="Trash" size=${20} /></div>
+                                    <h3 className="text-lg font-black text-slate-800 mb-2">Delete Permanently?</h3>
+                                    <p className="text-[10px] font-bold text-slate-500 mb-6 uppercase tracking-widest">This action cannot be undone.</p>
+                                    <div className="flex gap-2">
+                                        <button onClick=${function(){setPermDeleteWsId(null);}} className="flex-1 py-3 bg-slate-50 text-slate-600 rounded-xl font-black text-[10px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
+                                        <button onClick=${function(){ executePermDeleteWs(); }} className="flex-1 py-3 bg-rose-500 text-white rounded-xl font-black text-[10px] shadow-md active:scale-95 transition-all uppercase">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : null}
+
+                        ${alertPopup ? html`
+                            <div className="fixed inset-0 z-[800] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-[2rem] p-6 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                    <div className=${`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 border ${alertPopup.type === 'error' ? 'bg-rose-50 text-rose-500 border-rose-100' : alertPopup.type === 'success' ? 'bg-emerald-50 text-emerald-500 border-emerald-100' : 'bg-amber-50 text-amber-500 border-amber-100'}`}>
+                                        <${Icon} name=${alertPopup.type === 'error' ? 'Alert' : alertPopup.type === 'success' ? 'Check' : 'Alert'} size=${18} />
+                                    </div>
+                                    <h3 className="text-base font-black text-slate-800 mb-2">${alertPopup.title}</h3>
+                                    <p className="text-[10px] font-bold text-slate-500 mb-6 uppercase tracking-widest leading-relaxed">${alertPopup.message}</p>
+                                    <button onClick=${function(){setAlertPopup(null);}} className="w-full py-3.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[11px] active:scale-95 transition-all uppercase border border-slate-200 hover:bg-slate-200">Dismiss</button>
+                                </div>
+                            </div>
+                        ` : null}
+                    </div>
+                `;
+            }
+
+            var sc = isScrolled;
+            var stickyHeaderCls = "sticky top-0 z-40 transition-all duration-300 bg-[#F8FAFC]/95 backdrop-blur-md " + (sc ? "pb-2 shadow-sm border-b border-slate-200" : "");
+            var metricsGridCls = "grid transition-all duration-300 max-w-6xl mx-auto " + (sc ? "grid-cols-4 gap-1.5 px-4 pt-1.5" : "grid-cols-2 md:grid-cols-4 gap-3 px-4 pt-2");
+            var metricCardCls = "bg-white border border-slate-200 shadow-sm flex flex-col justify-center transition-all duration-300 " + (sc ? "p-2 rounded-xl min-w-[75px]" : "p-3.5 rounded-2xl min-w-[140px]");
+            var metricLabelCls = "font-bold uppercase tracking-widest flex items-center justify-between text-slate-400 transition-all duration-300 " + (sc ? "text-[6px] mb-0.5" : "text-[8px] mb-1");
+            var metricValCls = "font-black tracking-tight text-slate-800 transition-all duration-300 " + (sc ? "text-xs" : "text-lg mt-0.5");
+            var filterBarCls = "flex flex-col gap-2 bg-white border border-slate-200 transition-all duration-300 max-w-6xl mx-auto " + (sc ? "mx-4 mt-2 p-1.5 rounded-[1rem] shadow-sm" : "mx-4 mt-3 p-2.5 rounded-[1.2rem] shadow-sm");
+
+            return html`
+                <div className="min-h-screen pb-32 main-content flex flex-col justify-between" onTouchStart=${handleTouchStart} onTouchEnd=${handleTouchEnd}>
+                    
+                    <div>
+                        <div className=${stickyHeaderCls}>
+                            ${!sc ? html`
+                                <header className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center no-print">
+                                    <div className="flex items-center gap-3">
+                                        <button onClick=${function(){ setActiveId(null); setSelectedCat('All'); setCutIds([]); setIsSimulating(false); }} className="p-2 bg-white border border-slate-200 shadow-sm rounded-xl text-slate-500 active:scale-95 transition-all"><${Icon} name="Back" size=${14} /></button>
+                                        <div className="flex items-center gap-2">
+                                            <div className=${`p-1.5 rounded-lg ${activeWS.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${activeWS.icon || 'Briefcase'} size=${12}/></div>
+                                            <div className="flex flex-col"><input value=${activeWS.name} onChange=${function(e){ updateActiveWS({name: e.target.value}); }} className="text-sm font-black leading-none text-slate-800 bg-transparent outline-none w-32 truncate placeholder:text-slate-300" placeholder="Map Name" /><p className="text-[7px] font-bold text-slate-400 uppercase mt-1 tracking-widest">${displaySubs.length} Filtered</p></div>
+                                        </div>
+                                    </div>
+                                    <button onClick=${function(){ setShowPrint(true); }} className="p-2 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-xl active:scale-95"><${Icon} name="Printer" size=${14} /></button>
+                                </header>
+                            ` : html`
+                                <div className="max-w-6xl mx-auto flex items-center justify-between px-4 pt-2 pb-1">
+                                    <div className="flex items-center gap-2">
+                                        <button onClick=${function(){ setActiveId(null); setSelectedCat('All'); setCutIds([]); setIsSimulating(false); }} className="text-slate-500 active:scale-95"><${Icon} name="Back" size=${12} /></button>
+                                        <h1 className="text-[10px] font-black truncate text-slate-800 uppercase tracking-widest">${activeWS.name || ''}</h1>
+                                    </div>
+                                    <button onClick=${function(){ setShowPrint(true); }} className="text-indigo-600"><${Icon} name="Printer" size=${12} /></button>
+                                </div>
+                            `}
+
+                            ${!sc ? html`<p className="text-[7px] text-slate-400 font-bold px-4 mb-1 uppercase tracking-widest max-w-6xl mx-auto">Swipe category cards to show metrics</p>` : null}
+                            
+                            <div className=${"flex overflow-x-auto no-scrollbar snap-x max-w-6xl mx-auto " + (sc ? "pb-0" : "pb-2")}>
+                                <div className=${metricsGridCls + " flex-1 shrink-0 snap-center w-full"}>
+                                    <div className=${metricCardCls}>
+                                        <span className=${metricLabelCls}>Income Base ${selectedCat !== 'All' ? html`<span className="text-indigo-600 font-black ml-1">(${selectedCat})</span>` : null}</span>
+                                        <div className="flex items-center mt-1 text-slate-800 relative group">
+                                            <span className=${`font-bold mr-0.5 ${sc ? 'text-[8px]' : 'text-[10px]'}`}>₹</span>
+                                            <input type="number" value=${activeWS.salary || ""} onChange=${function(e){ updateActiveWS({salary:e.target.value}); }} className=${`w-full font-black bg-transparent outline-none placeholder:text-slate-300 ${sc ? 'text-xs' : 'text-lg'}`} placeholder="Add salary" />
+                                            ${!sc ? html`<${Icon} name="Edit" size=${12} className="text-slate-300 absolute right-0 pointer-events-none opacity-50" />` : null}
+                                        </div>
+                                    </div>
+                                    <div className=${metricCardCls.replace('bg-white', metrics.balance >= 0 ? 'bg-indigo-600' : 'bg-rose-500').replace('text-slate-800', 'text-white').replace('text-slate-400', 'text-white opacity-80').replace('border-slate-200', 'border-transparent')}>
+                                        <span className=${metricLabelCls.replace('text-slate-400', 'text-white/80')}>Net Balance</span>
+                                        <h2 className=${metricValCls + " text-white"}>₹${metrics.balance.toLocaleString()}</h2>
+                                    </div>
+                                    <div className=${metricCardCls}>
+                                        <span className=${metricLabelCls}>${selectedCat} Spend</span>
+                                        <h2 className=${metricValCls}>₹${metrics.total.toLocaleString()}</h2>
+                                    </div>
+                                    <div className=${metricCardCls + " relative"}>
+                                        <span className=${metricLabelCls}>Reduction Lab</span>
+                                        <div className="flex items-center justify-between mt-1">
+                                            <div className="relative">
+                                                <button onClick=${function(){ if(isSimulating) setZapPopup(!zapPopup); }} className=${`rounded-full transition-all relative flex items-center justify-center ${isSimulating ? 'bg-amber-100 text-amber-500 zap-glow' : 'bg-slate-100 text-slate-300'} ${sc ? 'w-5 h-5' : 'w-7 h-7'}`}>
+                                                    <${Icon} name="Zap" size=${sc ? 10 : 12}/>
+                                                    ${isSimulating && cutIds.length > 0 ? html`<span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white text-[6px] font-black flex items-center justify-center rounded-full border border-white">${cutIds.length}</span>` : null}
+                                                </button>
+                                                ${zapPopup && isSimulating ? html`
+                                                    <div className="absolute top-full left-0 md:right-0 md:left-auto mt-3 w-56 bg-slate-900 text-white rounded-2xl p-4 shadow-2xl z-50 animate-in zoom-in-95">
+                                                        <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-2 text-[9px] font-black uppercase tracking-widest"><span>To be Cut</span><button onClick=${function(){setZapPopup(false);}} className="p-1"><${Icon} name="Close" size=${10}/></button></div>
+                                                        <div className="space-y-1 max-h-40 overflow-y-auto no-scrollbar">
+                                                            ${(activeWS.subs || []).filter(function(s){return cutIds.indexOf(s.id)!==-1;}).map(function(s){ return html`
+                                                                <div key=${s.id} onClick=${function(){navigateToBill(s.id);}} className="flex justify-between items-center py-2 active:bg-white/10 rounded px-1 cursor-pointer">
+                                                                    <div className="flex items-center gap-2"><${Icon} name=${s.icon || 'Home'} size=${10} className="text-indigo-400" /> <span className="text-[10px] font-bold text-white/90 truncate w-24">${s.name || ''}</span></div>
+                                                                    <button onClick=${function(e){e.stopPropagation(); setCutIds(cutIds.filter(function(cid){return cid!==s.id;}));}} className="p-1"><${Icon} name="Trash" size=${14} className="text-rose-400" /></button>
+                                                                </div>
+                                                            `; })}
+                                                        </div>
+                                                    </div>
+                                                ` : null}
+                                            </div>
+                                            <button onClick=${function(){ setIsSimulating(!isSimulating); setCutIds([]); setZapPopup(false); }} className=${`rounded-lg font-black transition-all ${isSimulating ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-500'} ${sc ? 'px-2 py-1 text-[7px]' : 'px-3 py-1.5 text-[9px]'}`}>${isSimulating ? 'STOP' : 'TEST'}</button>
+                                        </div>
+                                        ${!sc && isSimulating && metrics.saved > 0 ? html`<p className="text-[7px] font-bold text-amber-500 uppercase mt-1 tracking-tighter absolute bottom-1.5 left-3">Saving ₹${metrics.saved.toLocaleString()}</p>` : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className=${filterBarCls}>
+                                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1 pb-1 border-b border-slate-50">
+                                    <button onClick=${function(){setSelectedCat('All');}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === 'All' ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[7px]' : 'px-3 py-1.5 text-[8px]'}`}>All</button>
+                                    ${(activeWS.categories || []).map(function(c) { return html`<button key=${c} onClick=${function(){setSelectedCat(c);}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === c ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[7px]' : 'px-3 py-1.5 text-[8px]'}`}>${c}</button>`; })}
+                                </div>
+                                <div className="flex items-center justify-between pt-1 px-1 gap-2">
+                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-lg border border-slate-100 flex-1 min-w-[90px]">
+                                        <${Icon} name="Search" size=${10} className="text-slate-400 ml-1 mr-1" />
+                                        <input value=${searchQuery} onChange=${function(e){setSearchQuery(e.target.value);}} placeholder="Search notes..." className="bg-transparent text-[8px] font-bold text-slate-600 outline-none w-full placeholder:text-slate-300" />
+                                    </div>
+                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-lg border border-slate-100 relative cursor-pointer group shrink-0">
+                                        <div className="p-0.5 bg-white rounded shadow-sm group-hover:text-indigo-600 transition-colors"><${Icon} name="Sort" size=${10} className="text-slate-500" /></div>
+                                        <select value=${sortBy} onChange=${function(e){setSortBy(e.target.value);}} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                            <option value="date_asc">Date (Asc)</option><option value="date_desc">Date (Desc)</option>
+                                            <option value="amount_desc">Cost (Hi-Lo)</option><option value="amount_asc">Cost (Lo-Hi)</option>
+                                            <option value="name_asc">Name (A-Z)</option><option value="cat_asc">Category</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-lg shrink-0">
+                                        <button onClick=${function(){setView('board');}} className=${`p-1 rounded transition-all ${view === 'board' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Grid" size=${12}/></button>
+                                        <button onClick=${function(){setView('list');}} className=${`p-1 rounded transition-all ${view === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="List" size=${12}/></button>
+                                        <button onClick=${function(){setView('calendar');}} className=${`p-1 rounded transition-all ${view === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Calendar" size=${12}/></button>
+                                        <div className="w-[1px] h-3 bg-slate-200 mx-0.5"></div>
+                                        <button onClick=${function(){setView('bin');}} className=${`p-1 rounded transition-all ${view === 'bin' ? 'bg-rose-100 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-rose-500'}`}><${Icon} name="Trash" size=${12}/></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <main className="max-w-6xl mx-auto px-4 mt-3 space-y-4 no-print">
+                            ${view === 'board' ? html`
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    ${displaySubs.map(function(sub) {
+                                        var stat = getStatus(sub); var isP = cutIds.indexOf(sub.id) !== -1;
+                                        return html`
+                                            <div key=${sub.id} id=${'bill-' + sub.id} onClick=${function(){if(isSimulating) { setCutIds(isP ? cutIds.filter(function(i){return i!==sub.id;}) : cutIds.concat([sub.id])); } }}
+                                                className=${`group relative bg-white p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden ${focusedId === sub.id ? 'bill-focus' : 'border-slate-200 shadow-sm'} ${isP && isSimulating ? 'opacity-40 grayscale border-dashed border-slate-300' : 'hover:shadow-md hover:-translate-y-0.5'}`}>
+                                                
+                                                <div className=${`absolute top-3 right-3 px-2 py-0.5 rounded text-[6px] font-black uppercase flex items-center gap-1 ${stat.color}`}><${Icon} name=${stat.icon} size=${8}/> ${stat.label}</div>
+                                                
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <div className=${`p-2.5 rounded-xl ${sub.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${sub.icon || 'Home'} size=${14}/></div>
+                                                    <div className="min-w-0 flex flex-col">
+                                                        <h4 className="font-bold text-sm text-slate-800 leading-tight truncate">${sub.name || ''}</h4>
+                                                        <div className="bg-slate-50 px-1.5 py-0.5 rounded flex items-center gap-1 mt-1 border border-slate-100 w-fit cursor-pointer hover:border-indigo-200 transition-colors relative">
+                                                            <span className="text-[7px] font-black text-slate-500 uppercase">${sub.cat || ''}</span>
+                                                            <svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400"><path d="M6 9l6 6 6-6"/></svg>
+                                                            <select value=${sub.cat || ""} onChange=${function(e){ e.stopPropagation(); changeNoteCategory(sub.id, e.target.value); }} onClick=${function(e){ e.stopPropagation(); }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                                                ${(activeWS.categories || []).map(function(c){ return html`<option key=${c} value=${c}>${c}</option>`; })}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex items-end justify-between mt-2">
+                                                    <div><span className="text-lg font-black tracking-tight text-slate-900">₹${(sub.amount || 0).toLocaleString()}</span></div>
+                                                    <div className="flex flex-col items-end gap-1">
+                                                        <div className="text-[7px] font-black text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">Day ${sub.day || 1}</div>
+                                                        ${(sub.fields || []).slice(0,1).map(function(f, i){ return html`<div key=${i} className="text-[6px] font-bold text-slate-500 bg-slate-50 px-1 py-0.5 rounded border border-slate-100 shadow-sm truncate max-w-[80px]"><span>${f.label}: </span><span className="text-slate-800">${f.value}</span></div>`; })}
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Transparent Hover Actions */}
+                                                <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex justify-end gap-2 bg-transparent pointer-events-none">
+                                                    <div className="flex gap-2 pointer-events-auto">
+                                                        <button onClick=${function(e){e.stopPropagation(); setModal(Object.assign({}, sub));}} className="text-blue-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Edit" size=${14}/></button>
+                                                        <button onClick=${function(e){e.stopPropagation(); togglePaid(sub.id);}} className=${`hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full ${sub.isPaidManual ? 'text-emerald-500' : 'text-slate-400 hover:text-emerald-500'}`}><${Icon} name="Check" size=${14}/></button>
+                                                        <button onClick=${function(e){e.stopPropagation(); setDeleteNoteId(sub.id);}} className="text-rose-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Trash" size=${14}/></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    })}
+                                </div>
+                            ` : null}
+
+                            ${view === 'list' ? html`
+                                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                                    <table className="w-full text-left table-fixed">
+                                        <thead className="bg-slate-50 border-b border-slate-100">
+                                            <tr><th className="w-[45%] px-4 py-2.5 text-[8px] font-black uppercase text-slate-400 tracking-widest">Name</th><th className="w-[20%] px-2 py-2.5 text-center text-[8px] font-black uppercase text-slate-400 tracking-widest">Day</th><th className="w-[35%] px-4 py-2.5 text-right text-[8px] font-black uppercase text-slate-400 tracking-widest">Cost</th></tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            ${displaySubs.map(function(s){ return html`
+                                                <tr key=${s.id} onClick=${function(){setModal(Object.assign({}, s));}} className="hover:bg-slate-50 cursor-pointer transition-colors relative group">
+                                                    <td className="px-4 py-3"><div className="flex items-center gap-2 overflow-hidden"><div className=${`p-1.5 rounded-lg ${s.color || 'bg-indigo-600'} text-white shrink-0 shadow-sm`}><${Icon} name=${s.icon || 'Home'} size=${10}/></div><div className="flex flex-col min-w-0"><span className="font-bold text-[11px] truncate text-slate-800">${s.name || ''}</span><span className="text-[7px] text-slate-400 font-bold uppercase truncate mt-0.5">${s.cat || ''}</span></div></div></td>
+                                                    <td className="px-2 py-3 text-center text-[9px] text-slate-500 font-bold">Day ${s.day || 1}</td>
+                                                    <td className="px-4 py-3 text-right flex flex-col items-end">
+                                                        <span className="font-black text-indigo-600 text-sm leading-none">₹${(parseFloat(s.amount) || 0).toLocaleString()}</span>
+                                                        <div className="mt-1.5 flex flex-wrap gap-1 justify-end">${(s.fields || []).slice(0,1).map(function(f){ return html`<span className="text-[6px] text-slate-500 font-bold uppercase bg-slate-50 px-1 py-0.5 rounded border border-slate-100 truncate max-w-[70px]">${f.label}: ${f.value}</span>`; })}</div>
+                                                    </td>
+                                                </tr>
+                                            `; })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ` : null}
+
+                            ${view === 'calendar' ? html`
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm relative">
+                                        <div className="grid grid-cols-7 gap-1">
+                                            ${['S','M','T','W','T','F','S'].map(function(d){ return html`<div key=${d} className="text-center text-[9px] font-bold text-slate-400 py-1.5 uppercase">${d}</div>`; })}
+                                            ${Array.from({length:31}, function(_,i){return String(i+1);}).map(function(dStr){
+                                                var dInt = parseInt(dStr);
+                                                var dSubs = (activeWS.subs || []).filter(function(s){return parseInt(s.day) === dInt;});
+                                                return html`
+                                                    <div key=${dStr} onClick=${function(){if(dSubs.length) setCalPopup(dInt);}} className=${`aspect-square border rounded-lg p-1 relative flex flex-col transition-all cursor-pointer ${dSubs.length ? 'bg-indigo-50 border-indigo-100 shadow-sm hover:scale-105' : 'border-slate-50 bg-slate-50/30'}`}>
+                                                        <span className=${`text-[8px] font-bold ${dSubs.length ? 'text-indigo-600' : 'text-slate-300'}`}>{dStr}</span>
+                                                        <div className="flex gap-0.5 mt-auto flex-wrap p-0.5">${dSubs.map(function(s){ return html`<div key=${s.id} className=${`w-1 h-1 rounded-full ${s.color || 'bg-indigo-600'} shadow-sm`} />`; })}</div>
+                                                        ${calPopup === dInt ? html`
+                                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white rounded-xl p-3 shadow-2xl z-50 animate-in zoom-in-95">
+                                                                <div className="flex justify-between items-center mb-2 border-b border-white/10 pb-1 text-[8px] uppercase font-black tracking-widest"><span>Day ${dStr}</span><button onClick=${function(e){e.stopPropagation(); setCalPopup(null);}} className="p-1"><${Icon} name="Close" size=${10}/></button></div>
+                                                                <div className="space-y-1">
+                                                                    ${dSubs.map(function(s){ return html`
+                                                                        <div key=${s.id} onClick=${function(){navigateToBill(s.id);}} className="flex justify-between items-center py-1.5 px-1 rounded hover:bg-white/10 cursor-pointer">
+                                                                            <div className="flex items-center gap-1.5"><div className=${`w-1.5 h-1.5 rounded-full ${s.color || 'bg-indigo-600'}`}></div><span className="truncate w-20 text-[9px] font-bold text-slate-200">${s.name || ''}</span></div>
+                                                                            <span className="font-bold text-[9px]">₹${s.amount || 0}</span>
+                                                                        </div>
+                                                                    `; })}
+                                                                </div>
+                                                            </div>
+                                                        ` : null}
+                                                    </div>
+                                                `;
+                                            })}
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 h-fit">
+                                        <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Upcoming</h4>
+                                        <div className="space-y-1.5 max-h-48 overflow-y-auto no-scrollbar">
+                                            ${displaySubs.slice(0, 10).sort(function(a,b){return a.day-b.day;}).map(function(s){ return html`
+                                                <div key=${s.id} onClick=${function(){navigateToBill(s.id);}} className="flex justify-between items-center p-2 bg-slate-50 rounded-xl hover:bg-slate-100 active:scale-95 transition-all cursor-pointer border border-transparent hover:border-slate-200">
+                                                    <div className="flex items-center gap-2.5"><div className=${`p-1.5 rounded-lg ${s.color || 'bg-indigo-600'} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon || 'Home'} size=${10}/></div><div className="flex flex-col"><span className="text-[10px] font-bold text-slate-700 truncate w-20">${s.name || ''}</span><span className="text-[6px] text-slate-400 font-bold uppercase mt-0.5">${s.cat || ''}</span></div></div>
+                                                    <span className="text-[8px] font-black text-indigo-600 uppercase">Day ${s.day || 1}</span>
+                                                </div>
+                                            `; })}
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : null}
+
+                            ${view === 'bin' ? html`
+                                <div>
+                                    <div className="mb-4 text-center"><span className="text-[8px] font-black uppercase text-slate-400 tracking-widest bg-slate-100 px-3 py-1.5 rounded-lg">Deleted notes kept for 30 days</span></div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        ${displaySubs.map(function(sub) {
+                                            return html`
+                                                <div key=${sub.id} className="group relative bg-white p-4 rounded-2xl border border-slate-200 shadow-sm opacity-70 hover:opacity-100 transition-all cursor-pointer overflow-hidden">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <div className=${`p-2.5 rounded-xl ${sub.color || 'bg-indigo-600'} text-white shadow-sm grayscale`}><${Icon} name=${sub.icon || 'Home'} size=${14}/></div>
+                                                        <div className="min-w-0 flex flex-col">
+                                                            <h4 className="font-bold text-sm text-slate-800 leading-tight line-through">${sub.name || ''}</h4>
+                                                            <span className="text-[7px] font-black text-slate-500 uppercase mt-0.5 w-fit">${sub.cat || ''}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex justify-end gap-2 bg-transparent pointer-events-none">
+                                                        <div className="flex gap-2 pointer-events-auto">
+                                                            <button onClick=${function(e){e.stopPropagation(); setQuickLook(Object.assign({}, sub));}} className="text-slate-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Alert" size=${14}/></button>
+                                                            <button onClick=${function(e){e.stopPropagation(); restoreNote(sub.id);}} className="text-emerald-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Check" size=${14}/></button>
+                                                            <button onClick=${function(e){e.stopPropagation(); setPermDeleteNoteId(sub.id);}} className="text-rose-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Trash" size=${14}/></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        })}
+                                        ${displaySubs.length === 0 ? html`<div className="col-span-full py-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">Bin is empty</div>` : null}
+                                    </div>
+                                </div>
+                            ` : null}
+                        </main>
+                    </div>
+
+                    <div className="py-8 text-center opacity-40 mt-auto no-print">
+                        <${Icon} name="Heart" size=${12} className="text-rose-500 fill-rose-500 mx-auto mb-1.5" />
+                        <p className="text-[8px] font-bold uppercase tracking-widest text-slate-500">Built with love</p>
+                    </div>
+
+                    ${modal ? html`
+                        <div className="fixed inset-0 z-[600] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="bg-white w-full max-w-[300px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
+                                <div className="p-3.5 bg-slate-50 border-b flex justify-between items-center shrink-0">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-800">Record Info</h3>
+                                    <button onClick=${function(){setModal(null);}} className="p-1.5 bg-white rounded-full shadow-sm active:scale-95"><${Icon} name="Close" size=${12} className="text-slate-400"/></button>
+                                </div>
+                                <div className="p-4 space-y-3 max-h-[70vh] overflow-y-auto no-scrollbar">
+                                    <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Title</label><input value=${modal.name || ""} onChange=${function(e){setModal(Object.assign({}, modal, {name:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="Name..." /></div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Amount (₹)</label><input type="number" value=${modal.amount || ""} onChange=${function(e){setModal(Object.assign({}, modal, {amount:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="0" /></div>
+                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Date</label><input type="date" value=${modal.rawDate || ""} className="w-full bg-slate-100 rounded-xl px-2 py-2 font-bold outline-none text-[10px] mt-1 shadow-inner" onChange=${function(e){if(e.target.value){var d=new Date(e.target.value); setModal(Object.assign({}, modal, {day:d.getDate(), rawDate:e.target.value}));}}} /></div>
+                                    </div>
+                                    
+                                    <div className="p-2.5 bg-indigo-50 rounded-xl flex justify-between items-center"><span className="text-[9px] font-black uppercase text-indigo-900 ml-1 tracking-widest">Auto-Pay</span><button onClick=${function(){setModal(Object.assign({}, modal, {isAutoPay:!modal.isAutoPay}));}} className=${`px-3 py-1.5 rounded-lg text-[8px] font-black transition-all ${modal.isAutoPay ? 'bg-indigo-600 text-white shadow-md' : 'bg-white border border-slate-200'}`}>${modal.isAutoPay ? 'ON' : 'OFF'}</button></div>
+                                    
+                                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="grid grid-cols-3 gap-1 bg-slate-50 p-1.5 rounded-xl">
+                                                ${ICON_LIST.map(function(k){return html`<button key=${k} onClick=${function(){setModal(Object.assign({}, modal, {icon:k}));}} className=${`p-1.5 rounded-lg flex items-center justify-center transition-all ${modal.icon === k ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-300'}`}><${Icon} name=${k} size=${12}/></button>`;})}
+                                            </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                ${modal.isCustomMode ? html`<input autoFocus className="w-full bg-slate-50 rounded-lg px-2 py-1.5 text-[9px] font-bold text-slate-800 border border-indigo-300 shadow-inner" placeholder="Cat Name..." onBlur=${function(e){if(e.target.value) setModal(Object.assign({}, modal, {cat:e.target.value, isCustomMode:false})); else setModal(Object.assign({}, modal, {isCustomMode:false}));}} />` : html`<select value=${modal.cat || ""} onChange=${function(e){if(e.target.value === 'NEW_CAT') setModal(Object.assign({}, modal, {isCustomMode:true})); else setModal(Object.assign({}, modal, {cat: e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-2 py-1.5 text-[9px] font-black uppercase outline-none shadow-sm text-slate-700 cursor-pointer">${(activeWS.categories || []).map(function(c){return html`<option key=${c} value=${c}>${c}</option>`;})}<option value="NEW_CAT">+ Custom...</option></select>`}
+                                                <div className="flex flex-wrap gap-1 justify-center mt-1">${COLOR_PALETTE.map(function(c){return html`<button key=${c} onClick=${function(){setModal(Object.assign({}, modal, {color: c}));}} className=${`w-3.5 h-3.5 rounded-full ${c} ${modal.color === c ? 'ring-2 ring-indigo-200 scale-110' : 'opacity-40'}`} />`;})}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                                        <div className="flex justify-between items-center"><span className="text-[8px] font-black uppercase text-slate-400">Metadata</span><button onClick=${function(){setModal(Object.assign({}, modal, {fields: (modal.fields || []).concat([{ label: 'Note', value: '', isCustomMode: false }])}));}} className="text-indigo-600 text-[8px] font-bold bg-indigo-50 px-2 py-1 rounded shadow-sm active:scale-95">+ Row</button></div>
+                                        ${(modal.fields || []).map(function(f, i){return html`
+                                            <div key=${i} className="flex gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100 items-center">
+                                                ${f.isCustomMode ? html`<input autoFocus className="w-[35%] bg-white rounded-md px-1.5 py-1 text-[8px] font-bold border border-indigo-200 shadow-sm" placeholder="Key..." value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].label=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} />` : html`<select value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); if(e.target.value === 'CUSTOM_KEY') { n[i].isCustomMode = true; n[i].label = ''; } else { n[i].label = e.target.value; } setModal(Object.assign({}, modal, {fields:n}));}} className="w-[35%] bg-white rounded-md px-1 py-1 text-[8px] font-bold border outline-none cursor-pointer"><option value="Note">Note</option><option value="Account">Account</option><option value="CUSTOM_KEY">Other..</option></select>`}
+                                                <input value=${f.value || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].value=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} className="flex-1 bg-white rounded-md px-2 py-1 text-[8px] font-bold border shadow-sm" placeholder="Info..." />
+                                                <button onClick=${function(){setModal(Object.assign({}, modal, {fields: modal.fields.filter(function(_,idx){return idx!==i;})}));}} className="p-1.5 bg-white rounded-md border text-rose-500 shadow-sm active:scale-95"><${Icon} name="Trash" size=${10} /></button>
+                                            </div>
+                                        `;})}
+                                    </div>
+                                    <button onClick=${function(){handleSaveNote();}} className="w-full font-black py-3 bg-indigo-600 text-white rounded-[1rem] shadow-lg text-xs active:scale-95 transition-all mt-1 tracking-widest uppercase">${modal.id ? "Update" : "Save Record"}</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : null}
+
+                    ${quickLook ? html`
+                        <div className="fixed inset-0 z-[700] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="bg-white rounded-[2rem] p-5 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95">
+                                <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+                                    <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-1.5"><${Icon} name="Alert" size=${12} className="text-amber-500" /> Bin Record</h3>
+                                    <button onClick=${function(){setQuickLook(null);}} className="bg-slate-50 p-1.5 rounded-full text-slate-400 hover:text-slate-600 transition-colors"><${Icon} name="Close" size=${12} /></button>
+                                </div>
+                                <div className="p-4 bg-slate-50 rounded-[1.5rem] mb-4 border border-slate-100 relative overflow-hidden">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className=${`w-10 h-10 rounded-xl ${quickLook.color || 'bg-indigo-600'} text-white flex items-center justify-center shadow-sm grayscale`}><${Icon} name=${quickLook.icon || 'Home'} size=${18}/></div>
+                                        <div className="flex flex-col">
+                                            <h4 className="font-bold text-base text-slate-800 leading-tight">${quickLook.name || ''}</h4>
+                                            <span className="text-[8px] font-black text-slate-500 uppercase mt-0.5">${quickLook.cat || ''} • Day ${quickLook.day || 1}</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-2xl font-black text-slate-900 mb-3 tracking-tight">₹${(parseFloat(quickLook.amount)||0).toLocaleString()}</div>
+                                    
+                                    ${(quickLook.fields && quickLook.fields.length > 0) ? html`
+                                        <div className="space-y-1.5 pt-3 border-t border-slate-200/60">
+                                            ${quickLook.fields.map(function(f, i){ return html`
+                                                <div key=${i} className="flex justify-between items-center bg-white px-2 py-1.5 rounded-lg border border-slate-100">
+                                                    <span className="text-[8px] font-bold text-slate-400 uppercase">${f.label}</span>
+                                                    <span className="text-[9px] font-black text-slate-700">${f.value}</span>
+                                                </div>
+                                            `; })}
+                                        </div>
+                                    ` : null}
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick=${function(){restoreNote(quickLook.id);}} className="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-black text-[10px] active:scale-95 transition-all uppercase shadow-md shadow-emerald-200">Restore</button>
+                                    <button onClick=${function(){ setPermDeleteNoteId(quickLook.id); }} className="flex-1 py-3 bg-slate-100 text-rose-500 rounded-xl font-black text-[10px] active:scale-95 transition-all uppercase border border-slate-200 hover:bg-rose-50">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : null}
+
+                    ${deleteNoteId ? html`
+                        <div className="fixed inset-0 z-[700] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="bg-white rounded-[2rem] p-5 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                <div className="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-100"><${Icon} name="Archive" size=${18} /></div>
+                                <h3 className="text-base font-black text-slate-800 mb-1">Move to Bin?</h3>
+                                <p className="text-[9px] font-bold text-slate-500 mb-5 uppercase tracking-widest">Kept for 30 days.</p>
+                                <div className="flex gap-2">
+                                    <button onClick=${function(){setDeleteNoteId(null);}} className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
+                                    <button onClick=${function(){ moveToBinNote(); }} className="flex-1 py-3 bg-amber-500 text-white rounded-xl font-black text-[10px] shadow-md active:scale-95 transition-all uppercase">Move</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : null}
+
+                    ${permDeleteNoteId ? html`
+                        <div className="fixed inset-0 z-[700] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="bg-white rounded-[2rem] p-5 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
+                                <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-100"><${Icon} name="Trash" size=${18} /></div>
+                                <h3 className="text-base font-black text-slate-800 mb-1">Delete Permanently?</h3>
+                                <p className="text-[9px] font-bold text-slate-500 mb-5 uppercase tracking-widest">This action cannot be undone.</p>
+                                <div className="flex gap-2">
+                                    <button onClick=${function(){setPermDeleteNoteId(null);}} className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
+                                    <button onClick=${function(){ executePermDeleteNote(); }} className="flex-1 py-3 bg-rose-500 text-white rounded-xl font-black text-[10px] shadow-md active:scale-95 transition-all uppercase">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : null}
+
+                    ${showPrint ? html`
+                        <div className="fixed inset-0 z-[600] bg-white flex flex-col print-view p-4">
+                            <div className="no-print p-4 bg-slate-50 border-b flex justify-between items-center max-w-4xl mx-auto w-full rounded-t-[2rem] shadow-sm mt-4">
+                                <h3 className="font-black text-sm flex items-center gap-2"><${Icon} name="Printer" size=${16}/> Print</h3>
+                                <div className="flex gap-2">
+                                    <button id="pdf-btn" onClick=${downloadPDF} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-[10px] shadow-lg active:scale-95 transition-all">Download PDF</button>
+                                    <button onClick=${function(){setShowPrint(false);}} className="px-5 py-2.5 bg-slate-200 text-slate-600 rounded-xl font-bold text-[10px] active:scale-95">Close</button>
+                                </div>
+                            </div>
+                            <div id="pdf-document-content" className="max-w-4xl mx-auto p-6 w-full bg-white">
+                                <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">OFFICIAL RECORDS</h1>
+                                <p className="text-[9px] border-b-2 border-slate-900 pb-3 mb-6 tracking-widest text-slate-500 uppercase mt-2">Map: ${activeWS.name} | Holder: ${profile ? profile.name : ''} | Generated: ${new Date().toLocaleDateString()}</p>
+                                <div className="grid grid-cols-4 gap-2 mb-6">
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Income</p><p className="text-xs font-black text-slate-800">₹${activeWS.salary || 0}</p></div>
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Net Balance</p><p className="text-xs font-black text-indigo-600">₹${metrics.balance}</p></div>
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Spend (${selectedCat})</p><p className="text-xs font-black text-slate-800">₹${metrics.total}</p></div>
+                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Reduction</p><p className="text-xs font-black text-amber-500">₹${metrics.saved}</p></div>
+                                </div>
+                                <table className="w-full text-left border-collapse">
+                                    <thead><tr className="border-b-2 border-slate-900"><th className="py-2 px-2 text-[8px] font-black uppercase tracking-widest">Detail Name</th><th className="py-2 text-center text-[8px] font-black uppercase tracking-widest">Day</th><th className="py-2 px-2 text-right text-[8px] font-black uppercase tracking-widest">Amount</th></tr></thead>
+                                    <tbody>${displaySubs.map(function(s){ return html`<tr key=${s.id} className="border-b border-slate-100"><td className="py-3 px-2 font-bold text-xs text-slate-800 leading-tight">${s.name || ''}<br/><span className="text-[6px] text-indigo-600 uppercase font-black tracking-widest mt-0.5 inline-block">${s.cat || ''}</span><div className="mt-1">${(s.fields || []).map(function(f){ return html`<span className="text-[5px] text-slate-500 bg-slate-50 border px-1 rounded mr-1">${f.label}: ${f.value}</span>`; })}</div></td><td className="py-3 text-center text-[8px] font-bold text-slate-500 uppercase">Day ${s.day || 1}</td><td className="py-3 px-2 text-right font-black text-sm text-slate-900">₹${(s.amount||0).toLocaleString()}</td></tr>`; })}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ` : null}
+
+                    ${view !== 'bin' ? html`
+                        <button onClick=${function(){setModal({ name: '', amount: '', day: 1, cat: activeWS.categories[0] || 'General', icon: 'Home', color: 'bg-indigo-600', isAutoPay: false, fields: [] });}} 
+                            className="fixed bottom-6 right-5 w-12 h-12 bg-indigo-600/90 backdrop-blur-md text-white rounded-full shadow-2xl flex items-center justify-center z-40 no-print active:scale-95 transition-all shadow-indigo-200">
+                            <${Icon} name="Plus" size=${20} />
+                        </button>
+                    ` : null}
+                </div>
+            `;
+        };
+
+        var root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(html`<${App} />`);
+    </script>
+</body>
+</html>
