@@ -894,7 +894,7 @@
                                                 var dSubs = (activeWS.subs || []).filter(function(s){return parseInt(s.day) === dInt;});
                                                 return html`
                                                     <div key=${dStr} onClick=${function(){if(dSubs.length) setCalPopup(dInt);}} className=${`aspect-square border rounded-lg p-1 relative flex flex-col transition-all cursor-pointer ${dSubs.length ? 'bg-indigo-50 border-indigo-100 shadow-sm hover:scale-105' : 'border-slate-50 bg-slate-50/30'}`}>
-                                                        <span className=${`text-[8px] font-bold ${dSubs.length ? 'text-indigo-600' : 'text-slate-300'}`}>{dStr}</span>
+                                                        <span className=${`text-[8px] font-bold ${dSubs.length ? 'text-indigo-600' : 'text-slate-300'}`}>${dStr}</span>
                                                         <div className="flex gap-0.5 mt-auto flex-wrap p-0.5">${dSubs.map(function(s){ return html`<div key=${s.id} className=${`w-1 h-1 rounded-full ${s.color || 'bg-indigo-600'} shadow-sm`} />`; })}</div>
                                                         ${calPopup === dInt ? html`
                                                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white rounded-xl p-3 shadow-2xl z-50 animate-in zoom-in-95">
