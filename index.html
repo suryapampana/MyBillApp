@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Bill Map | Pro Native</title>
     
+    <!-- Ultra-Stable Dependencies (No Compiler Needed) -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
@@ -16,6 +17,7 @@
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #0F172A; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
+        /* Prevent Auto-Zoom on Mobile */
         input, select, textarea, button { font-size: 16px !important; outline: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
@@ -39,6 +41,7 @@
     <div id="root"></div>
 
     <script>
+        // === 100% PURE ES5 JAVASCRIPT ===
         var html = htm.bind(React.createElement);
 
         var Icon = function(props) {
@@ -93,51 +96,63 @@
             var stateWorkspaces = React.useState([]); var workspaces = stateWorkspaces[0]; var setWorkspaces = stateWorkspaces[1];
             var stateActiveId = React.useState(null); var activeId = stateActiveId[0]; var setActiveId = stateActiveId[1];
             
-            var stateHasSeenOnboard = React.useState(localStorage.getItem('sl_onboard_v12') === 'true'); var hasSeenOnboard = stateHasSeenOnboard[0]; var setHasSeenOnboard = stateHasSeenOnboard[1];
+            // Onboarding, Profile & Startup
+            var stateHasSeenOnboard = React.useState(localStorage.getItem('sl_onboard_v13') === 'true'); var hasSeenOnboard = stateHasSeenOnboard[0]; var setHasSeenOnboard = stateHasSeenOnboard[1];
             var stateOnboardStep = React.useState(0); var onboardStep = stateOnboardStep[0]; var setOnboardStep = stateOnboardStep[1];
-            
-            var savedProfile = localStorage.getItem('sl_profile_v12');
+            var stateHasSeenStartupRestore = React.useState(localStorage.getItem('sl_startup_restore_v13') === 'true'); var hasSeenStartupRestore = stateHasSeenStartupRestore[0]; var setHasSeenStartupRestore = stateHasSeenStartupRestore[1];
+
+            var savedProfile = localStorage.getItem('sl_profile_v13');
             var stateProfile = React.useState(savedProfile ? JSON.parse(savedProfile) : null); var profile = stateProfile[0]; var setProfile = stateProfile[1];
             var stateProfDraft = React.useState({ salutation: 'Mr.', name: '', icon: 'User', color: 'text-indigo-600' }); var profDraft = stateProfDraft[0]; var setProfDraft = stateProfDraft[1];
             var stateShowProfileEdit = React.useState(false); var showProfileEdit = stateShowProfileEdit[0]; var setShowProfileEdit = stateShowProfileEdit[1];
 
+            // Workspace Form
             var stateHomeView = React.useState('grid'); var homeView = stateHomeView[0]; var setHomeView = stateHomeView[1];
             var stateShowWsModal = React.useState(false); var showWsModal = stateShowWsModal[0]; var setShowWsModal = stateShowWsModal[1];
             var stateWsName = React.useState(""); var wsName = stateWsName[0]; var setWsName = stateWsName[1];
             var stateWsIcon = React.useState("Briefcase"); var wsIcon = stateWsIcon[0]; var setWsIcon = stateWsIcon[1];
             var stateWsColor = React.useState("bg-indigo-600"); var wsColor = stateWsColor[0]; var setWsColor = stateWsColor[1];
 
+            // UI States
             var stateView = React.useState('board'); var view = stateView[0]; var setView = stateView[1];
             var stateSelectedCat = React.useState('All'); var selectedCat = stateSelectedCat[0]; var setSelectedCat = stateSelectedCat[1];
             var stateSortBy = React.useState('date_asc'); var sortBy = stateSortBy[0]; var setSortBy = stateSortBy[1];
             var stateSearchQuery = React.useState(''); var searchQuery = stateSearchQuery[0]; var setSearchQuery = stateSearchQuery[1];
+            var stateUpcSort = React.useState('date_asc'); var upcSort = stateUpcSort[0]; var setUpcSort = stateUpcSort[1];
             
             var stateIsSimulating = React.useState(false); var isSimulating = stateIsSimulating[0]; var setIsSimulating = stateIsSimulating[1];
             var stateCutIds = React.useState([]); var cutIds = stateCutIds[0]; var setCutIds = stateCutIds[1];
             
+            // Modals
             var stateModal = React.useState(null); var modal = stateModal[0]; var setModal = stateModal[1];
             var stateQuickLook = React.useState(null); var quickLook = stateQuickLook[0]; var setQuickLook = stateQuickLook[1];
+            var stateCatManageModal = React.useState(false); var catManageModal = stateCatManageModal[0]; var setCatManageModal = stateCatManageModal[1];
+            var stateCatEditTarget = React.useState(null); var catEditTarget = stateCatEditTarget[0]; var setCatEditTarget = stateCatEditTarget[1];
+            
             var stateShowPrint = React.useState(false); var showPrint = stateShowPrint[0]; var setShowPrint = stateShowPrint[1];
             var stateZapPopup = React.useState(false); var zapPopup = stateZapPopup[0]; var setZapPopup = stateZapPopup[1];
             var stateCalPopup = React.useState(null); var calPopup = stateCalPopup[0]; var setCalPopup = stateCalPopup[1];
             var stateFocusedId = React.useState(null); var focusedId = stateFocusedId[0]; var setFocusedId = stateFocusedId[1];
             
+            // Deletes & Backups
             var stateDeleteWsId = React.useState(null); var deleteWsId = stateDeleteWsId[0]; var setDeleteWsId = stateDeleteWsId[1];
             var statePermDeleteWsId = React.useState(null); var permDeleteWsId = statePermDeleteWsId[0]; var setPermDeleteWsId = statePermDeleteWsId[1];
             var stateDeleteNoteId = React.useState(null); var deleteNoteId = stateDeleteNoteId[0]; var setDeleteNoteId = stateDeleteNoteId[1];
             var statePermDeleteNoteId = React.useState(null); var permDeleteNoteId = statePermDeleteNoteId[0]; var setPermDeleteNoteId = statePermDeleteNoteId[1];
             
-            var stateIsScrolled = React.useState(false); var isScrolled = stateIsScrolled[0]; var setIsScrolled = stateIsScrolled[1];
             var stateAlertPopup = React.useState(null); var alertPopup = stateAlertPopup[0]; var setAlertPopup = stateAlertPopup[1];
             var stateShowBackupModal = React.useState(false); var showBackupModal = stateShowBackupModal[0]; var setShowBackupModal = stateShowBackupModal[1];
             var stateBackupName = React.useState("SubLattice_Backup"); var backupName = stateBackupName[0]; var setBackupName = stateBackupName[1];
+            
+            var stateIsScrolled = React.useState(false); var isScrolled = stateIsScrolled[0]; var setIsScrolled = stateIsScrolled[1];
             var stateTouchStart = React.useState(null); var touchStart = stateTouchStart[0]; var setTouchStart = stateTouchStart[1];
 
             window._isScrolled = window._isScrolled || false;
 
+            // Load Local Storage Sync
             React.useEffect(function() {
                 var timer = setTimeout(function() { setIsAppLoading(false); }, 1500);
-                var saved = localStorage.getItem('sublattice_data_v5200');
+                var saved = localStorage.getItem('sublattice_data_v7000');
                 if (saved) { 
                     try { 
                         var parsed = JSON.parse(saved);
@@ -153,17 +168,14 @@
                 
                 var handleScroll = function() { 
                     var sc = window.scrollY > 40;
-                    if (sc !== window._isScrolled) {
-                        window._isScrolled = sc;
-                        setIsScrolled(sc); 
-                    }
+                    if (sc !== window._isScrolled) { window._isScrolled = sc; setIsScrolled(sc); }
                 };
                 window.addEventListener('scroll', handleScroll);
                 return function() { clearTimeout(timer); window.removeEventListener('scroll', handleScroll); };
             }, []);
 
             React.useEffect(function() { 
-                if (workspaces.length > 0) { localStorage.setItem('sublattice_data_v5200', JSON.stringify(workspaces)); }
+                if (workspaces.length > 0) { localStorage.setItem('sublattice_data_v7000', JSON.stringify(workspaces)); }
             }, [workspaces]);
 
             var activeWS = React.useMemo(function() {
@@ -236,7 +248,7 @@
             var activeWorkspaces = workspaces.filter(function(w) { return !w.deletedAt; });
             var binWorkspaces = workspaces.filter(function(w) { return w.deletedAt; });
 
-            // --- Handlers ---
+            // Category Swiper
             var handleTouchStart = function(e) { setTouchStart(e.targetTouches[0].clientX); };
             var handleTouchEnd = function(e) {
                 if (touchStart === null || !activeWS) return;
@@ -244,28 +256,24 @@
                 var diff = touchStart - touchEnd;
                 var catList = ['All'].concat(activeWS.categories || []);
                 var currentIndex = catList.indexOf(selectedCat);
-                
-                if (diff > 60) { // Swipe Left
-                    if (currentIndex < catList.length - 1) setSelectedCat(catList[currentIndex + 1]);
-                } else if (diff < -60) { // Swipe Right
-                    if (currentIndex > 0) setSelectedCat(catList[currentIndex - 1]);
-                }
+                if (diff > 50) { if (currentIndex < catList.length - 1) setSelectedCat(catList[currentIndex + 1]); } 
+                else if (diff < -50) { if (currentIndex > 0) setSelectedCat(catList[currentIndex - 1]); }
                 setTouchStart(null);
             };
 
+            // Handlers
+            var triggerAlert = function(title, message, type) { setAlertPopup({ title: title, message: message, type: type || 'info' }); };
+
             var finishOnboarding = function() {
-                localStorage.setItem('sl_onboard_v12', 'true');
+                localStorage.setItem('sl_onboard_v13', 'true');
                 setHasSeenOnboard(true);
             };
 
             var saveProfile = function() {
                 if (!profDraft.name) return;
-                localStorage.setItem('sl_profile_v12', JSON.stringify(profDraft));
+                localStorage.setItem('sl_profile_v13', JSON.stringify(profDraft));
                 setProfile(profDraft);
                 setShowProfileEdit(false);
-                if (workspaces.length === 0) {
-                    setWorkspaces([{ id: 'ws1', name: 'My Daily Notes', icon: 'Briefcase', color: 'bg-indigo-600', salary: 0, categories: ["Essentials", "Personal"], subs: [], deletedSubs: [] }]);
-                }
             };
 
             var handleSaveWorkspace = function() {
@@ -278,9 +286,7 @@
 
             var moveToBinWs = function() {
                 if (deleteWsId) {
-                    var newArr = workspaces.map(function(w) {
-                        return w.id === deleteWsId ? Object.assign({}, w, { deletedAt: Date.now() }) : w;
-                    });
+                    var newArr = workspaces.map(function(w) { return w.id === deleteWsId ? Object.assign({}, w, { deletedAt: Date.now() }) : w; });
                     setWorkspaces(newArr);
                     setDeleteWsId(null);
                 }
@@ -288,11 +294,7 @@
 
             var restoreWs = function(id) {
                 var newArr = workspaces.map(function(w) {
-                    if (w.id === id) {
-                        var restored = Object.assign({}, w);
-                        delete restored.deletedAt;
-                        return restored;
-                    }
+                    if (w.id === id) { var r = Object.assign({}, w); delete r.deletedAt; return r; }
                     return w;
                 });
                 setWorkspaces(newArr);
@@ -306,22 +308,12 @@
                 }
             };
 
-            var triggerAlert = function(title, message, type) {
-                setAlertPopup({ title: title, message: message, type: type || 'info' });
-            };
-
             var confirmBackup = function() {
                 try {
-                    var backupData = {
-                        workspaces: workspaces,
-                        profile: profile,
-                        onboard: hasSeenOnboard,
-                        timestamp: Date.now()
-                    };
+                    var backupData = { workspaces: workspaces, profile: profile, onboard: hasSeenOnboard, timestamp: Date.now() };
                     var jsonStr = JSON.stringify(backupData);
                     var b64 = btoa(unescape(encodeURIComponent(jsonStr)));
                     var encryptedStr = b64.split('').reverse().join('');
-                    
                     var blob = new Blob([encryptedStr], { type: "text/plain" });
                     var url = URL.createObjectURL(blob);
                     var a = document.createElement('a');
@@ -332,10 +324,10 @@
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                     setShowBackupModal(false);
-                    triggerAlert("Backup Successful", "Encrypted backup file has been securely downloaded to your device.", "success");
+                    triggerAlert("Backup Successful", "Encrypted backup securely downloaded. Store it safely.", "success");
                 } catch(e) {
                     setShowBackupModal(false);
-                    triggerAlert("Backup Error", "An error occurred while encrypting and generating the backup file.", "error");
+                    triggerAlert("Backup Error", "An error occurred while generating the backup.", "error");
                 }
             };
 
@@ -352,23 +344,12 @@
                         
                         if (data && data.workspaces) {
                             setWorkspaces(data.workspaces);
-                            if (data.profile !== undefined) {
-                                setProfile(data.profile);
-                                localStorage.setItem('sl_profile_v12', JSON.stringify(data.profile));
-                            }
-                            if (data.onboard !== undefined) {
-                                setHasSeenOnboard(data.onboard);
-                                localStorage.setItem('sl_onboard_v12', 'true');
-                            }
-                            
-                            localStorage.setItem('sublattice_data_v5200', JSON.stringify(data.workspaces));
-                            triggerAlert("Restore Successful", "Your data and settings have been safely restored from the backup file.", "success");
-                        } else {
-                            triggerAlert("Invalid File", "The uploaded file format is not a valid SubLattice backup.", "error");
-                        }
-                    } catch(err) {
-                        triggerAlert("Decryption Error", "Could not decrypt the backup. Please ensure you uploaded the correct SubLattice .txt file.", "error");
-                    }
+                            if (data.profile) { setProfile(data.profile); localStorage.setItem('sl_profile_v13', JSON.stringify(data.profile)); }
+                            if (data.onboard) { setHasSeenOnboard(data.onboard); localStorage.setItem('sl_onboard_v13', 'true'); }
+                            localStorage.setItem('sublattice_data_v7000', JSON.stringify(data.workspaces));
+                            triggerAlert("Restore Successful", "Data restored perfectly.", "success");
+                        } else { triggerAlert("Invalid File", "Not a valid SubLattice backup.", "error"); }
+                    } catch(err) { triggerAlert("Decryption Error", "Could not decrypt. File is corrupt or invalid.", "error"); }
                     e.target.value = null;
                 };
                 reader.readAsText(file);
@@ -378,12 +359,9 @@
                 if (!modal || !modal.name) return;
                 var currentCats = (activeWS.categories || []).slice();
                 if (currentCats.indexOf(modal.cat) === -1 && modal.cat) { currentCats.push(modal.cat); }
-                
                 var newSubs = (activeWS.subs || []).slice();
                 if (modal.id) {
-                    for(var i=0; i<newSubs.length; i++) { 
-                        if(newSubs[i].id === modal.id) newSubs[i] = Object.assign({}, modal); 
-                    }
+                    for(var i=0; i<newSubs.length; i++) { if(newSubs[i].id === modal.id) newSubs[i] = Object.assign({}, modal); }
                 } else {
                     var newNote = Object.assign({}, modal, { id: "n-" + Date.now() });
                     newSubs.push(newNote);
@@ -432,18 +410,14 @@
             };
 
             var togglePaid = function(id) {
-                var newSubs = (activeWS.subs || []).map(function(s) {
-                    return s.id === id ? Object.assign({}, s, { isPaidManual: !s.isPaidManual }) : s;
-                });
+                var newSubs = (activeWS.subs || []).map(function(s) { return s.id === id ? Object.assign({}, s, { isPaidManual: !s.isPaidManual }) : s; });
                 updateActiveWS({ subs: newSubs });
             };
 
             var changeNoteCategory = function(id, newCat) {
                 var newCats = (activeWS.categories || []).slice();
                 if (newCats.indexOf(newCat) === -1) { newCats.push(newCat); }
-                var newSubs = (activeWS.subs || []).map(function(s) {
-                    return s.id === id ? Object.assign({}, s, { cat: newCat }) : s;
-                });
+                var newSubs = (activeWS.subs || []).map(function(s) { return s.id === id ? Object.assign({}, s, { cat: newCat }) : s; });
                 updateActiveWS({ categories: newCats, subs: newSubs });
             };
 
@@ -480,14 +454,14 @@
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
                 if (typeof html2pdf !== 'undefined') {
-                    html2pdf().set(opt).from(element).save().then(function() {
-                        if (btn) btn.innerText = "Download PDF";
-                    });
+                    html2pdf().set(opt).from(element).save().then(function() { if (btn) btn.innerText = "Download PDF"; });
                 } else {
                     window.print();
                     if (btn) btn.innerText = "Download PDF";
                 }
             };
+
+            // --- VIEWS PIPELINE ---
 
             if (isAppLoading) {
                 return html`<div className="fixed inset-0 bg-indigo-600 flex items-center justify-center z-[500]"><div className="flex flex-col items-center splash-logo text-white"><${Icon} name="CreditCard" size=${60} /><h1 className="text-3xl font-extrabold mt-5 tracking-tight">My Bill Map</h1><p className="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mt-2">Titanium Mobile Engine</p></div></div>`;
@@ -518,11 +492,10 @@
             }
 
             if (!profile || showProfileEdit) {
-                var avatarBg = profDraft.color ? profDraft.color.replace('text-', 'bg-') : 'bg-indigo-600';
                 return html`<div className="min-h-screen bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-5 main-content z-[1000] relative">
                     <div className="bg-white w-full max-w-[340px] p-6 rounded-[2rem] shadow-2xl animate-in zoom-in-95 relative">
                         ${showProfileEdit ? html`<button onClick=${function(){setShowProfileEdit(false);}} className="absolute top-4 right-4 p-2 text-slate-400 bg-slate-50 rounded-full"><${Icon} name="Close" size=${14}/></button>` : null}
-                        <div className=${`w-14 h-14 rounded-[1.2rem] flex items-center justify-center mb-6 shadow-sm border border-white mx-auto text-white ${avatarBg}`}><${Icon} name=${profDraft.icon} size=${24} /></div>
+                        <div className=${`w-14 h-14 rounded-[1.2rem] flex items-center justify-center mb-6 shadow-sm border border-slate-100 mx-auto text-white ${profDraft.color ? profDraft.color.replace('text-', 'bg-') : 'bg-indigo-600'}`}><${Icon} name=${profDraft.icon} size=${24} /></div>
                         <h2 className="text-xl font-black text-slate-800 mb-1 text-center">Your Profile</h2>
                         <p className="text-[10px] font-bold text-slate-400 mb-6 text-center tracking-widest uppercase">Personalize your experience</p>
                         
@@ -554,7 +527,21 @@
                 </div>`;
             }
 
-            var profileBg = profile && profile.color ? profile.color.replace('text-', 'bg-') : 'bg-indigo-600';
+            if (profile && !hasSeenStartupRestore && workspaces.length === 0) {
+                return html`<div className="min-h-screen bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-5 main-content z-[1000] relative">
+                    <div className="bg-white w-full max-w-[340px] p-6 rounded-[2rem] shadow-2xl animate-in zoom-in-95 text-center relative">
+                        <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-[1.2rem] flex items-center justify-center mb-5 mx-auto border border-emerald-100"><${Icon} name="Upload" size=${28} /></div>
+                        <h2 className="text-xl font-black text-slate-800 mb-2">Existing User?</h2>
+                        <p className="text-[10px] font-bold text-slate-500 mb-6 uppercase tracking-widest leading-relaxed">Check your device downloads for your backup file (.txt) to restore your data safely.</p>
+                        
+                        <label className="w-full py-4 bg-emerald-500 text-white rounded-xl font-black text-xs shadow-md active:scale-95 transition-all uppercase tracking-widest cursor-pointer block mb-3 hover:bg-emerald-600">
+                            Upload Backup File
+                            <input type="file" accept=".txt" onChange=${function(e){ handleRestore(e); setHasSeenStartupRestore(true); localStorage.setItem('sl_startup_restore_v13', 'true'); }} className="hidden" />
+                        </label>
+                        <button onClick=${function(){ setHasSeenStartupRestore(true); localStorage.setItem('sl_startup_restore_v13', 'true'); setWorkspaces([{ id: 'ws1', name: 'My Daily Notes', icon: 'Briefcase', color: 'bg-indigo-600', salary: 0, categories: ["Essentials", "Personal"], subs: [], deletedSubs: [] }]); }} className="w-full py-4 bg-slate-100 text-slate-600 rounded-xl font-black text-xs active:scale-95 transition-all uppercase tracking-widest hover:bg-slate-200 border border-slate-200">Start Fresh</button>
+                    </div>
+                </div>`;
+            }
 
             if (activeId === null) {
                 return html`
@@ -562,7 +549,7 @@
                         <div>
                             <div className="mb-6 mt-4 cursor-pointer active:scale-95 transition-transform" onClick=${function(){ setProfDraft(profile); setShowProfileEdit(true); }}>
                                 <div className="flex items-center gap-3 mb-2">
-                                    <div className=${`p-2 rounded-lg border border-white shadow-sm text-white ${profileBg}`}><${Icon} name=${profile.icon} size=${16} /></div>
+                                    <div className=${`p-2 rounded-lg border border-slate-100 shadow-sm text-white ${profile.color ? profile.color.replace('text-', 'bg-') : 'bg-indigo-600'}`}><${Icon} name=${profile.icon} size=${16} /></div>
                                     <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none">${getGreeting()},</h2>
                                 </div>
                                 <h2 className=${`text-2xl font-black tracking-tight ${profile.color}`}>${profile.salutation} ${profile.name}</h2>
@@ -596,8 +583,8 @@
                                             <div><h4 className="font-bold text-slate-800 text-sm line-through">${ws.name || 'Map'}</h4><p className="text-[8px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Deleted</p></div>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button onClick=${function(){ restoreWs(ws.id); }} className="p-2 text-emerald-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm"><${Icon} name="Check" size=${14} /></button>
-                                            <button onClick=${function(){ setPermDeleteWsId(ws.id); }} className="p-2 text-rose-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm"><${Icon} name="Trash" size=${14} /></button>
+                                            <button onClick=${function(){ restoreWs(ws.id); }} className="p-2 text-emerald-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm hover:bg-emerald-50"><${Icon} name="Check" size=${14} /></button>
+                                            <button onClick=${function(){ setPermDeleteWsId(ws.id); }} className="p-2 text-rose-500 bg-white rounded-lg transition-colors border border-slate-200 shadow-sm hover:bg-rose-50"><${Icon} name="Trash" size=${14} /></button>
                                         </div>
                                     </div>
                                 `; }) : null}
@@ -620,6 +607,7 @@
                                         <input type="file" accept=".txt" onChange=${handleRestore} className="hidden" />
                                     </label>
                                 </div>
+                                <p className="text-[7px] text-center text-slate-400 font-bold uppercase tracking-widest mt-3">Auto-saving securely to local cache.</p>
                             </div>
                         </div>
                         
@@ -645,11 +633,9 @@
                         ${showBackupModal ? html`
                             <div className="fixed inset-0 z-[800] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
                                 <div className="bg-white rounded-[2rem] p-6 w-full max-w-[280px] shadow-2xl animate-in zoom-in-95 text-center">
-                                    <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-indigo-50 text-indigo-500 border border-indigo-100">
-                                        <${Icon} name="Download" size=${18} />
-                                    </div>
+                                    <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-indigo-50 text-indigo-500 border border-indigo-100"><${Icon} name="Download" size=${18} /></div>
                                     <h3 className="text-base font-black text-slate-800 mb-2">Backup Data</h3>
-                                    <p className="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest leading-relaxed">Please store this encrypted file safely. Do not modify its contents to prevent corruption.</p>
+                                    <p className="text-[9px] font-bold text-slate-500 mb-4 uppercase tracking-widest leading-relaxed">Please store this encrypted file safely. Do not modify its contents to prevent corruption.</p>
                                     <input value=${backupName} onChange=${function(e){setBackupName(e.target.value);}} className="w-full bg-slate-50 p-3 rounded-xl font-bold outline-none mb-4 text-xs border border-slate-200 focus:border-indigo-300 text-center" placeholder="Backup File Name" />
                                     <div className="flex gap-2">
                                         <button onClick=${function(){setShowBackupModal(false);}} className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[11px] active:scale-95 transition-all uppercase border border-slate-200">Cancel</button>
@@ -712,14 +698,15 @@
             var filterBarCls = "flex flex-col gap-2 bg-white border border-slate-200 transition-all duration-300 max-w-6xl mx-auto " + (sc ? "mx-4 mt-2 p-1.5 rounded-[1rem] shadow-sm" : "mx-4 mt-3 p-2.5 rounded-[1.2rem] shadow-sm");
 
             return html`
-                <div className="min-h-screen pb-32 main-content flex flex-col justify-between" onTouchStart=${handleTouchStart} onTouchEnd=${handleTouchEnd}>
+                <div className="min-h-screen pb-32 main-content flex flex-col justify-between relative" onTouchStart=${handleTouchStart} onTouchEnd=${handleTouchEnd}>
+                    ${calPopup !== null ? html`<div className="fixed inset-0 z-[45]" onClick=${function(e){e.stopPropagation(); setCalPopup(null);}}></div>` : null}
                     
                     <div>
                         <div className=${stickyHeaderCls}>
                             ${!sc ? html`
                                 <header className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center no-print">
                                     <div className="flex items-center gap-3">
-                                        <button onClick=${function(){ setActiveId(null); setSelectedCat('All'); setCutIds([]); setIsSimulating(false); }} className="p-2 bg-white border border-slate-200 shadow-sm rounded-xl text-slate-500 active:scale-95 transition-all"><${Icon} name="Back" size=${14} /></button>
+                                        <button onClick=${function(){ setActiveId(null); setSelectedCat('All'); setCutIds([]); setIsSimulating(false); }} className="p-2.5 bg-white border border-slate-200 shadow-sm rounded-xl text-slate-500 active:scale-95 transition-all"><${Icon} name="Back" size=${14} /></button>
                                         <div className="flex items-center gap-2">
                                             <div className=${`p-1.5 rounded-lg ${activeWS.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${activeWS.icon || 'Briefcase'} size=${12}/></div>
                                             <div className="flex flex-col"><input value=${activeWS.name} onChange=${function(e){ updateActiveWS({name: e.target.value}); }} className="text-sm font-black leading-none text-slate-800 bg-transparent outline-none w-32 truncate placeholder:text-slate-300" placeholder="Map Name" /><p className="text-[7px] font-bold text-slate-400 uppercase mt-1 tracking-widest">${displaySubs.length} Filtered</p></div>
@@ -737,7 +724,7 @@
                                 </div>
                             `}
 
-                            ${!sc ? html`<p className="text-[7px] text-slate-400 font-bold px-4 mb-1 uppercase tracking-widest max-w-6xl mx-auto">Swipe category cards to show metrics</p>` : null}
+                            ${!sc ? html`<p className="text-[7px] text-slate-400 font-bold px-4 mb-1 uppercase tracking-widest max-w-6xl mx-auto">Swipe category cards to view metrics</p>` : null}
                             
                             <div className=${"flex overflow-x-auto no-scrollbar snap-x max-w-6xl mx-auto " + (sc ? "pb-0" : "pb-2")}>
                                 <div className=${metricsGridCls + " flex-1 shrink-0 snap-center w-full"}>
@@ -754,15 +741,15 @@
                                         <h2 className=${metricValCls + " text-white"}>₹${metrics.balance.toLocaleString()}</h2>
                                     </div>
                                     <div className=${metricCardCls}>
-                                        <span className=${metricLabelCls}>${selectedCat} Spend</span>
+                                        <span className=${metricLabelCls}>Spend</span>
                                         <h2 className=${metricValCls}>₹${metrics.total.toLocaleString()}</h2>
                                     </div>
                                     <div className=${metricCardCls + " relative"}>
-                                        <span className=${metricLabelCls}>Reduction Lab</span>
+                                        <span className=${metricLabelCls}>Reduction</span>
                                         <div className="flex items-center justify-between mt-1">
                                             <div className="relative">
                                                 <button onClick=${function(){ if(isSimulating) setZapPopup(!zapPopup); }} className=${`rounded-full transition-all relative flex items-center justify-center ${isSimulating ? 'bg-amber-100 text-amber-500 zap-glow' : 'bg-slate-100 text-slate-300'} ${sc ? 'w-5 h-5' : 'w-7 h-7'}`}>
-                                                    <${Icon} name="Zap" size=${sc ? 10 : 12}/>
+                                                    <${Icon} name="Zap" size=${sc ? 10 : 14}/>
                                                     ${isSimulating && cutIds.length > 0 ? html`<span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 text-white text-[6px] font-black flex items-center justify-center rounded-full border border-white">${cutIds.length}</span>` : null}
                                                 </button>
                                                 ${zapPopup && isSimulating ? html`
@@ -781,35 +768,36 @@
                                             </div>
                                             <button onClick=${function(){ setIsSimulating(!isSimulating); setCutIds([]); setZapPopup(false); }} className=${`rounded-lg font-black transition-all ${isSimulating ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-500'} ${sc ? 'px-2 py-1 text-[7px]' : 'px-3 py-1.5 text-[9px]'}`}>${isSimulating ? 'STOP' : 'TEST'}</button>
                                         </div>
-                                        ${!sc && isSimulating && metrics.saved > 0 ? html`<p className="text-[7px] font-bold text-amber-500 uppercase mt-1 tracking-tighter absolute bottom-1.5 left-3">Saving ₹${metrics.saved.toLocaleString()}</p>` : null}
+                                        ${!sc && isSimulating && metrics.saved > 0 ? html`<p className="text-[7px] font-bold text-amber-500 uppercase mt-1.5 tracking-tighter absolute bottom-2 left-4">Saving ₹${metrics.saved.toLocaleString()}</p>` : null}
                                     </div>
                                 </div>
                             </div>
 
                             <div className=${filterBarCls}>
                                 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1 pb-1 border-b border-slate-50">
-                                    <button onClick=${function(){setSelectedCat('All');}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === 'All' ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[7px]' : 'px-3 py-1.5 text-[8px]'}`}>All</button>
-                                    ${(activeWS.categories || []).map(function(c) { return html`<button key=${c} onClick=${function(){setSelectedCat(c);}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === c ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[7px]' : 'px-3 py-1.5 text-[8px]'}`}>${c}</button>`; })}
+                                    <button onClick=${function(){setSelectedCat('All');}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === 'All' ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[8px]' : 'px-3 py-1.5 text-[10px]'}`}>All</button>
+                                    ${(activeWS.categories || []).map(function(c) { return html`<button key=${c} onClick=${function(){setSelectedCat(c);}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all ${selectedCat === c ? 'bg-slate-800 text-white shadow-sm' : 'bg-white text-slate-500 hover:bg-slate-50'} ${sc ? 'px-2.5 py-1 text-[8px]' : 'px-3 py-1.5 text-[10px]'}`}>${c}</button>`; })}
+                                    <button onClick=${function(){setCatManageModal(true);}} className=${`rounded-md font-black uppercase whitespace-nowrap transition-all bg-slate-100 text-slate-500 hover:bg-slate-200 ${sc ? 'px-2.5 py-1' : 'px-3 py-1.5'}`}><${Icon} name="Edit" size=${sc?10:12} /></button>
                                 </div>
-                                <div className="flex items-center justify-between pt-1 px-1 gap-2">
-                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-lg border border-slate-100 flex-1 min-w-[90px]">
-                                        <${Icon} name="Search" size=${10} className="text-slate-400 ml-1 mr-1" />
-                                        <input value=${searchQuery} onChange=${function(e){setSearchQuery(e.target.value);}} placeholder="Search notes..." className="bg-transparent text-[8px] font-bold text-slate-600 outline-none w-full placeholder:text-slate-300" />
+                                <div className="flex items-center justify-between pt-1.5 px-1 gap-2">
+                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-xl border border-slate-100 flex-1 min-w-[90px]">
+                                        <${Icon} name="Search" size=${12} className="text-slate-400 ml-1 mr-1.5" />
+                                        <input value=${searchQuery} onChange=${function(e){setSearchQuery(e.target.value);}} placeholder="Search..." className="bg-transparent text-[10px] font-bold text-slate-600 outline-none w-full placeholder:text-slate-400" />
                                     </div>
-                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-lg border border-slate-100 relative cursor-pointer group shrink-0">
-                                        <div className="p-0.5 bg-white rounded shadow-sm group-hover:text-indigo-600 transition-colors"><${Icon} name="Sort" size=${10} className="text-slate-500" /></div>
+                                    <div className="flex items-center bg-slate-50 p-1.5 rounded-xl border border-slate-100 relative cursor-pointer group shrink-0">
+                                        <div className="p-0.5 bg-white rounded shadow-sm group-hover:text-indigo-600 transition-colors"><${Icon} name="Sort" size=${12} className="text-slate-500" /></div>
                                         <select value=${sortBy} onChange=${function(e){setSortBy(e.target.value);}} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                                             <option value="date_asc">Date (Asc)</option><option value="date_desc">Date (Desc)</option>
                                             <option value="amount_desc">Cost (Hi-Lo)</option><option value="amount_asc">Cost (Lo-Hi)</option>
                                             <option value="name_asc">Name (A-Z)</option><option value="cat_asc">Category</option>
                                         </select>
                                     </div>
-                                    <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-lg shrink-0">
-                                        <button onClick=${function(){setView('board');}} className=${`p-1 rounded transition-all ${view === 'board' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Grid" size=${12}/></button>
-                                        <button onClick=${function(){setView('list');}} className=${`p-1 rounded transition-all ${view === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="List" size=${12}/></button>
-                                        <button onClick=${function(){setView('calendar');}} className=${`p-1 rounded transition-all ${view === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Calendar" size=${12}/></button>
+                                    <div className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-xl shrink-0">
+                                        <button onClick=${function(){setView('board');}} className=${`p-1.5 rounded-lg transition-all ${view === 'board' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Grid" size=${14}/></button>
+                                        <button onClick=${function(){setView('list');}} className=${`p-1.5 rounded-lg transition-all ${view === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="List" size=${14}/></button>
+                                        <button onClick=${function(){setView('calendar');}} className=${`p-1.5 rounded-lg transition-all ${view === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Calendar" size=${14}/></button>
                                         <div className="w-[1px] h-3 bg-slate-200 mx-0.5"></div>
-                                        <button onClick=${function(){setView('bin');}} className=${`p-1 rounded transition-all ${view === 'bin' ? 'bg-rose-100 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-rose-500'}`}><${Icon} name="Trash" size=${12}/></button>
+                                        <button onClick=${function(){setView('bin');}} className=${`p-1.5 rounded-lg transition-all ${view === 'bin' ? 'bg-rose-100 text-rose-600 shadow-sm' : 'text-slate-400 hover:text-rose-500'}`}><${Icon} name="Trash" size=${14}/></button>
                                     </div>
                                 </div>
                             </div>
@@ -822,12 +810,12 @@
                                         var stat = getStatus(sub); var isP = cutIds.indexOf(sub.id) !== -1;
                                         return html`
                                             <div key=${sub.id} id=${'bill-' + sub.id} onClick=${function(){if(isSimulating) { setCutIds(isP ? cutIds.filter(function(i){return i!==sub.id;}) : cutIds.concat([sub.id])); } }}
-                                                className=${`group relative bg-white p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden ${focusedId === sub.id ? 'bill-focus' : 'border-slate-200 shadow-sm'} ${isP && isSimulating ? 'opacity-40 grayscale border-dashed border-slate-300' : 'hover:shadow-md hover:-translate-y-0.5'}`}>
+                                                className=${`group relative bg-white p-5 rounded-[1.5rem] border transition-all cursor-pointer overflow-hidden ${focusedId === sub.id ? 'bill-focus' : 'border-slate-200 shadow-sm'} ${isP && isSimulating ? 'opacity-40 grayscale border-dashed border-slate-300' : 'hover:shadow-md hover:-translate-y-0.5'}`}>
                                                 
                                                 <div className=${`absolute top-3 right-3 px-2 py-0.5 rounded text-[6px] font-black uppercase flex items-center gap-1 ${stat.color}`}><${Icon} name=${stat.icon} size=${8}/> ${stat.label}</div>
                                                 
-                                                <div className="flex items-center gap-3 mb-4">
-                                                    <div className=${`p-2.5 rounded-xl ${sub.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${sub.icon || 'Home'} size=${14}/></div>
+                                                <div className="flex items-center gap-3 mb-5">
+                                                    <div className=${`p-3 rounded-xl ${sub.color || 'bg-indigo-600'} text-white shadow-sm`}><${Icon} name=${sub.icon || 'Home'} size=${16}/></div>
                                                     <div className="min-w-0 flex flex-col">
                                                         <h4 className="font-bold text-sm text-slate-800 leading-tight truncate">${sub.name || ''}</h4>
                                                         <div className="bg-slate-50 px-1.5 py-0.5 rounded flex items-center gap-1 mt-1 border border-slate-100 w-fit cursor-pointer hover:border-indigo-200 transition-colors relative">
@@ -840,21 +828,20 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex items-end justify-between mt-2">
-                                                    <div><span className="text-lg font-black tracking-tight text-slate-900">₹${(sub.amount || 0).toLocaleString()}</span></div>
-                                                    <div className="flex flex-col items-end gap-1">
-                                                        <div className="text-[7px] font-black text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">Day ${sub.day || 1}</div>
-                                                        ${(sub.fields || []).slice(0,1).map(function(f, i){ return html`<div key=${i} className="text-[6px] font-bold text-slate-500 bg-slate-50 px-1 py-0.5 rounded border border-slate-100 shadow-sm truncate max-w-[80px]"><span>${f.label}: </span><span className="text-slate-800">${f.value}</span></div>`; })}
+                                                <div className="flex flex-col gap-1.5 border-b border-slate-50 pb-3 mb-3">
+                                                    <div className="flex items-end justify-between">
+                                                        <span className="text-xl font-black tracking-tight text-slate-900">₹${(parseFloat(sub.amount) || 0).toLocaleString()}</span>
+                                                        <div className="text-[9px] font-black text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded">Day ${sub.day || 1}</div>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-1 mt-1.5">
+                                                        ${(sub.fields || []).map(function(f, i){ return html`<div key=${i} className="text-[7px] font-bold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 shadow-sm truncate max-w-[120px]"><span>${f.label}: </span><span className="text-slate-800">${f.value}</span></div>`; })}
                                                     </div>
                                                 </div>
                                                 
-                                                
-                                                <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex justify-end gap-2 bg-transparent pointer-events-none">
-                                                    <div className="flex gap-2 pointer-events-auto">
-                                                        <button onClick=${function(e){e.stopPropagation(); setModal(Object.assign({}, sub));}} className="text-blue-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Edit" size=${14}/></button>
-                                                        <button onClick=${function(e){e.stopPropagation(); togglePaid(sub.id);}} className=${`hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full ${sub.isPaidManual ? 'text-emerald-500' : 'text-slate-400 hover:text-emerald-500'}`}><${Icon} name="Check" size=${14}/></button>
-                                                        <button onClick=${function(e){e.stopPropagation(); setDeleteNoteId(sub.id);}} className="text-rose-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Trash" size=${14}/></button>
-                                                    </div>
+                                                <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex justify-end gap-2 bg-gradient-to-t from-white via-white/90 to-transparent">
+                                                    <button onClick=${function(e){e.stopPropagation(); setModal(Object.assign({}, sub));}} className="text-blue-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Edit" size=${14}/></button>
+                                                    <button onClick=${function(e){e.stopPropagation(); togglePaid(sub.id);}} className=${`hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full ${sub.isPaidManual ? 'text-emerald-500' : 'text-slate-400 hover:text-emerald-500'}`}><${Icon} name="Check" size=${14}/></button>
+                                                    <button onClick=${function(e){e.stopPropagation(); setDeleteNoteId(sub.id);}} className="text-rose-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Trash" size=${14}/></button>
                                                 </div>
                                             </div>
                                         `;
@@ -866,7 +853,7 @@
                                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                                     <table className="w-full text-left table-fixed">
                                         <thead className="bg-slate-50 border-b border-slate-100">
-                                            <tr><th className="w-[45%] px-4 py-2.5 text-[8px] font-black uppercase text-slate-400 tracking-widest">Name</th><th className="w-[20%] px-2 py-2.5 text-center text-[8px] font-black uppercase text-slate-400 tracking-widest">Day</th><th className="w-[35%] px-4 py-2.5 text-right text-[8px] font-black uppercase text-slate-400 tracking-widest">Cost</th></tr>
+                                            <tr><th className="w-[40%] px-4 py-2.5 text-[8px] font-black uppercase text-slate-400 tracking-widest">Name</th><th className="w-[15%] px-2 py-2.5 text-center text-[8px] font-black uppercase text-slate-400 tracking-widest">Day</th><th className="w-[45%] px-4 py-2.5 text-right text-[8px] font-black uppercase text-slate-400 tracking-widest">Cost & Details</th></tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50">
                                             ${displaySubs.map(function(s){ return html`
@@ -875,7 +862,7 @@
                                                     <td className="px-2 py-3 text-center text-[9px] text-slate-500 font-bold">Day ${s.day || 1}</td>
                                                     <td className="px-4 py-3 text-right flex flex-col items-end">
                                                         <span className="font-black text-indigo-600 text-sm leading-none">₹${(parseFloat(s.amount) || 0).toLocaleString()}</span>
-                                                        <div className="mt-1.5 flex flex-wrap gap-1 justify-end">${(s.fields || []).slice(0,1).map(function(f){ return html`<span className="text-[6px] text-slate-500 font-bold uppercase bg-slate-50 px-1 py-0.5 rounded border border-slate-100 truncate max-w-[70px]">${f.label}: ${f.value}</span>`; })}</div>
+                                                        <div className="mt-1.5 flex flex-wrap gap-1 justify-end">${(s.fields || []).map(function(f){ return html`<span className="text-[6px] text-slate-500 font-bold uppercase bg-slate-50 px-1 py-0.5 rounded border border-slate-100 truncate max-w-[80px]">${f.label}: ${f.value}</span>`; })}</div>
                                                     </td>
                                                 </tr>
                                             `; })}
@@ -886,27 +873,28 @@
 
                             ${view === 'calendar' ? html`
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm relative">
+                                    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm relative z-10">
                                         <div className="grid grid-cols-7 gap-1">
                                             ${['S','M','T','W','T','F','S'].map(function(d){ return html`<div key=${d} className="text-center text-[9px] font-bold text-slate-400 py-1.5 uppercase">${d}</div>`; })}
                                             ${Array.from({length:31}, function(_,i){return String(i+1);}).map(function(dStr){
                                                 var dInt = parseInt(dStr);
                                                 var dSubs = (activeWS.subs || []).filter(function(s){return parseInt(s.day) === dInt;});
                                                 return html`
-                                                    <div key=${dStr} onClick=${function(){if(dSubs.length) setCalPopup(dInt);}} className=${`aspect-square border rounded-lg p-1 relative flex flex-col transition-all cursor-pointer ${dSubs.length ? 'bg-indigo-50 border-indigo-100 shadow-sm hover:scale-105' : 'border-slate-50 bg-slate-50/30'}`}>
+                                                    <div key=${dStr} onClick=${function(e){ e.stopPropagation(); if(dSubs.length) setCalPopup(dInt);}} className=${`aspect-square border rounded-lg p-1 relative flex flex-col transition-all cursor-pointer ${dSubs.length ? 'bg-indigo-50 border-indigo-100 shadow-sm hover:scale-105' : 'border-slate-50 bg-slate-50/30'}`}>
                                                         <span className=${`text-[8px] font-bold ${dSubs.length ? 'text-indigo-600' : 'text-slate-300'}`}>${dStr}</span>
-                                                        <div className="flex gap-0.5 mt-auto flex-wrap p-0.5">${dSubs.map(function(s){ return html`<div key=${s.id} className=${`w-1 h-1 rounded-full ${s.color || 'bg-indigo-600'} shadow-sm`} />`; })}</div>
+                                                        <div className="flex gap-0.5 mt-auto flex-wrap p-1">${dSubs.map(function(s){ return html`<div key=${s.id} className=${`w-1 h-1 rounded-full ${s.color || 'bg-indigo-600'}`} />`; })}</div>
                                                         ${calPopup === dInt ? html`
-                                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white rounded-xl p-3 shadow-2xl z-50 animate-in zoom-in-95">
+                                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900 text-white rounded-xl p-3 shadow-2xl z-[60] animate-in zoom-in-95 cursor-default" onClick=${function(e){ e.stopPropagation(); }}>
                                                                 <div className="flex justify-between items-center mb-2 border-b border-white/10 pb-1 text-[8px] uppercase font-black tracking-widest"><span>Day ${dStr}</span><button onClick=${function(e){e.stopPropagation(); setCalPopup(null);}} className="p-1"><${Icon} name="Close" size=${10}/></button></div>
                                                                 <div className="space-y-1">
                                                                     ${dSubs.map(function(s){ return html`
-                                                                        <div key=${s.id} onClick=${function(){navigateToBill(s.id);}} className="flex justify-between items-center py-1.5 px-1 rounded hover:bg-white/10 cursor-pointer">
+                                                                        <div key=${s.id} onClick=${function(e){e.stopPropagation(); setCalPopup(null); navigateToBill(s.id);}} className="flex justify-between items-center py-1.5 px-1 rounded hover:bg-white/10 cursor-pointer">
                                                                             <div className="flex items-center gap-1.5"><div className=${`w-1.5 h-1.5 rounded-full ${s.color || 'bg-indigo-600'}`}></div><span className="truncate w-20 text-[9px] font-bold text-slate-200">${s.name || ''}</span></div>
                                                                             <span className="font-bold text-[9px]">₹${s.amount || 0}</span>
                                                                         </div>
                                                                     `; })}
                                                                 </div>
+                                                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-slate-900"></div>
                                                             </div>
                                                         ` : null}
                                                     </div>
@@ -915,12 +903,23 @@
                                         </div>
                                     </div>
                                     <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 h-fit">
-                                        <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Upcoming</h4>
+                                        <h4 className="text-[8px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2 flex justify-between items-center">
+                                            <span>Upcoming</span>
+                                            <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded relative cursor-pointer">
+                                                <${Icon} name="Sort" size=${10} />
+                                                <select className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-xs" onChange=${function(e){ setUpcSort(e.target.value); }}>
+                                                    <option value="date_asc">Sort: Date</option><option value="amount_desc">Sort: Amount</option>
+                                                </select>
+                                            </div>
+                                        </h4>
                                         <div className="space-y-1.5 max-h-48 overflow-y-auto no-scrollbar">
-                                            ${displaySubs.slice(0, 10).sort(function(a,b){return a.day-b.day;}).map(function(s){ return html`
+                                            ${displaySubs.slice().sort(function(a,b){ return upcSort==='date_asc' ? parseFloat(a.day||0)-parseFloat(b.day||0) : parseFloat(b.amount||0)-parseFloat(a.amount||0); }).slice(0, 10).map(function(s){ return html`
                                                 <div key=${s.id} onClick=${function(){navigateToBill(s.id);}} className="flex justify-between items-center p-2 bg-slate-50 rounded-xl hover:bg-slate-100 active:scale-95 transition-all cursor-pointer border border-transparent hover:border-slate-200">
-                                                    <div className="flex items-center gap-2.5"><div className=${`p-1.5 rounded-lg ${s.color || 'bg-indigo-600'} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon || 'Home'} size=${10}/></div><div className="flex flex-col"><span className="text-[10px] font-bold text-slate-700 truncate w-20">${s.name || ''}</span><span className="text-[6px] text-slate-400 font-bold uppercase mt-0.5">${s.cat || ''}</span></div></div>
-                                                    <span className="text-[8px] font-black text-indigo-600 uppercase">Day ${s.day || 1}</span>
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className=${`p-1.5 rounded-lg ${s.color || 'bg-indigo-600'} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon || 'Home'} size=${10}/></div>
+                                                        <div className="flex flex-col"><span className="text-[10px] font-bold text-slate-700 truncate w-20">${s.name || ''}</span><span className="text-[6px] text-indigo-600 font-black uppercase mt-0.5">${s.cat || ''}</span></div>
+                                                    </div>
+                                                    <span className="text-[8px] font-black text-slate-400 uppercase">Day ${s.day || 1}</span>
                                                 </div>
                                             `; })}
                                         </div>
@@ -944,8 +943,8 @@
                                                     </div>
                                                     <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex justify-end gap-2 bg-transparent pointer-events-none">
                                                         <div className="flex gap-2 pointer-events-auto">
-                                                            <button onClick=${function(e){e.stopPropagation(); setQuickLook(Object.assign({}, sub));}} className="text-slate-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Alert" size=${14}/></button>
-                                                            <button onClick=${function(e){e.stopPropagation(); restoreNote(sub.id);}} className="text-emerald-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Check" size=${14}/></button>
+                                                            <button onClick=${function(e){e.stopPropagation(); setQuickLook(Object.assign({}, sub));}} className="text-slate-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Eye" size=${14}/></button>
+                                                            <button onClick=${function(e){e.stopPropagation(); restoreNote(sub.id);}} className="text-emerald-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="RotateCcw" size=${14}/></button>
                                                             <button onClick=${function(e){e.stopPropagation(); setPermDeleteNoteId(sub.id);}} className="text-rose-500 hover:scale-110 transition-transform p-1.5 drop-shadow-md bg-white rounded-full"><${Icon} name="Trash" size=${14}/></button>
                                                         </div>
                                                     </div>
@@ -964,18 +963,63 @@
                         <p className="text-[8px] font-bold uppercase tracking-widest text-slate-500">Built with love</p>
                     </div>
 
+                    ${catManageModal ? html`
+                        <div className="fixed inset-0 z-[700] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="bg-white w-full max-w-[320px] rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95">
+                                 <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
+                                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-800">Manage Categories</h3>
+                                     <button onClick=${function(){setCatManageModal(false); setCatEditTarget(null);}} className="p-1.5 bg-white rounded-full shadow-sm"><${Icon} name="Close" size=${14} className="text-slate-400" /></button>
+                                 </div>
+                                 <div className="p-5 space-y-3 max-h-[60vh] overflow-y-auto no-scrollbar">
+                                     ${(activeWS.categories || []).map(function(c, i) {
+                                         var isEditing = catEditTarget && catEditTarget.oldName === c;
+                                         return html`
+                                             <div key=${i} className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 shadow-sm">
+                                                 ${isEditing ? html`
+                                                     <input autoFocus value=${catEditTarget.newName} onChange=${function(e){setCatEditTarget(Object.assign({}, catEditTarget, {newName: e.target.value}));}} className="flex-1 bg-white px-3 py-2 text-xs font-bold rounded-lg border border-indigo-300 outline-none shadow-inner" />
+                                                     <button onClick=${function(){
+                                                         var oldC = catEditTarget.oldName; var newC = catEditTarget.newName.trim();
+                                                         if(newC && newC !== oldC) {
+                                                             var newCats = activeWS.categories.map(function(cat){ return cat === oldC ? newC : cat; });
+                                                             var newSubs = activeWS.subs.map(function(s){ return s.cat === oldC ? Object.assign({}, s, {cat: newC}) : s; });
+                                                             updateActiveWS({ categories: newCats, subs: newSubs });
+                                                             if(selectedCat === oldC) setSelectedCat(newC);
+                                                         }
+                                                         setCatEditTarget(null);
+                                                     }} className="p-2.5 bg-emerald-500 text-white rounded-lg shadow-sm"><${Icon} name="Check" size=${14} /></button>
+                                                 ` : html`
+                                                     <span className="flex-1 text-xs font-bold text-slate-700 pl-2">${c}</span>
+                                                     <button onClick=${function(){setCatEditTarget({oldName: c, newName: c});}} className="p-2.5 text-indigo-500 bg-white rounded-lg shadow-sm border border-slate-200"><${Icon} name="Edit" size=${14} /></button>
+                                                     <button onClick=${function(){
+                                                         if(confirm("Delete category? Assigned notes will be marked 'General'.")) {
+                                                             var newCats = activeWS.categories.filter(function(cat){ return cat !== c; });
+                                                             var newSubs = activeWS.subs.map(function(s){ return s.cat === c ? Object.assign({}, s, {cat: 'General'}) : s; });
+                                                             if(newCats.indexOf('General') === -1) newCats.push('General');
+                                                             updateActiveWS({ categories: newCats, subs: newSubs });
+                                                             if(selectedCat === c) setSelectedCat('All');
+                                                         }
+                                                     }} className="p-2.5 text-rose-500 bg-white rounded-lg shadow-sm border border-slate-200"><${Icon} name="Trash" size=${14} /></button>
+                                                 `}
+                                             </div>
+                                         `;
+                                     })}
+                                 </div>
+                            </div>
+                        </div>
+                    ` : null}
+
                     ${modal ? html`
                         <div className="fixed inset-0 z-[600] bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-                            <div className="bg-white w-full max-w-[300px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
+                            <div className="bg-white w-full max-w-[320px] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95">
                                 <div className="p-3.5 bg-slate-50 border-b flex justify-between items-center shrink-0">
                                     <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-800">Record Info</h3>
                                     <button onClick=${function(){setModal(null);}} className="p-1.5 bg-white rounded-full shadow-sm active:scale-95"><${Icon} name="Close" size=${12} className="text-slate-400"/></button>
                                 </div>
                                 <div className="p-4 space-y-3 max-h-[70vh] overflow-y-auto no-scrollbar">
-                                    <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Title</label><input value=${modal.name || ""} onChange=${function(e){setModal(Object.assign({}, modal, {name:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="Name..." /></div>
+                                    <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Title</label><input value=${modal.name || ""} onChange=${function(e){setModal(Object.assign({}, modal, {name:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2.5 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="Name..." /></div>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Amount (₹)</label><input type="number" value=${modal.amount || ""} onChange=${function(e){setModal(Object.assign({}, modal, {amount:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="0" /></div>
-                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Date</label><input type="date" value=${modal.rawDate || ""} className="w-full bg-slate-100 rounded-xl px-2 py-2 font-bold outline-none text-[10px] mt-1 shadow-inner" onChange=${function(e){if(e.target.value){var d=new Date(e.target.value); setModal(Object.assign({}, modal, {day:d.getDate(), rawDate:e.target.value}));}}} /></div>
+                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Amount (₹)</label><input type="number" value=${modal.amount || ""} onChange=${function(e){setModal(Object.assign({}, modal, {amount:e.target.value}));}} className="w-full bg-slate-100 rounded-xl px-3 py-2.5 font-bold outline-none border border-transparent focus:border-indigo-200 mt-1 text-sm shadow-inner" placeholder="0" /></div>
+                                        <div><label className="text-[8px] font-black uppercase text-slate-400 ml-1 block">Date</label><input type="date" value=${modal.rawDate || ""} className="w-full bg-slate-100 rounded-xl px-2 py-2.5 font-bold outline-none text-[10px] mt-1 shadow-inner" onChange=${function(e){if(e.target.value){var d=new Date(e.target.value); setModal(Object.assign({}, modal, {day:d.getDate(), rawDate:e.target.value}));}}} /></div>
                                     </div>
                                     
                                     <div className="p-2.5 bg-indigo-50 rounded-xl flex justify-between items-center"><span className="text-[9px] font-black uppercase text-indigo-900 ml-1 tracking-widest">Auto-Pay</span><button onClick=${function(){setModal(Object.assign({}, modal, {isAutoPay:!modal.isAutoPay}));}} className=${`px-3 py-1.5 rounded-lg text-[8px] font-black transition-all ${modal.isAutoPay ? 'bg-indigo-600 text-white shadow-md' : 'bg-white border border-slate-200'}`}>${modal.isAutoPay ? 'ON' : 'OFF'}</button></div>
@@ -992,17 +1036,19 @@
                                         </div>
                                     </div>
                                     
-                                    <div className="space-y-2 pt-2 border-t border-slate-100">
-                                        <div className="flex justify-between items-center"><span className="text-[8px] font-black uppercase text-slate-400">Metadata</span><button onClick=${function(){setModal(Object.assign({}, modal, {fields: (modal.fields || []).concat([{ label: 'Note', value: '', isCustomMode: false }])}));}} className="text-indigo-600 text-[8px] font-bold bg-indigo-50 px-2 py-1 rounded shadow-sm active:scale-95">+ Row</button></div>
+                                    <div className="space-y-3 pt-3 border-t border-slate-100">
+                                        <div className="flex justify-between items-center"><span className="text-[8px] font-black uppercase text-slate-400">Metadata Details</span><button onClick=${function(){setModal(Object.assign({}, modal, {fields: (modal.fields || []).concat([{ label: 'Note', value: '', isCustomMode: false }])}));}} className="text-indigo-600 text-[8px] font-bold bg-indigo-50 px-2 py-1 rounded shadow-sm active:scale-95">+ Row</button></div>
                                         ${(modal.fields || []).map(function(f, i){return html`
-                                            <div key=${i} className="flex gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100 items-center">
-                                                ${f.isCustomMode ? html`<input autoFocus className="w-[35%] bg-white rounded-md px-1.5 py-1 text-[8px] font-bold border border-indigo-200 shadow-sm" placeholder="Key..." value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].label=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} />` : html`<select value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); if(e.target.value === 'CUSTOM_KEY') { n[i].isCustomMode = true; n[i].label = ''; } else { n[i].label = e.target.value; } setModal(Object.assign({}, modal, {fields:n}));}} className="w-[35%] bg-white rounded-md px-1 py-1 text-[8px] font-bold border outline-none cursor-pointer"><option value="Note">Note</option><option value="Account">Account</option><option value="CUSTOM_KEY">Other..</option></select>`}
-                                                <input value=${f.value || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].value=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} className="flex-1 bg-white rounded-md px-2 py-1 text-[8px] font-bold border shadow-sm" placeholder="Info..." />
-                                                <button onClick=${function(){setModal(Object.assign({}, modal, {fields: modal.fields.filter(function(_,idx){return idx!==i;})}));}} className="p-1.5 bg-white rounded-md border text-rose-500 shadow-sm active:scale-95"><${Icon} name="Trash" size=${10} /></button>
+                                            <div key=${i} className="bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
+                                                <button onClick=${function(){setModal(Object.assign({}, modal, {fields: modal.fields.filter(function(_,idx){return idx!==i;})}));}} className="absolute top-2 right-2 p-1.5 bg-white rounded-md border text-rose-500 shadow-sm active:scale-95"><${Icon} name="Trash" size=${12} /></button>
+                                                <label className="text-[8px] font-black uppercase text-slate-400 block mb-1 tracking-widest">Key Name</label>
+                                                ${f.isCustomMode ? html`<input autoFocus className="w-[85%] bg-white rounded-xl px-3 py-2 text-[9px] font-bold border border-indigo-200 shadow-sm mb-2 outline-none" placeholder="Key..." value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].label=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} />` : html`<select value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); if(e.target.value === 'CUSTOM_KEY') { n[i].isCustomMode = true; n[i].label = ''; } else { n[i].label = e.target.value; } setModal(Object.assign({}, modal, {fields:n}));}} className="w-[85%] bg-white rounded-xl px-2 py-2 text-[9px] font-bold border outline-none cursor-pointer mb-2 shadow-sm"><option value="Note">Note</option><option value="Account">Account</option><option value="CUSTOM_KEY">Other..</option></select>`}
+                                                <label className="text-[8px] font-black uppercase text-slate-400 block mb-1 tracking-widest">Information</label>
+                                                <input value=${f.value || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].value=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} className="w-full bg-white rounded-xl px-3 py-2 text-[9px] font-bold border shadow-sm outline-none" placeholder="Details..." />
                                             </div>
                                         `;})}
                                     </div>
-                                    <button onClick=${function(){handleSaveNote();}} className="w-full font-black py-3 bg-indigo-600 text-white rounded-[1rem] shadow-lg text-xs active:scale-95 transition-all mt-1 tracking-widest uppercase">${modal.id ? "Update" : "Save Record"}</button>
+                                    <button onClick=${function(){handleSaveNote();}} className="w-full font-black py-4 bg-indigo-600 text-white rounded-[1.2rem] shadow-lg text-sm active:scale-95 transition-all mt-2 tracking-widest uppercase">${modal.id ? "Update" : "Save Record"}</button>
                                 </div>
                             </div>
                         </div>
@@ -1075,24 +1121,24 @@
                     ${showPrint ? html`
                         <div className="fixed inset-0 z-[600] bg-white flex flex-col print-view p-4">
                             <div className="no-print p-4 bg-slate-50 border-b flex justify-between items-center max-w-4xl mx-auto w-full rounded-t-[2rem] shadow-sm mt-4">
-                                <h3 className="font-black text-sm flex items-center gap-2"><${Icon} name="Printer" size=${16}/> Print</h3>
+                                <h3 className="font-black text-sm flex items-center gap-2"><${Icon} name="Printer" size=${16}/> Download</h3>
                                 <div className="flex gap-2">
-                                    <button id="pdf-btn" onClick=${downloadPDF} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-[10px] shadow-lg active:scale-95 transition-all">Download PDF</button>
+                                    <button id="pdf-btn" onClick=${downloadPDF} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-[10px] shadow-lg active:scale-95 transition-all">Save PDF</button>
                                     <button onClick=${function(){setShowPrint(false);}} className="px-5 py-2.5 bg-slate-200 text-slate-600 rounded-xl font-bold text-[10px] active:scale-95">Close</button>
                                 </div>
                             </div>
-                            <div id="pdf-document-content" className="max-w-4xl mx-auto p-6 w-full bg-white">
-                                <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">OFFICIAL RECORDS</h1>
-                                <p className="text-[9px] border-b-2 border-slate-900 pb-3 mb-6 tracking-widest text-slate-500 uppercase mt-2">Map: ${activeWS.name} | Holder: ${profile ? profile.name : ''} | Generated: ${new Date().toLocaleDateString()}</p>
-                                <div className="grid grid-cols-4 gap-2 mb-6">
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Income</p><p className="text-xs font-black text-slate-800">₹${activeWS.salary || 0}</p></div>
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Net Balance</p><p className="text-xs font-black text-indigo-600">₹${metrics.balance}</p></div>
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Spend (${selectedCat})</p><p className="text-xs font-black text-slate-800">₹${metrics.total}</p></div>
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col justify-center"><p className="text-[6px] font-bold uppercase text-slate-400 mb-0.5">Reduction</p><p className="text-xs font-black text-amber-500">₹${metrics.saved}</p></div>
+                            <div id="pdf-document-content" className="max-w-4xl mx-auto p-8 w-full bg-white">
+                                <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">OFFICIAL RECORDS</h1>
+                                <p className="text-[11px] border-b-2 border-slate-900 pb-4 mb-8 tracking-widest text-slate-500 uppercase mt-4">Map: ${activeWS.name} | Holder: ${profile ? profile.name : ''} | Generated: ${new Date().toLocaleDateString()}</p>
+                                <div className="grid grid-cols-4 gap-4 mb-8">
+                                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center"><p className="text-[8px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Income</p><p className="text-base font-black text-slate-800">₹${activeWS.salary || 0}</p></div>
+                                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center"><p className="text-[8px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Net Balance</p><p className="text-base font-black text-indigo-600">₹${metrics.balance}</p></div>
+                                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center"><p className="text-[8px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Spend (${selectedCat})</p><p className="text-base font-black text-slate-800">₹${metrics.total}</p></div>
+                                    <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-center"><p className="text-[8px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Reduction</p><p className="text-base font-black text-amber-500">₹${metrics.saved}</p></div>
                                 </div>
                                 <table className="w-full text-left border-collapse">
-                                    <thead><tr className="border-b-2 border-slate-900"><th className="py-2 px-2 text-[8px] font-black uppercase tracking-widest">Detail Name</th><th className="py-2 text-center text-[8px] font-black uppercase tracking-widest">Day</th><th className="py-2 px-2 text-right text-[8px] font-black uppercase tracking-widest">Amount</th></tr></thead>
-                                    <tbody>${displaySubs.map(function(s){ return html`<tr key=${s.id} className="border-b border-slate-100"><td className="py-3 px-2 font-bold text-xs text-slate-800 leading-tight">${s.name || ''}<br/><span className="text-[6px] text-indigo-600 uppercase font-black tracking-widest mt-0.5 inline-block">${s.cat || ''}</span><div className="mt-1">${(s.fields || []).map(function(f){ return html`<span className="text-[5px] text-slate-500 bg-slate-50 border px-1 rounded mr-1">${f.label}: ${f.value}</span>`; })}</div></td><td className="py-3 text-center text-[8px] font-bold text-slate-500 uppercase">Day ${s.day || 1}</td><td className="py-3 px-2 text-right font-black text-sm text-slate-900">₹${(s.amount||0).toLocaleString()}</td></tr>`; })}</tbody>
+                                    <thead><tr className="border-b-2 border-slate-900"><th className="py-4 px-2 text-[10px] font-black uppercase tracking-widest">Detail Name</th><th className="py-4 text-center text-[10px] font-black uppercase tracking-widest">Day</th><th className="py-4 px-2 text-right text-[10px] font-black uppercase tracking-widest">Amount</th></tr></thead>
+                                    <tbody>${displaySubs.map(function(s){ return html`<tr key=${s.id} className="border-b border-slate-100"><td className="py-4 px-2 font-bold text-sm text-slate-800 leading-tight">${s.name || ''}<br/><span className="text-[8px] text-indigo-600 uppercase font-black tracking-widest mt-1 inline-block">${s.cat || ''}</span><div className="mt-1.5">${(s.fields || []).map(function(f){ return html`<span className="text-[7px] text-slate-500 bg-slate-50 border px-1.5 py-0.5 rounded mr-1 shadow-sm">${f.label}: ${f.value}</span>`; })}</div></td><td className="py-4 text-center text-[10px] font-bold text-slate-500 uppercase">Day ${s.day || 1}</td><td className="py-4 px-2 text-right font-black text-base text-slate-900">₹${(parseFloat(s.amount)||0).toLocaleString()}</td></tr>`; })}</tbody>
                                 </table>
                             </div>
                         </div>
@@ -1100,8 +1146,8 @@
 
                     ${view !== 'bin' ? html`
                         <button onClick=${function(){setModal({ name: '', amount: '', day: 1, cat: activeWS.categories[0] || 'General', icon: 'Home', color: 'bg-indigo-600', isAutoPay: false, fields: [] });}} 
-                            className="fixed bottom-6 right-5 w-12 h-12 bg-indigo-600/90 backdrop-blur-md text-white rounded-full shadow-2xl flex items-center justify-center z-40 no-print active:scale-95 transition-all shadow-indigo-200">
-                            <${Icon} name="Plus" size=${20} />
+                            className="fixed bottom-6 right-5 w-14 h-14 bg-indigo-600/90 backdrop-blur-md text-white rounded-full shadow-2xl flex items-center justify-center z-40 no-print active:scale-95 transition-all shadow-indigo-200">
+                            <${Icon} name="Plus" size=${24} />
                         </button>
                     ` : null}
                 </div>
