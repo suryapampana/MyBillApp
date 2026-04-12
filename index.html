@@ -2,319 +2,1175 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Bill Map | Ultra Stable</title>
-    		
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <title>Luminous Finance | Pro</title>
+    
+    <!-- Stable Dependencies -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Premium Professional Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Inter:wght@400;600;800&family=Nunito:wght@400;600;800&family=Quicksand:wght@500;700&family=Space+Mono:wght@700&family=Caveat:wght@700&family=Pacifico&family=Comic+Neue:wght@700&family=Fredoka:wght@500;700&family=Poppins:wght@400;600;800&family=Outfit:wght@400;600;800&family=Manrope:wght@400;600;800&family=DM+Sans:wght@400;700&family=Syne:wght@600;800&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sysbg: 'var(--sys-bg)', syscard: 'var(--sys-card)', syssolid: 'var(--sys-solid)',
+                        systext: 'var(--sys-text)', sysmuted: 'var(--sys-muted)', sysborder: 'var(--sys-border)',
+                        sysaccent: 'var(--sys-accent)', sysaccentsoft: 'var(--sys-accent-soft)'
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #F8FAFC; 
-            color: #0F172A; 
-            margin: 0; padding: 0; 
-            -webkit-tap-highlight-color: transparent; 
-            overflow-x: hidden;
-        }
+        /* CSS Variable Theming - 20 Aesthetic Themes */
+        :root { --sys-bg: #0B0F19; --sys-card: #151A27; --sys-solid: #1E2538; --sys-text: #F8FAFC; --sys-muted: #94A3B8; --sys-border: #2A3441; --sys-accent: #6366F1; --sys-accent-soft: rgba(99, 102, 241, 0.15); --sys-font: 'Plus Jakarta Sans', sans-serif; }
+        [data-theme="light"] { --sys-bg: #F8FAFC; --sys-card: #FFFFFF; --sys-solid: #F1F5F9; --sys-text: #0F172A; --sys-muted: #64748B; --sys-border: #E2E8F0; --sys-accent: #4F46E5; --sys-accent-soft: rgba(79, 70, 229, 0.15); }
+        [data-theme="midnight"] { --sys-bg: #020617; --sys-card: #0F172A; --sys-solid: #1E293B; --sys-text: #F1F5F9; --sys-muted: #64748B; --sys-border: #334155; --sys-accent: #38BDF8; --sys-accent-soft: rgba(56, 189, 248, 0.15); }
+        [data-theme="latte"] { --sys-bg: #FAF8F5; --sys-card: #FFFFFF; --sys-solid: #F0EBE1; --sys-text: #4A443A; --sys-muted: #9E9689; --sys-border: #E8E2D6; --sys-accent: #C28E5E; --sys-accent-soft: rgba(194, 142, 94, 0.15); }
+        [data-theme="forest"] { --sys-bg: #0D1410; --sys-card: #15201A; --sys-solid: #1B2B23; --sys-text: #E8F4EC; --sys-muted: #80A18E; --sys-border: #2A4034; --sys-accent: #4ADE80; --sys-accent-soft: rgba(74, 222, 128, 0.15); }
+        [data-theme="lavender"] { --sys-bg: #FAF5FF; --sys-card: #FFFFFF; --sys-solid: #F3E8FF; --sys-text: #4C1D95; --sys-muted: #A855F7; --sys-border: #E9D5FF; --sys-accent: #9333EA; --sys-accent-soft: rgba(147, 51, 234, 0.15); }
+        [data-theme="ocean"] { --sys-bg: #ECFEFF; --sys-card: #FFFFFF; --sys-solid: #CCFBF1; --sys-text: #083344; --sys-muted: #06B6D4; --sys-border: #A5F3FC; --sys-accent: #0891B2; --sys-accent-soft: rgba(8, 145, 178, 0.15); }
+        [data-theme="sunset"] { --sys-bg: #FFF1F2; --sys-card: #FFFFFF; --sys-solid: #FFE4E6; --sys-text: #881337; --sys-muted: #F43F5E; --sys-border: #FECDD3; --sys-accent: #E11D48; --sys-accent-soft: rgba(225, 29, 72, 0.15); }
+        [data-theme="cyberpunk"] { --sys-bg: #09090B; --sys-card: #18181B; --sys-solid: #27272A; --sys-text: #FAFAFA; --sys-muted: #A1A1AA; --sys-border: #3F3F46; --sys-accent: #EAB308; --sys-accent-soft: rgba(234, 179, 8, 0.15); }
+        [data-theme="nord"] { --sys-bg: #2E3440; --sys-card: #3B4252; --sys-solid: #434C5E; --sys-text: #ECEFF4; --sys-muted: #D8DEE9; --sys-border: #4C566A; --sys-accent: #88C0D0; --sys-accent-soft: rgba(136, 192, 208, 0.15); }
+        [data-theme="rose"] { --sys-bg: #FFF1F2; --sys-card: #FFFFFF; --sys-solid: #FFE4E6; --sys-text: #881337; --sys-muted: #FB7185; --sys-border: #FECDD3; --sys-accent: #E11D48; --sys-accent-soft: rgba(225, 29, 72, 0.15); }
+        [data-theme="amber"] { --sys-bg: #FEFCE8; --sys-card: #FFFFFF; --sys-solid: #FEF9C3; --sys-text: #713F12; --sys-muted: #FACC15; --sys-border: #FEF08A; --sys-accent: #CA8A04; --sys-accent-soft: rgba(202, 138, 4, 0.15); }
+        [data-theme="teal"] { --sys-bg: #042F2E; --sys-card: #0D3E3D; --sys-solid: #134E4A; --sys-text: #CCFBF1; --sys-muted: #5EEAD4; --sys-border: #115E59; --sys-accent: #2DD4BF; --sys-accent-soft: rgba(45, 212, 191, 0.15); }
+        [data-theme="slate"] { --sys-bg: #0F172A; --sys-card: #1E293B; --sys-solid: #334155; --sys-text: #F8FAFC; --sys-muted: #94A3B8; --sys-border: #475569; --sys-accent: #94A3B8; --sys-accent-soft: rgba(148, 163, 184, 0.15); }
+        [data-theme="dracula"] { --sys-bg: #282A36; --sys-card: #44475A; --sys-solid: #6272A4; --sys-text: #F8F8F2; --sys-muted: #8BE9FD; --sys-border: #6272A4; --sys-accent: #FF79C6; --sys-accent-soft: rgba(255, 121, 198, 0.15); }
+        [data-theme="matrix"] { --sys-bg: #0D110E; --sys-card: #151C17; --sys-solid: #1C2620; --sys-text: #D1E8D5; --sys-muted: #74967C; --sys-border: #233328; --sys-accent: #00FF41; --sys-accent-soft: rgba(0,255,65,0.15); }
+        [data-theme="dune"] { --sys-bg: #1A1412; --sys-card: #241A17; --sys-solid: #2E211C; --sys-text: #F2E3D5; --sys-muted: #B39B82; --sys-border: #3D2D26; --sys-accent: #FF9900; --sys-accent-soft: rgba(255,153,0,0.15); }
+        [data-theme="gotham"] { --sys-bg: #0A0A0C; --sys-card: #111114; --sys-solid: #18181C; --sys-text: #E0E0E0; --sys-muted: #7A7A85; --sys-border: #222228; --sys-accent: #FFD700; --sys-accent-soft: rgba(255,215,0,0.15); }
 
-        /* Prevent iPhone Auto-Zoom */
-        input, select, textarea { font-size: 16px !important; }
-
+        /* Strict Native Layout */
+        body { font-family: var(--sys-font); background-color: var(--sys-bg); color: var(--sys-text); margin: 0; padding: 0; overflow: hidden; touch-action: manipulation; transition: background-color 0.3s ease, color 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        .native-container { height: 100dvh; width: 100vw; display: flex; flex-direction: column; position: relative; }
+        .scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 160px;}
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Prevent iOS Zooming */
+        input, select, textarea, button { font-size: 16px !important; outline: none; font-family: inherit; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 24px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 12px); }
 
-        @media print { 
-            .no-print { display: none !important; } 
-            body { background: white !important; } 
-        }
+        /* Sync Shadows to Theme */
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(90px); z-index: -1; opacity: 0.15; animation: float 14s infinite ease-in-out alternate; pointer-events: none;}
+        .blob-1 { top: -5%; left: -10%; width: 320px; height: 320px; background: var(--sys-accent); }
+        .blob-2 { bottom: 15%; right: -10%; width: 280px; height: 280px; background: var(--sys-text); opacity: 0.05; animation-delay: -7s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, 30px) scale(1.05); } }
 
         /* Animations */
-        @keyframes zap-pulse { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
-        .zap-glow { animation: zap-pulse 2s infinite; }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        .animate-fade-up { animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes zoomSpring { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+        .animate-in { animation: zoomSpring 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        @keyframes fade-in-out { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.1); } }
-        .splash-logo { animation: fade-in-out 2.5s forwards; }
+        @keyframes slideDownToast { 
+            0% { transform: translate(-50%, -120%) scale(0.9); opacity: 0; } 
+            15% { transform: translate(-50%, 0) scale(1); opacity: 1; } 
+            85% { transform: translate(-50%, 0) scale(1); opacity: 1; } 
+            100% { transform: translate(-50%, -120%) scale(0.9); opacity: 0; } 
+        }
+        .animate-toast { animation: slideDownToast 3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        .main-content { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes animateGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .animate-gradient { background-size: 200% auto; animation: animateGradient 4s linear infinite; }
+        .gradient-bg { background: linear-gradient(135deg, var(--sys-accent) 0%, var(--sys-border) 150%); }
 
-        .bill-focus { animation: highlight-pulse 2s ease-in-out; }
-        @keyframes highlight-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); border: 2px solid #4f46e5; } 100% { transform: scale(1); } }
+        /* UI Core */
+        .glass-card { background: var(--sys-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--sys-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        
+        /* Compact Ticket Card */
+        .ticket-card { position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .ticket-cut-l, .ticket-cut-r { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--sys-bg); bottom: 33px; z-index: 5; box-shadow: inset 0 0 8px rgba(0,0,0,0.15); pointer-events: none;}
+        .ticket-cut-l { left: -8px; border-right: 1px solid var(--sys-border); border-top: 1px solid var(--sys-border); border-bottom: 1px solid var(--sys-border); }
+        .ticket-cut-r { right: -8px; border-left: 1px solid var(--sys-border); border-top: 1px solid var(--sys-border); border-bottom: 1px solid var(--sys-border); }
+        .ticket-divider { position: absolute; bottom: 40px; left: 16px; right: 16px; border-top: 2px dashed var(--sys-border); opacity: 0.6; pointer-events: none; }
+        
+        /* Native Toggle Switch */
+        .toggle-switch { width: 40px; height: 22px; border-radius: 999px; position: relative; cursor: pointer; transition: background-color 0.3s; }
+        .toggle-switch.on { background-color: var(--sys-accent); }
+        .toggle-switch.off { background-color: var(--sys-solid); border: 1px solid var(--sys-border); }
+        .toggle-thumb { width: 18px; height: 18px; background-color: white; border-radius: 50%; position: absolute; top: 1px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .toggle-switch.on .toggle-thumb { transform: translateX(19px); }
+        .toggle-switch.off .toggle-thumb { transform: translateX(1px); background-color: var(--sys-muted);}
+
+        /* Quick Note Bar Animation */
+        .quick-note-wrap { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: bottom center; }
+        .quick-note-expanded { opacity: 1; transform: translateY(14px); padding-bottom: 14px; }
+        .quick-note-collapsed { opacity: 0; transform: translateY(40px) scale(0.95); pointer-events: none; }
     </style>
 </head>
 <body>
+    <div class="bg-blob blob-1"></div><div class="bg-blob blob-2"></div>
     <div id="root"></div>
 
-    <script type="text/babel">
-        const html = htm.bind(React.createElement);
+    <script>
+        // === 100% PURE ES5 JAVASCRIPT ===
+        var html = htm.bind(React.createElement);
 
-        // --- Hardcoded SVG Components ---
-        const Icon = function(props) {
-            const name = props.name;
-            const size = props.size || 18;
-            const paths = {
-                Plus: html`<path d="M12 5v14M5 12h14" />`,
-                Trash: html`<path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />`,
-                Edit: html`<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 00 2 2h14a2 2 0 00 2-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />`,
-                Zap: html`<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />`,
-                Printer: html`<path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z" />`,
-                Calendar: html`<path d="M3 4h18v16H3V4zM16 2v4M8 2v4M3 10h18" />`,
-                Grid: html`<path d="M3 3h7v7H3V3zM14 3h7v7h-7V3zM14 14h7v7h-7v-14zM3 14h7v7H3v-7z" />`,
-                List: html`<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />`,
-                Close: html`<path d="M18 6L6 18M6 6l12 12" />`,
-                Check: html`<path d="M20 6L9 17l-5-5" />`,
-                Alert: html`<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01" />`,
-                CreditCard: html`<rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h22" />`,
-                Home: html`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10" />`,
-                Clock: html`<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" />`,
-                Heart: html`<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />`
-            };
-            return html`
-                <svg width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" className=${props.className || ""}>
-                    ${paths[name] || null}
-                </svg>
-            `;
+        var FREE_EMOJIS = ['😎','👩‍🚀','👨‍💻','👻','🦊','🤖','🦄','🚀','💎','🔮','💰','📱','🎯','🎨','🎭','🧩','☕','🍔'];
+        var PREMIUM_EMOJIS = ['🥷','⛩️','🌸','🍜','👺','👹','🗡️','🍙','🐉','👑','💍','🏎️','🚁','🏰','🥂'];
+        var ALL_EMOJIS = FREE_EMOJIS.concat(PREMIUM_EMOJIS);
+
+        var CATEGORIES = ["Housing", "Utilities", "Subscriptions", "Auto", "Insurance", "Credit Card", "Personal"];
+        var THEMES = [
+            {id:'dark', name:'Dark Luminous', p:false}, {id:'light', name:'Light Mode', p:false}, {id:'midnight', name:'Midnight Blue', p:false}, 
+            {id:'latte', name:'Latte Coffee', p:false}, {id:'forest', name:'Deep Forest', p:false}, {id:'lavender', name:'Soft Lavender', p:false}, 
+            {id:'ocean', name:'Ocean Breeze', p:false}, {id:'sunset', name:'Sunset Red', p:false}, 
+            {id:'cyberpunk', name:'Cyberpunk', p:true}, {id:'nord', name:'Nordic Ice', p:true}, {id:'rose', name:'Rose Petal', p:true}, 
+            {id:'amber', name:'Amber Gold', p:true}, {id:'teal', name:'Teal Ocean', p:true}, {id:'slate', name:'Slate Gray', p:true}, 
+            {id:'dracula', name:'Dracula', p:true}, {id:'matrix', name:'The Matrix', p:true}, {id:'dune', name:'Dune Sand', p:true}, 
+            {id:'gotham', name:'Gotham City', p:true}
+        ];
+        
+        var FONTS = [
+            {id: 'Plus Jakarta Sans', p:false}, {id: 'Inter', p:false}, {id: 'Nunito', p:false}, {id: 'Quicksand', p:false}, 
+            {id: 'Comic Neue', p:false}, {id: 'Fredoka', p:false}, {id: 'Space Mono', p:true}, {id: 'Caveat', p:true}, 
+            {id: 'Pacifico', p:true}, {id: 'Poppins', p:true}, {id: 'Outfit', p:true}, {id: 'Manrope', p:true}, 
+            {id: 'DM Sans', p:true}, {id: 'Syne', p:true}, {id: 'Lexend', p:true}
+        ];
+        
+        var COLOR_PALETTE = ["bg-indigo-600", "bg-rose-500", "bg-emerald-500", "bg-sky-500", "bg-amber-500", "bg-purple-600", "bg-slate-800", "bg-teal-500"];
+        var ICONS = ["Home", "Zap", "CreditCard", "Briefcase", "Calendar", "Clock", "Shield", "Heart", "Star", "Tv", "Smartphone", "Car", "Cloud", "Coffee", "ShoppingCart", "Dumbbell", "Plane", "Instagram", "Activity", "Camera", "Map", "Layers"];
+        var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+        class ErrorBoundary extends React.Component {
+            constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+            static getDerivedStateFromError(error) { return { hasError: true, error: error }; }
+            render() {
+                if (this.state.hasError) {
+                    return html`<div style=${{padding: '30px', background: '#FEE2E2', color: '#9F1239', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+                        <h1 style=${{fontWeight: '900', fontSize: '24px', marginBottom: '10px'}}>System Recovered</h1>
+                        <p style=${{fontWeight: 'bold', marginBottom: '20px'}}>The engine intercepted an invalid operation.</p>
+                        <button onClick=${function(){
+                            localStorage.clear(); sessionStorage.clear();
+                            window.location.reload();
+                        }} style=${{marginTop: '30px', padding: '15px', background: '#E11D48', color: '#fff', borderRadius: '12px', fontWeight: 'bold'}}>Hard Reset App Data</button>
+                    </div>`;
+                }
+                return this.props.children;
+            }
+        }
+
+        var Icon = function(props) {
+            var n = props.name || 'Home', s = props.size || 18, c = props.className || "", w = "2.2";
+            if (ALL_EMOJIS.indexOf(n) !== -1 || n.length <= 2) return html`<span className=${c} style=${{fontSize: (s*1.2)+'px', lineHeight: 1}}>${n}</span>`;
+            
+            var pData = "";
+            if (n === 'Plus') pData = html`<g><path d="M12 5v14M5 12h14" /></g>`;
+            else if (n === 'Trash') pData = html`<g><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></g>`;
+            else if (n === 'Back') pData = html`<g><path d="M19 12H5M12 19l-7-7 7-7" /></g>`;
+            else if (n === 'Check') pData = html`<g><path strokeWidth="3" d="M20 6L9 17l-5-5" /></g>`;
+            else if (n === 'Edit' || n === 'Pen') pData = html`<g><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 00 2 2h14a2 2 0 00 2-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></g>`;
+            else if (n === 'Bell') pData = html`<g><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></g>`;
+            else if (n === 'Settings') pData = html`<g><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></g>`;
+            else if (n === 'Grid' || n === 'LayoutGrid') pData = html`<g><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></g>`;
+            else if (n === 'List') pData = html`<g><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></g>`;
+            else if (n === 'Calendar') pData = html`<g><rect x="3" y="4" width="18" height="16" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></g>`;
+            else if (n === 'Printer') pData = html`<g><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6v-8z" /></g>`;
+            else if (n === 'Clock') pData = html`<g><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g>`;
+            else if (n === 'Upload') pData = html`<g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></g>`;
+            else if (n === 'Download') pData = html`<g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></g>`;
+            else if (n === 'RotateCcw') pData = html`<g><polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" /></g>`;
+            else if (n === 'Eye') pData = html`<g><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></g>`;
+            else if (n === 'Alert') pData = html`<g><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></g>`;
+            else if (n === 'Search') pData = html`<g><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></g>`;
+            else if (n === 'Sort') pData = html`<g><path d="M3 6h18M3 12h12M3 18h6" /></g>`;
+            else if (n === 'Archive') pData = html`<g><polyline points="21 8 21 21 3 21 3 8" /><rect x="1" y="3" width="22" height="5" /><line x1="10" y1="12" x2="14" y2="12" /></g>`;
+            else if (n === 'Home') pData = html`<g><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10" /></g>`;
+            else if (n === 'Briefcase') pData = html`<g><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" /></g>`;
+            else if (n === 'CreditCard') pData = html`<g><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h22" /></g>`;
+            else if (n === 'Zap') pData = html`<g><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></g>`;
+            else if (n === 'Shield') pData = html`<g><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></g>`;
+            else if (n === 'Heart') pData = html`<g><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></g>`;
+            else if (n === 'Star') pData = html`<g><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></g>`;
+            else if (n === 'Tv') pData = html`<g><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></g>`;
+            else if (n === 'Smartphone') pData = html`<g><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></g>`;
+            else if (n === 'Car') pData = html`<g><path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a2 2 0 00-1.6-.8H9.3a2 2 0 00-1.6.8L5 11l-5.16.86a1 1 0 00-.84.99V16h3m10 0a2 2 0 11-4 0m4 0a2 2 0 10-4 0m-10 0a2 2 0 11-4 0m4 0a2 2 0 10-4 0"/></g>`;
+            else if (n === 'Cloud') pData = html`<g><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9z"/></g>`;
+            else if (n === 'Coffee') pData = html`<g><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></g>`;
+            else if (n === 'ShoppingCart') pData = html`<g><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></g>`;
+            else if (n === 'Dumbbell') pData = html`<g><path d="M14.4 14.4l-4.8-4.8"/><path d="M6.5 6.5l-1.2 1.2a2 2 0 0 0 0 2.8l2.8 2.8a2 2 0 0 0 2.8 0l1.2-1.2"/><path d="M17.5 17.5l1.2-1.2a2 2 0 0 0 0-2.8l-2.8-2.8a2 2 0 0 0-2.8 0l-1.2 1.2"/><path d="M4 8l-2-2"/><path d="M16 20l2 2"/></g>`;
+            else if (n === 'Plane') pData = html`<g><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-.5-.5-2.5 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-3 3-3-1-1 1 3 4 4 3 1-1-1-3 3-3 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/></g>`;
+            else if (n === 'Instagram') pData = html`<g><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></g>`;
+            else if (n === 'Activity') pData = html`<g><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></g>`;
+            else if (n === 'Camera') pData = html`<g><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></g>`;
+            else if (n === 'Target') pData = html`<g><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></g>`;
+            else if (n === 'ArrowRight') pData = html`<g><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></g>`;
+            else if (n === 'Map') pData = html`<g><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></g>`;
+            else pData = html`<g><circle cx="12" cy="12" r="10"/></g>`;
+
+            return html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth=${w} strokeLinecap="round" strokeLinejoin="round" className=${c}>${pData}</svg>`;
         };
 
-        const PRESET_KEYS = ["End Date", "Note", "Account ID", "Policy Number", "Renewal Type"];
-        const COLOR_PALETTE = ["bg-indigo-600", "bg-rose-500", "bg-emerald-500", "bg-sky-500", "bg-amber-500", "bg-purple-600", "bg-slate-800"];
-        const ICON_LIST = ["Home", "Zap", "CreditCard", "Calendar", "Clock"];
+        var safeParse = function(key, defaultVal) {
+            try { var val = localStorage.getItem(key); return (val && val !== 'undefined' && val !== null) ? JSON.parse(val) : defaultVal; } catch(e) { return defaultVal; }
+        };
 
-        const App = function() {
-            const [isAppLoading, setIsAppLoading] = React.useState(true);
-            const [userName, setUserName] = React.useState("My Notes");
-            const [categories, setCategories] = React.useState(["Essentials", "Leisure", "Work"]);
-            const [subs, setSubs] = React.useState([]);
-            const [view, setView] = React.useState('board');
-            const [selectedCat, setSelectedCat] = React.useState('All');
-            const [isSimulating, setIsSimulating] = React.useState(false);
-            const [cutIds, setCutIds] = React.useState([]);
-            const [modal, setModal] = React.useState(null);
-            const [showPrint, setShowPrint] = React.useState(false);
-            const [zapPopup, setZapPopup] = React.useState(false);
-            const [calPopup, setCalPopup] = React.useState(null);
-            const [focusedId, setFocusedId] = React.useState(null);
+        var App = function() {
+            var stateIsAppLoading = React.useState(true); var isAppLoading = stateIsAppLoading[0]; var setIsAppLoading = stateIsAppLoading[1];
+            var stateIsRendering = React.useState(false); var isRendering = stateIsRendering[0]; var setIsRendering = stateIsRendering[1];
+            var statePendingNav = React.useState(null); var pendingNav = statePendingNav[0]; var setPendingNav = statePendingNav[1];
+            
+            var stateTheme = React.useState(localStorage.getItem('lum_theme_v130') || 'dark'); var theme = stateTheme[0]; var setTheme = stateTheme[1];
+            var stateFont = React.useState(localStorage.getItem('lum_font_v130') || 'Plus Jakarta Sans'); var font = stateFont[0]; var setFont = stateFont[1];
+            
+            var stateHasSeenOnboard = React.useState(localStorage.getItem('lum_onboard_v130') === 'true'); var hasSeenOnboard = stateHasSeenOnboard[0]; var setHasSeenOnboard = stateHasSeenOnboard[1];
+            var stateOnboardStep = React.useState(0); var onboardStep = stateOnboardStep[0]; var setOnboardStep = stateOnboardStep[1];
+
+            var stateProfile = React.useState(safeParse('lum_profile_v130', null)); var profile = stateProfile[0]; var setProfile = stateProfile[1];
+            var stateProfDraft = React.useState(profile || { salutation: 'Namaste', name: '', icon: '😎' }); var profDraft = stateProfDraft[0]; var setProfDraft = stateProfDraft[1];
+            var stateShowProfileEdit = React.useState(false); var showProfileEdit = stateShowProfileEdit[0]; var setShowProfileEdit = stateShowProfileEdit[1];
+
+            var stateWorkspaces = React.useState(safeParse('lum_data_pro_v130', [])); var workspaces = stateWorkspaces[0]; var setWorkspaces = stateWorkspaces[1];
+            var stateActiveId = React.useState(localStorage.getItem('lum_last_map_v130') || null); var activeId = stateActiveId[0]; var setActiveId = stateActiveId[1];
+
+            var initialNav = (!activeId || workspaces.length === 0) ? 'maps' : 'dash';
+            var stateNav = React.useState(initialNav); var nav = stateNav[0]; var setNav = stateNav[1];
+            
+            var stateView = React.useState('board'); var view = stateView[0]; var setView = stateView[1];
+            var stateSelectedCat = React.useState('All'); var selectedCat = stateSelectedCat[0]; var setSelectedCat = stateSelectedCat[1];
+            var stateSortBy = React.useState('date_asc'); var sortBy = stateSortBy[0]; var setSortBy = stateSortBy[1];
+            var stateSearchQuery = React.useState(''); var searchQuery = stateSearchQuery[0]; var setSearchQuery = stateSearchQuery[1];
+            
+            var stateIsSimulating = React.useState(false); var isSimulating = stateIsSimulating[0]; var setIsSimulating = stateIsSimulating[1];
+            var stateCutIds = React.useState([]); var cutIds = stateCutIds[0]; var setCutIds = stateCutIds[1];
+            
+            var stateShowWsModal = React.useState(false); var showWsModal = stateShowWsModal[0]; var setShowWsModal = stateShowWsModal[1];
+            var stateWsName = React.useState(""); var wsName = stateWsName[0]; var setWsName = stateWsName[1];
+            var stateWsColor = React.useState("bg-indigo-600"); var wsColor = stateWsColor[0]; var setWsColor = stateWsColor[1];
+            var stateWsIcon = React.useState("Briefcase"); var wsIcon = stateWsIcon[0]; var setWsIcon = stateWsIcon[1];
+
+            var stateModal = React.useState(null); var modal = stateModal[0]; var setModal = stateModal[1];
+            var stateIsEditMode = React.useState(false); var isEditMode = stateIsEditMode[0]; var setIsEditMode = stateIsEditMode[1];
+            
+            var stateQaName = React.useState(''); var qaName = stateQaName[0]; var setQaName = stateQaName[1];
+            var stateQaAmount = React.useState(''); var qaAmount = stateQaAmount[0]; var setQaAmount = stateQaAmount[1];
+            var stateShowQuickAdd = React.useState(true); var showQuickAdd = stateShowQuickAdd[0]; var setShowQuickAdd = stateShowQuickAdd[1];
+            
+            var stateCatManageModal = React.useState(false); var catManageModal = stateCatManageModal[0]; var setCatManageModal = stateCatManageModal[1];
+            var stateSingleCatEdit = React.useState(null); var singleCatEdit = stateSingleCatEdit[0]; var setSingleCatEdit = stateSingleCatEdit[1];
+            
+            var stateShowPrint = React.useState(false); var showPrint = stateShowPrint[0]; var setShowPrint = stateShowPrint[1];
+            var stateCalPopup = React.useState(null); var calPopup = stateCalPopup[0]; var setCalPopup = stateCalPopup[1];
+            
+            var stateAlertPopup = React.useState(null); var alertPopup = stateAlertPopup[0]; var setAlertPopup = stateAlertPopup[1];
+            var stateConfirmDialog = React.useState(null); var confirmDialog = stateConfirmDialog[0]; var setConfirmDialog = stateConfirmDialog[1];
+            var stateShowBackupModal = React.useState(false); var showBackupModal = stateShowBackupModal[0]; var setShowBackupModal = stateShowBackupModal[1];
+            var stateSalaryModal = React.useState(false); var salaryModal = stateSalaryModal[0]; var setSalaryModal = stateSalaryModal[1];
+            var stateSalaryDraft = React.useState(''); var salaryDraft = stateSalaryDraft[0]; var setSalaryDraft = stateSalaryDraft[1];
+            var statePremiumModal = React.useState(false); var premiumModal = statePremiumModal[0]; var setPremiumModal = statePremiumModal[1];
+            var stateToast = React.useState(null); var toast = stateToast[0]; var setToast = stateToast[1];
+
+            var dName = "Luminous_" + new Date().getFullYear() + (new Date().getMonth()+1) + new Date().getDate() + "_" + new Date().getHours() + new Date().getMinutes();
+            var stateBackupName = React.useState(dName); var backupName = stateBackupName[0]; var setBackupName = stateBackupName[1];
+
+            var touchRef = React.useRef(0);
+            var pressTimer = React.useRef(null);
+            
+            React.useEffect(function() { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('lum_theme_v130', theme); }, [theme]);
+            React.useEffect(function() { document.documentElement.style.setProperty('--sys-font', '"' + font + '", sans-serif'); localStorage.setItem('lum_font_v130', font); }, [font]);
+            React.useEffect(function() { var t = setTimeout(function() { setIsAppLoading(false); }, 1000); return function() { clearTimeout(t); }; }, []);
+            React.useEffect(function() { localStorage.setItem('lum_data_pro_v130', JSON.stringify(workspaces)); }, [workspaces]);
+            React.useEffect(function() { if (activeId) { localStorage.setItem('lum_last_map_v130', activeId); } else { localStorage.removeItem('lum_last_map_v130'); } }, [activeId]);
 
             React.useEffect(function() {
-                const timer = setTimeout(function() { setIsAppLoading(false); }, 2500);
-                const saved = localStorage.getItem('sublattice_v80_final');
-                if (saved) {
-                    const d = JSON.parse(saved);
-                    setSubs(d.subs || []);
-                    setCategories(d.categories || ["Essentials", "Leisure", "Work"]);
-                    setUserName(d.userName || "My Notes");
-                } else {
-                    setSubs([{ id: '1', name: 'Home EMI', amount: 45000, cat: 'Essentials', day: 5, icon: 'Home', color: 'bg-indigo-600', isAutoPay: true, fields: [] }]);
-                }
-                return function() { clearTimeout(timer); };
-            }, []);
+                var qaTimer;
+                var handleActive = function() {
+                    setShowQuickAdd(true);
+                    if (qaTimer) clearTimeout(qaTimer);
+                };
+                var handleInactive = function() {
+                    if (qaTimer) clearTimeout(qaTimer);
+                    qaTimer = setTimeout(function(){ setShowQuickAdd(false); }, 1500);
+                };
+                window.addEventListener('touchstart', handleActive); window.addEventListener('mousemove', handleActive); window.addEventListener('scroll', handleActive, true);
+                window.addEventListener('touchend', handleInactive);
+                handleActive(); handleInactive();
+                return function() { window.removeEventListener('touchstart', handleActive); window.removeEventListener('mousemove', handleActive); window.removeEventListener('scroll', handleActive, true); window.removeEventListener('touchend', handleInactive); clearTimeout(qaTimer); };
+            }, [nav, activeId]);
 
-            React.useEffect(function() { 
-                localStorage.setItem('sublattice_v80_final', JSON.stringify({ subs: subs, categories: categories, userName: userName })); 
-            }, [subs, categories, userName]);
+            var triggerAlert = function(title, message) { setAlertPopup({ title: title, message: message }); };
+            var requestConfirm = function(title, message, action) { setConfirmDialog({ title: title, message: message, action: action }); };
+            var triggerToast = function(msg) { setToast(msg); setTimeout(function(){ setToast(null); }, 3000); };
+            var safeStr = function(val) { return val ? String(val) : ""; };
+            var formatDate = function(ts) { if(!ts) return ""; var d = new Date(ts); return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); };
 
-            const metrics = React.useMemo(function() {
-                const active = subs.filter(function(s) { return cutIds.indexOf(s.id) === -1; });
-                const total = active.reduce(function(acc, curr) { return acc + (parseFloat(curr.amount) || 0); }, 0);
-                const saved = isSimulating ? subs.filter(function(s) { return cutIds.indexOf(s.id) !== -1; }).reduce(function(acc, curr) { return acc + (parseFloat(curr.amount) || 0); }, 0) : 0;
-                return { total: total, daily: (total / 30).toFixed(0), saved: saved };
-            }, [subs, cutIds, isSimulating]);
+            var activeWS = React.useMemo(function() {
+                if (!activeId) return null;
+                for (var i = 0; i < workspaces.length; i++) { if (workspaces[i].id === activeId) return workspaces[i]; }
+                return null;
+            }, [workspaces, activeId]);
 
-            const filteredSubs = subs.filter(function(s) { return selectedCat === 'All' || s.cat === selectedCat; });
-
-            const navigateToBill = function(id) {
-                setView('board');
-                setSelectedCat('All');
-                setCalPopup(null);
-                setZapPopup(false);
-                setFocusedId(id);
-                setTimeout(function() {
-                    const el = document.getElementById('bill-' + id);
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(function() { setFocusedId(null); }, 3000);
-                }, 200);
+            var updateActiveWS = function(data) {
+                if (!activeWS) return;
+                setWorkspaces(workspaces.map(function(w) { return w.id === activeId ? Object.assign({}, w, data) : w; }));
             };
 
-            const handleSave = function(u) {
-                if (!u.name) return;
-                let newCats = categories;
-                if (categories.indexOf(u.cat) === -1) {
-                    newCats = categories.concat([u.cat]);
-                    setCategories(newCats);
-                }
-                if (u.id) {
-                    setSubs(subs.map(function(s) { return s.id === u.id ? u : s; }));
-                } else {
-                    const newSub = Object.assign({}, u, { id: Date.now().toString() });
-                    setSubs(subs.concat([newSub]));
-                }
-                setModal(null);
+            var handleMapSelect = function(id) {
+                setIsRendering(true);
+                setActiveId(id); setNav('dash'); setSelectedCat('All'); setView('board');
+                setTimeout(function(){ setIsRendering(false); }, 600);
             };
 
-            const getStatus = function(sub) {
-                const today = new Date().getDate();
-                if (sub.isAutoPay) {
-                    if (today >= sub.day && today <= sub.day + 5) return { label: 'Paid', color: 'text-emerald-600 bg-emerald-50', icon: 'Check' };
-                    return { label: 'Auto', color: 'text-indigo-600 bg-indigo-50', icon: 'Zap' };
+            var requestSafeNav = function(target) {
+                var isPremTheme = THEMES.find(function(t){return t.id===theme;})?.p;
+                var isPremFont = FONTS.find(function(f){return f.id===font;})?.p;
+                if (nav === 'settings' && target !== 'settings' && (isPremTheme || isPremFont)) {
+                    setPendingNav(target); setPremiumModal(true);
                 } else {
-                    if (today >= sub.day - 5 && today <= sub.day) return { label: 'Due', color: 'text-rose-600 bg-rose-50 animate-pulse', icon: 'Alert' };
-                    return { label: 'Manual', color: 'text-slate-400 bg-slate-100', icon: 'Clock' };
+                    if (target === 'dash' && !activeWS) target = 'maps';
+                    if (target === 'dash' && nav === 'dash') { setActiveId(null); target = 'maps'; }
+                    if (target === 'dash' && nav !== 'dash') setView('board');
+                    setNav(target);
                 }
             };
 
-            if (isAppLoading) {
+            var handleObTouchStart = function(e) { touchRef.current = e.touches[0].clientX; };
+            var handleObTouchEnd = function(e) {
+                var diff = touchRef.current - e.changedTouches[0].clientX;
+                if (diff > 50 && onboardStep < 4) setOnboardStep(onboardStep + 1);
+                else if (diff < -50 && onboardStep > 0) setOnboardStep(onboardStep - 1);
+            };
+
+            var handleGlobalTouchStart = function(e) { touchRef.current = e.touches[0].clientX; };
+            var handleGlobalTouchEnd = function(e) {
+                if (!activeWS || nav !== 'dash') return;
+                var diff = touchRef.current - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 50) { 
+                    var catList = ['All'].concat(activeWS.categories || []);
+                    var idx = catList.indexOf(selectedCat);
+                    if (diff > 0 && idx < catList.length - 1) { setSelectedCat(catList[idx + 1]); setIsRendering(true); setTimeout(function(){ setIsRendering(false); }, 300); }
+                    else if (diff < 0 && idx > 0) { setSelectedCat(catList[idx - 1]); setIsRendering(true); setTimeout(function(){ setIsRendering(false); }, 300); }
+                }
+            };
+
+            var handleCatPressStart = function(c) { pressTimer.current = setTimeout(function(){ setSingleCatEdit({oldName: c, newName: c}); }, 500); };
+            var handleCatPressEnd = function() { clearTimeout(pressTimer.current); };
+
+            var metrics = React.useMemo(function() {
+                if (!activeWS) return { income: 0, spend: 0, balance: 0, simSaved: 0 };
+                var inc = parseFloat(activeWS.salary) || 0;
+                var rawSpend = 0; var simSaved = 0;
+                (activeWS.subs || []).forEach(function(s) { 
+                    var amt = parseFloat(s.amount) || 0;
+                    rawSpend += amt;
+                    if (cutIds.indexOf(s.id) !== -1) simSaved += amt;
+                });
+                return { income: inc, spend: rawSpend, balance: inc - rawSpend, simSaved: simSaved };
+            }, [activeWS, cutIds]);
+
+            var displaySubs = React.useMemo(function() {
+                if (!activeWS) return [];
+                var filtered = (activeWS.subs || []).filter(function(s) { return selectedCat === 'All' || s.cat === selectedCat; });
+                if (searchQuery.trim()) {
+                    var sq = searchQuery.toLowerCase();
+                    filtered = filtered.filter(function(s) { return (safeStr(s.name).toLowerCase().indexOf(sq) !== -1) || (safeStr(s.cat).toLowerCase().indexOf(sq) !== -1); });
+                }
+                var sorted = filtered.slice();
+                if (sortBy === 'amount_desc') sorted.sort(function(a,b) { return parseFloat(b.amount || 0) - parseFloat(a.amount || 0); });
+                else if (sortBy === 'amount_asc') sorted.sort(function(a,b) { return parseFloat(a.amount || 0) - parseFloat(b.amount || 0); });
+                else if (sortBy === 'date_desc') sorted.sort(function(a,b) { return parseFloat(b.day || 0) - parseFloat(a.day || 0); });
+                else sorted.sort(function(a,b) { return parseFloat(a.day || 0) - parseFloat(b.day || 0); });
+                return sorted;
+            }, [activeWS, selectedCat, sortBy, searchQuery]);
+
+            var displayBinSubs = React.useMemo(function() {
+                if (!activeWS) return [];
+                return (activeWS.deletedSubs || []).slice().sort(function(a,b) { return (b.deletedAt || 0) - (a.deletedAt || 0); });
+            }, [activeWS]);
+
+            var generateSmartAnalysis = function() {
+                if (!activeWS || (activeWS.subs||[]).length === 0) {
+                    var emptyInsights = ["Your slate is clean. Add some bills to unlock personalized insights.", "A fresh start. Log your recurring expenses to predict your monthly balance.", "I'm ready to analyze. Start adding records below."];
+                    return emptyInsights[Math.floor(Math.random() * emptyInsights.length)];
+                }
+                if (metrics.spend === 0) return "Your tracked expenses are perfectly zero right now. Keeping liabilities low is the ultimate wealth builder.";
+                
+                if (cutIds.length > 0) {
+                    var pct = ((metrics.simSaved / metrics.spend) * 100).toFixed(1);
+                    var simInsights = [
+                        "Great choice! By cutting these items, you save " + pct + "% of your monthly expenditure.",
+                        "Optimization detected: You just reclaimed " + pct + "% of your outgoing cash flow.",
+                        "This simulation increases your monthly retention by " + pct + "%. Confirm to lock in these savings."
+                    ];
+                    return simInsights[Math.floor(Math.random() * simInsights.length)];
+                }
+
+                var catMap = {};
+                (activeWS.subs||[]).forEach(function(s) { catMap[s.cat] = (catMap[s.cat] || 0) + (parseFloat(s.amount)||0); });
+                var topCat = Object.keys(catMap).sort(function(a,b){return catMap[b]-catMap[a]})[0];
+                var topCatAmt = catMap[topCat];
+                var pct2 = Math.round((topCatAmt / (metrics.income || metrics.spend || 1)) * 100);
+                
+                if (metrics.balance < 0) {
+                    var deficitInsights = [
+                        "Alert: You are operating at a deficit. Review your '" + topCat + "' expenses immediately to stop the leak.",
+                        "Cashflow Warning: Your liabilities exceed your base income. Consider simulating cuts in '" + topCat + "'.",
+                        "Negative Balance Detected. Prioritize trimming non-essential items in '" + topCat + "' to restore stability."
+                    ];
+                    return deficitInsights[Math.floor(Math.random() * deficitInsights.length)];
+                }
+
+                if (pct2 > 40) {
+                    var highSpendInsights = [
+                        "Notice: " + pct2 + "% of your budget is going towards '" + topCat + "'. Trimming this could significantly boost your Net Balance.",
+                        "Your highest expenditure is '" + topCat + "'. Auditing this category is your fastest path to increased savings.",
+                        "Concentration Alert: A large portion of your cash flow (" + pct2 + "%) is locked in '" + topCat + "'."
+                    ];
+                    return highSpendInsights[Math.floor(Math.random() * highSpendInsights.length)];
+                }
+
+                var stableInsights = [
+                    "Your financial trajectory is steady. You have a healthy distribution across categories.",
+                    "Consistency is key. Your base income safely covers your current liability footprint.",
+                    "Everything looks optimal. Small daily savings will continue to compound your Net Balance.",
+                    "System nominal. Your expense to income ratio is well within safe operating parameters."
+                ];
+                return stableInsights[Math.floor(Math.random() * stableInsights.length)];
+            };
+
+            var handleRestore = function(e) {
+                var file = e.target.files[0]; if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        var data = JSON.parse(decodeURIComponent(escape(atob(evt.target.result.split('').reverse().join('')))));
+                        if (data && data.workspaces) {
+                            var cleaned = data.workspaces.map(function(ws) {
+                                var extractedCats = [];
+                                (ws.subs||[]).forEach(function(s){ if(s.cat && extractedCats.indexOf(s.cat)===-1) extractedCats.push(s.cat); });
+                                var masterCats = Array.from(new Set(CATEGORIES.concat(ws.categories || [], extractedCats)));
+
+                                return {
+                                    id: ws.id || 'ws-' + Date.now() + Math.random(), name: ws.name || 'Imported Map', icon: ws.icon || 'Briefcase', color: ws.color || 'bg-indigo-600', salary: parseFloat(ws.salary) || 0,
+                                    categories: masterCats, deletedAt: ws.deletedAt || null,
+                                    subs: (Array.isArray(ws.subs) ? ws.subs : []).map(function(s) { return { id: s.id || 'n-'+Math.random(), name: s.name||'Unnamed Note', amount: parseFloat(s.amount)||0, cat: s.cat||'General', day: parseInt(s.day)||1, icon: (s.icon && ICONS.indexOf(s.icon) !== -1) ? s.icon : 'Home', color: s.color||'bg-indigo-600', isAutoPay: !!s.isAutoPay, isPaidManual: !!s.isPaidManual, fields: Array.isArray(s.fields)?s.fields:[] }; }),
+                                    deletedSubs: (Array.isArray(ws.deletedSubs) ? ws.deletedSubs : []).map(function(s) { return { id: s.id || 'n-'+Math.random(), name: s.name||'Unnamed Note', amount: parseFloat(s.amount)||0, cat: s.cat||'General', day: parseInt(s.day)||1, icon: (s.icon && ICONS.indexOf(s.icon) !== -1) ? s.icon : 'Home', color: s.color||'bg-indigo-600', isAutoPay: !!s.isAutoPay, isPaidManual: !!s.isPaidManual, fields: Array.isArray(s.fields)?s.fields:[], deletedAt: s.deletedAt||Date.now() }; }).filter(function(ds) { return (Date.now() - (ds.deletedAt||0)) < THIRTY_DAYS; })
+                                };
+                            });
+                            setWorkspaces(cleaned);
+                            if (data.profile) { 
+                                if (!data.profile.icon || data.profile.icon.length > 5 || data.profile.icon.indexOf("User")!==-1) data.profile.icon = '😎'; 
+                                setProfile(data.profile); localStorage.setItem('lum_profile_v130', JSON.stringify(data.profile)); 
+                            }
+                            setHasSeenOnboard(true); localStorage.setItem('lum_onboard_v130', 'true');
+                            
+                            setIsRendering(true);
+                            setActiveId(null); setNav('maps');
+                            setTimeout(function(){ setIsRendering(false); }, 800);
+                            triggerAlert("Success", "Data restored perfectly.");
+                        } else { triggerAlert("Error", "Invalid backup file."); }
+                    } catch(err) { triggerAlert("Error", "File is corrupt."); }
+                    e.target.value = null;
+                };
+                reader.readAsText(file);
+            };
+
+            var confirmBackup = function() {
+                try {
+                    var backupData = { workspaces: workspaces, profile: profile, onboard: hasSeenOnboard, timestamp: Date.now() };
+                    var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(backupData))));
+                    var blob = new Blob([b64.split('').reverse().join('')], { type: "text/plain" });
+                    var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = (backupName || "Backup") + ".txt";
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    setShowBackupModal(false); triggerToast("Backup Saved! ⚡");
+                } catch(e) { setShowBackupModal(false); triggerAlert("Error", "Backup failed."); }
+            };
+
+            var handleSaveNote = function() {
+                if (!activeWS || !modal || !modal.name) return;
+                var currentCats = (activeWS.categories || []).slice();
+                if (currentCats.indexOf(modal.cat) === -1 && modal.cat && modal.cat !== 'NEW_CAT') { currentCats.push(modal.cat); }
+                var newSubs = (activeWS.subs || []).slice();
+                if (modal.id) { for(var i=0; i<newSubs.length; i++) { if(newSubs[i].id === modal.id) newSubs[i] = Object.assign({}, modal); } } 
+                else { newSubs.push(Object.assign({}, modal, { id: "n-" + Date.now() })); setSelectedCat(modal.cat); }
+                updateActiveWS({ subs: newSubs, categories: currentCats }); setModal(null);
+                triggerToast("Note Saved! ⚡");
+            };
+
+            var handleDirectQuickAdd = function() {
+                if (!activeWS || !qaName.trim()) return;
+                var currentCats = (activeWS.categories || []).slice();
+                var selectedOrGeneral = selectedCat !== 'All' ? selectedCat : (currentCats[0] || 'General');
+                var parsedAmount = parseFloat(qaAmount) || 0;
+                var newSubs = (activeWS.subs || []).concat([{ id: "n-" + Date.now(), name: qaName.trim(), amount: parsedAmount, cat: selectedOrGeneral, day: 1, icon: 'Home', color: 'bg-indigo-600', isAutoPay: false, isPaidManual: false, fields: [] }]);
+                updateActiveWS({ subs: newSubs }); setQaName(''); setQaAmount('');
+                triggerToast("Quick Note Created! ⚡");
+                setTimeout(function(){ window.scrollTo({top: 0, behavior: 'smooth'}); }, 100);
+            };
+
+            var openFullModal = function() {
+                setModal({name: qaName, amount: parseFloat(qaAmount)||'', day: 1, cat: activeWS.categories[0]||'General', icon: 'Home', color: 'bg-indigo-600', isAutoPay: false, isPaidManual: false, fields: []});
+                setIsEditMode(true); setQaName(''); setQaAmount('');
+            };
+
+            var moveToBinNote = function(id) {
+                if (!activeWS) return;
+                var t = null; var nS = (activeWS.subs||[]).filter(function(s){if(s.id===id){t=s;return false;}return true;});
+                if(t){ t.deletedAt=Date.now(); updateActiveWS({subs:nS, deletedSubs:(activeWS.deletedSubs||[]).concat([t])}); }
+            };
+
+            var togglePaid = function(id) { 
+                if (!activeWS) return;
+                updateActiveWS({ subs: (activeWS.subs || []).map(function(s){return s.id===id ? Object.assign({},s,{isPaidManual:!s.isPaidManual}) : s;}) }); 
+            };
+            
+            var downloadPDF = function() {
+                if (!activeWS) return;
+                var btn = document.getElementById('pdf-btn'); if(btn) btn.innerText = "Processing...";
+                var element = document.getElementById('pdf-document-content');
+                if (typeof html2pdf !== 'undefined') { html2pdf().set({margin:0.5, filename:safeStr(activeWS.name||'Map').replace(/[^a-z0-9]/gi,'_')+'_Statement.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'}}).from(element).save().then(function(){if(btn)btn.innerText="Download PDF"; setShowPrint(false); triggerAlert("Success", "PDF Downloaded");}); } else { window.print(); if(btn) btn.innerText="Download PDF"; }
+            };
+
+            var renderOnboarding = function() {
+                var d = [{i:'List',t:"Welcome",d:"Track your bills, stash cash, and gain ultimate control over your expenses."}, {i:'Zap',t:"Simulate Cuts",d:"Use the Lab mode to simulate cutting subscriptions and see how much you save instantly."}, {i:'Shield',t:"Secure Core",d:"No clouds. No accounts. All data is perfectly secured and locked locally on your device."}, {i:'Calendar',t:"Never Miss",d:"Generate full native calendars and visualize all your upcoming due dates."}, {i:'Rocket',t:"Ready",d:"Your interface is fully customized. Let's launch your financial headquarters."}];
+                return html`<div className="absolute inset-0 bg-[var(--sys-bg)] z-50 flex flex-col justify-between pt-safe pb-safe" onTouchStart=${handleObTouchStart} onTouchEnd=${handleObTouchEnd}><div className="scroll-area flex flex-col justify-center items-center text-center animate-in" key=${onboardStep}><div className="w-32 h-32 bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] rounded-[3rem] flex items-center justify-center mb-8 shadow-inner border border-[var(--sys-accent)]/20"><${Icon} name=${d[onboardStep].i} size=${54} /></div><h2 className="text-4xl font-black text-[var(--sys-text)] mb-4 tracking-tight px-4 leading-none">${d[onboardStep].t}</h2><p className="text-sm font-bold text-[var(--sys-muted)] px-8 leading-relaxed">${d[onboardStep].d}</p>${onboardStep === 0 ? html`<div className="mt-12 w-full px-8"><div className="relative border-t border-[var(--sys-border)] mb-6"><span className="absolute left-1/2 -translate-x-1/2 -top-2 bg-[var(--sys-bg)] px-2 text-[10px] font-black text-[var(--sys-muted)] uppercase tracking-widest">Existing User?</span></div><label className="flex items-center justify-center gap-2 w-full py-4 bg-[var(--sys-card)] border border-[var(--sys-border)] text-[var(--sys-text)] rounded-2xl font-black text-xs uppercase tracking-widest cursor-pointer active:scale-95 transition-all shadow-lg glow-text"><${Icon} name="Upload" size=${16} className="text-[var(--sys-accent)]" /> Restore Backup<input type="file" accept=".txt" onChange=${handleRestore} className="hidden" /></label></div>` : null}</div><div className="p-8 pb-safe space-y-10 shrink-0"><div className="flex justify-center gap-2">${[0,1,2,3,4].map(function(_,i){return html`<div key=${i} className=${`h-2 rounded-full transition-all ${i===onboardStep?'w-8 bg-[var(--sys-accent)]':'w-2 bg-[var(--sys-solid)]'}`}/>`;})}</div><div className="flex gap-4"><button onClick=${function(){localStorage.setItem('lum_onboard_v130','true');setHasSeenOnboard(true);}} className="flex-1 py-5 text-sm font-black text-[var(--sys-muted)] bg-[var(--sys-solid)] rounded-2xl border border-[var(--sys-border)] active:scale-95 transition-all">Skip</button><button onClick=${function(){if(onboardStep<4)setOnboardStep(onboardStep+1);else{localStorage.setItem('lum_onboard_v130','true');setHasSeenOnboard(true);}}} className="flex-1 py-5 text-sm font-black text-white bg-[var(--sys-accent)] shadow-lg rounded-2xl active:scale-95 transition-all">${onboardStep<4?'Next':"Let's Go"}</button></div></div></div>`;
+            };
+
+            var renderProfileSetup = function() {
+                var pd = profDraft;
+                return html`<div className="absolute inset-0 bg-[var(--sys-bg)] z-[1000] flex items-center justify-center p-4"><div className="glass-card w-full max-w-[340px] p-6 rounded-[2.5rem] premium-shadow animate-in border border-[var(--sys-border)] text-center relative">${showProfileEdit?html`<button onClick=${function(){setShowProfileEdit(false);}} className="absolute top-4 right-4 p-2 text-[var(--sys-muted)] bg-[var(--sys-solid)] rounded-full border border-[var(--sys-border)]"><${Icon} name="Close" size=${14}/></button>`:null}<div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4 mx-auto shadow-sm bg-[var(--sys-accent-soft)]"><span style=${{fontSize: '40px'}}>${pd.icon}</span></div><h2 className="text-xl font-black text-[var(--sys-text)] mb-1">Set Vibe</h2><p className="text-[10px] font-bold text-[var(--sys-muted)] mb-5 tracking-widest uppercase text-center">Quick Profile Setup</p><div className="grid grid-cols-3 gap-2 mb-4"><div><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] block mb-1 text-left ml-1">Title</label><select value=${pd.salutation} onChange=${function(e){setProfDraft(Object.assign({},pd,{salutation:e.target.value}));}} className="w-full bg-[var(--sys-solid)] p-3 rounded-xl font-bold outline-none text-xs border border-[var(--sys-border)] text-[var(--sys-text)]">${['Hey','Mr','Ms','Sir','Namaste'].map(function(o){return html`<option value=${o}>${o}</option>`;})}</select></div><div className="col-span-2"><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] block mb-1 text-left ml-1">Name</label><input maxLength="12" value=${pd.name} onChange=${function(e){setProfDraft(Object.assign({},pd,{name:e.target.value.substring(0,12)}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] p-3 rounded-xl font-bold outline-none text-xs border border-[var(--sys-border)] focus:border-[var(--sys-accent)]" placeholder="..." /></div></div><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] block mb-1 text-left ml-1">Select Emoji <span className="text-[var(--sys-accent)] ml-1">(Scroll)</span></label><div className="grid grid-cols-6 gap-1 bg-[var(--sys-solid)] p-2 rounded-2xl border border-[var(--sys-border)] mb-6 h-[160px] overflow-y-auto no-scrollbar">${ALL_EMOJIS.map(function(k){var isPremium = PREMIUM_EMOJIS.indexOf(k) !== -1; return html`<button key=${k} onClick=${function(){if(isPremium){setPremiumModal(true); return;} setProfDraft(Object.assign({},pd,{icon:k}));}} className=${`p-1 flex items-center justify-center transition-all rounded-lg relative ${pd.icon===k?'bg-[var(--sys-accent)] shadow-md scale-110':'hover:bg-[var(--sys-bg)]'}`}><span style=${{fontSize: '18px'}}>${k}</span> ${isPremium ? html`<div className="absolute -top-1 -right-1 text-[8px]">🔒</div>` : null}</button>`;})}</div><button onClick=${function(){var fp=Object.assign({},pd);localStorage.setItem('lum_profile_v130',JSON.stringify(fp));setProfile(fp);setShowProfileEdit(false);if(workspaces.length===0){ setNav('maps'); }}} className="w-full py-4 bg-[var(--sys-accent)] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">Save Profile</button></div></div>`;
+            };
+
+            var renderTopNav = function() {
                 return html`
-                    <div className="fixed inset-0 bg-indigo-600 flex items-center justify-center z-[500]">
-                        <div className="flex flex-col items-center splash-logo text-white">
-                            <${Icon} name="CreditCard" size=${70} />
-                            <h1 className="text-3xl font-extrabold mt-6 tracking-tighter">My Bill Map</h1>
-                            <p className="text-indigo-200 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">v1.0 Architect Stable</p>
+                    <div className="px-6 py-4 pt-safe flex justify-between items-center bg-[var(--sys-bg)]/80 backdrop-blur-md sticky top-0 z-40 border-b border-[var(--sys-border)]">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center shadow-lg shadow-[var(--sys-accent)]/30"><${Icon} name="LayoutGrid" size=${16} className="text-white"/></div>
+                            <span className="font-bold text-lg tracking-tight text-[var(--sys-text)]">Luminous<span className="text-[var(--sys-accent)]">Finance</span></span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            ${activeWS && nav !== 'maps' ? html`
+                                <div className="flex flex-col items-center cursor-pointer group" onClick=${function(){setActiveId(null); setNav('maps');}}>
+                                    <span className="text-sm font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-[var(--sys-accent)] via-purple-400 to-[var(--sys-accent)] animate-gradient" style=${{backgroundSize: '200% auto'}}>
+                                        ${activeWS.name}
+                                    </span>
+                                    <span className="text-[7px] font-black text-[var(--sys-muted)] uppercase tracking-widest mt-[-2px] group-hover:text-[var(--sys-accent)] transition-colors">${(activeWS.subs||[]).length} Records</span>
+                                </div>
+                            ` : null}
+                            <div className="w-9 h-9 rounded-full bg-[var(--sys-solid)] border border-[var(--sys-border)] flex items-center justify-center text-lg cursor-pointer shadow-inner active:scale-95 transition-transform" onClick=${function(){setProfDraft(profile||{salutation:'Namaste',name:'',icon:'😎'}); setShowProfileEdit(true);}}>${profile ? profile.icon : '👤'}</div>
                         </div>
                     </div>
                 `;
-            }
+            };
 
-            return html`
-                <div className="min-h-screen pb-40">
-                    <header className="max-w-6xl mx-auto px-5 py-6 flex justify-between items-center no-print">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg"><${Icon} name="CreditCard" size=${20} /></div>
-                            <div><h1 className="text-lg font-black tracking-tight text-slate-800 leading-none">My Bill Map</h1><input value=${userName} onChange=${e => setUserName(e.target.value)} className="text-[10px] font-bold text-slate-400 bg-transparent border-none p-0 focus:ring-0 uppercase tracking-widest mt-1 w-32" /></div>
-                        </div>
-                        <button onClick=${function() { setShowPrint(true); }} className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 shadow-sm"><${Icon} name="Printer" size=${18} /></button>
-                    </header>
-
-                    <main className="max-w-6xl mx-auto px-5 space-y-6 no-print">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Monthly Summary</span>
-                                <div className="flex items-baseline gap-2 mt-1"><h2 className="text-2xl font-bold">₹${metrics.total.toLocaleString()}</h2>${isSimulating && metrics.saved > 0 && html`<div className="text-emerald-600 text-[9px] font-black bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase">Save ₹${metrics.saved.toLocaleString()}</div>`}</div>
+            var renderDashboard = function() {
+                if (!activeWS) {
+                    return html`<div className="flex-1 flex flex-col items-center justify-center p-8 animate-fade-up h-full"><div className="w-20 h-20 bg-[var(--sys-solid)] rounded-full flex items-center justify-center text-[var(--sys-accent)] mb-6 border border-[var(--sys-border)]"><${Icon} name="Briefcase" size=${32}/></div><h2 className="text-2xl font-bold mb-2 text-[var(--sys-text)]">No Active Map</h2><p className="text-[var(--sys-muted)] text-center mb-8 text-sm">Select a map from the library or create a new one to start tracking.</p><button onClick=${function(){setNav('maps');}} className="bg-[var(--sys-accent)] px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-[var(--sys-accent)]/20 active:scale-95 transition-transform text-white">Go to Map Library</button></div>`;
+                }
+                var reductionPct = metrics.spend > 0 ? ((metrics.simSaved / metrics.spend) * 100).toFixed(0) : 0;
+                return html`
+                    <div className="p-6 space-y-6 animate-fade-up pb-32">
+                        <div className="flex justify-between items-end">
+                            <div><h1 className="text-3xl font-bold tracking-tight mb-1 text-[var(--sys-text)]">${profile ? profile.salutation : 'Welcome'}, ${profile ? profile.name : 'User'}</h1><p className="text-xs text-[var(--sys-muted)] uppercase tracking-widest font-bold">Here is your financial luminous map.</p></div>
+                            <div className="flex gap-2">
+                                <button onClick=${function(){setShowPrint(true);}} className="p-3 bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] rounded-xl shadow-sm active:scale-95 transition-transform"><${Icon} name="Printer" size=${16}/></button>
                             </div>
-                            <div className="bg-indigo-600 p-4 rounded-3xl text-white shadow-lg"><span className="text-[10px] font-medium text-indigo-100 uppercase tracking-widest block">Daily Cost</span><h2 className="text-2xl font-bold mt-1 tracking-tight">₹${metrics.daily}</h2></div>
-                            <div className="bg-white p-4 rounded-3xl border border-slate-200 flex flex-col justify-between relative overflow-visible shadow-sm">
-                                <div className="flex items-center justify-between"><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest tracking-tight">Reduction Lab</span>
-                                    <div className="relative"><button onClick=${function() { if(isSimulating) setZapPopup(!zapPopup); }} className=${`p-2.5 rounded-full transition-all ${isSimulating ? 'bg-amber-100 text-amber-500 zap-glow' : 'bg-slate-100 text-slate-300'}`}>
-                                        <${Icon} name="Zap" size=${18} />${isSimulating && cutIds.length > 0 && html`<span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border-2 border-white">${cutIds.length}</span>`}</button>
-                                        ${zapPopup && isSimulating && html`<div className="absolute bottom-full right-0 mb-4 w-56 bg-slate-900 text-white rounded-2xl p-4 shadow-2xl z-50 animate-in zoom-in-95">
-                                            <div className="flex justify-between items-center mb-2 border-b border-white/10 pb-1"><span className="text-[9px] font-black text-amber-400 uppercase">Removing</span><button onClick=${function() { setZapPopup(false); }}><${Icon} name="Close" size=${10}/></button></div>
-                                            <div className="space-y-1 max-h-32 overflow-y-auto no-scrollbar">${subs.filter(function(s) { return cutIds.indexOf(s.id) !== -1; }).map(function(s) { return html`<div key=${s.id} onClick=${function() { navigateToBill(s.id); }} className="flex justify-between items-center py-2 text-[10px] border-b border-white/5 active:bg-white/10 rounded px-1">
-                                                <div className="flex items-center gap-2"><div className=${`p-1 rounded-sm ${s.color} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon} size=${8}/></div> <span>${s.name}</span></div>
-                                                <button onClick=${function(e) { e.stopPropagation(); setCutIds(cutIds.filter(function(cid){ return cid !== s.id; })); }} className="p-1.5"><${Icon} name="Trash" size=${14} className="text-rose-400"/></button>
-                                            </div>`; })}</div><div className="absolute top-full right-4 border-[8px] border-transparent border-t-slate-900"></div></div>`}
-                                    </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="glass-card rounded-3xl p-5 relative overflow-hidden group cursor-pointer" onClick=${function(){ setSalaryDraft(activeWS.salary||""); setSalaryModal(true); }}>
+                                <div className="flex justify-between items-start mb-2 relative z-10"><div className="w-10 h-10 rounded-xl bg-[var(--sys-solid)] flex items-center justify-center border border-[var(--sys-border)]"><${Icon} name="Briefcase" size=${18} className="text-[var(--sys-text)]"/></div><span className="text-[9px] font-bold uppercase tracking-widest text-[var(--sys-muted)] flex items-center gap-1 group-hover:text-[var(--sys-text)] transition-colors">Salary <${Icon} name="Pen" size=${10}/></span></div>
+                                <div className="text-3xl font-bold tracking-tight relative z-10 text-[var(--sys-text)]">₹${metrics.income.toLocaleString()}</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="glass-card rounded-3xl p-5"><div className="flex justify-between items-start mb-3"><div className="w-8 h-8 rounded-lg bg-[var(--sys-solid)] flex items-center justify-center border border-[var(--sys-border)]"><${Icon} name="CreditCard" size=${14} className="text-rose-400"/></div><span className="text-[8px] font-bold uppercase tracking-widest text-[var(--sys-muted)]">Spend</span></div><div className="text-xl font-bold tracking-tight text-[var(--sys-text)]">₹${metrics.spend.toLocaleString()}</div><div className="text-[10px] text-[var(--sys-muted)] mt-1">${metrics.income ? ((metrics.spend / metrics.income) * 100).toFixed(0) : 0}% of salary</div></div>
+                                <div className="gradient-bg rounded-3xl p-5 shadow-lg shadow-[var(--sys-accent)]/20 relative overflow-hidden"><div className="flex justify-between items-start mb-3 relative z-10"><div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-sm"><${Icon} name="Briefcase" size=${14} className="text-white"/></div><span className="text-[8px] font-bold uppercase tracking-widest text-indigo-100">Net Balance</span></div><div className="text-xl font-bold tracking-tight text-white relative z-10">₹${metrics.balance.toLocaleString()}</div><div className="text-[10px] text-indigo-100 mt-1 relative z-10">${metrics.balance >= 0 ? 'Trajectory: Steady' : 'Deficit Detected'}</div><div className="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4"><${Icon} name="Target" size=${100} /></div></div>
+                            </div>
+                            <div className="glass-card rounded-3xl p-4 flex items-center justify-between cursor-pointer active:scale-95 transition-transform" onClick=${function(){setNav('lab');}}>
+                                <div className="flex items-center gap-3"><div className="w-8 h-8 rounded-lg bg-[var(--sys-solid)] border border-[var(--sys-border)] flex items-center justify-center"><${Icon} name="Zap" size=${14} className="text-amber-400"/></div><div><h4 className="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-muted)]">Reduction Lab</h4><div className="text-base font-bold text-[var(--sys-text)]">₹${metrics.simSaved.toLocaleString()}</div></div></div>
+                                <div className="text-right"><span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-md">${reductionPct}% Saved</span></div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-3 py-2">
+                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                                <button onClick=${function(){setSelectedCat('All'); setIsRendering(true); setTimeout(function(){setIsRendering(false)}, 300);}} className=${`rounded-full font-bold uppercase px-4 py-2 text-[10px] transition-all whitespace-nowrap ${selectedCat==='All'?'bg-[var(--sys-accent)] text-white shadow-lg shadow-[var(--sys-accent)]/20':'bg-[var(--sys-solid)] text-[var(--sys-muted)] border border-[var(--sys-border)]'}`}>All Bills</button>
+                                ${(activeWS.categories||[]).map(function(c){return html`<button key=${c} onClick=${function(){setSelectedCat(c); setIsRendering(true); setTimeout(function(){setIsRendering(false)}, 300);}} onTouchStart=${function(){handleCatPressStart(c);}} onTouchEnd=${handleCatPressEnd} onMouseDown=${function(){handleCatPressStart(c);}} onMouseUp=${handleCatPressEnd} onMouseLeave=${handleCatPressEnd} className=${`rounded-full font-bold uppercase px-4 py-2 text-[10px] transition-all whitespace-nowrap ${selectedCat===c?'bg-[var(--sys-accent)] text-white shadow-lg shadow-[var(--sys-accent)]/20':'bg-[var(--sys-solid)] text-[var(--sys-muted)] border border-[var(--sys-border)]'}`}>${c}</button>`;})}
+                                <button onClick=${function(){setCatManageModal(true);}} className="rounded-full font-bold uppercase transition-all bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] px-3 py-1.5 shrink-0"><${Icon} name="Pen" size=${12}/></button>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="flex-1 bg-[var(--sys-solid)] border border-[var(--sys-border)] rounded-xl px-3 flex items-center shadow-sm"><${Icon} name="Search" size=${14} className="text-[var(--sys-muted)]" /><input value=${searchQuery} onChange=${function(e){setSearchQuery(e.target.value);}} className="w-full bg-transparent text-xs font-bold p-2 text-[var(--sys-text)] placeholder-[var(--sys-muted)]" placeholder="Search..." /></div>
+                                <div className="w-10 bg-[var(--sys-solid)] border border-[var(--sys-border)] rounded-xl flex items-center justify-center shadow-sm relative"><${Icon} name="Sort" size=${14} className="text-[var(--sys-muted)]"/><select value=${sortBy} onChange=${function(e){setSortBy(e.target.value);}} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"><option value="date_asc">Date (Asc)</option><option value="date_desc">Date (Desc)</option><option value="amount_desc">Cost (Hi-Lo)</option><option value="amount_asc">Cost (Lo-Hi)</option></select></div>
+                                <div className="flex items-center gap-1 bg-[var(--sys-solid)] border border-[var(--sys-border)] p-1 rounded-xl shadow-sm">
+                                    <button onClick=${function(){setView('board');}} className=${`p-1.5 rounded-lg transition-colors ${view==='board'?'bg-[var(--sys-bg)] text-[var(--sys-accent)]':'text-[var(--sys-muted)]'}`}><${Icon} name="LayoutGrid" size=${14}/></button>
+                                    <button onClick=${function(){setView('list');}} className=${`p-1.5 rounded-lg transition-colors ${view==='list'?'bg-[var(--sys-bg)] text-[var(--sys-accent)]':'text-[var(--sys-muted)]'}`}><${Icon} name="List" size=${14}/></button>
+                                    <button onClick=${function(){setView('bin');}} className=${`p-1.5 rounded-lg transition-colors flex items-center gap-1 font-bold text-[10px] uppercase tracking-widest ${view==='bin'?'bg-rose-500/10 text-rose-500':'text-[var(--sys-muted)] hover:text-rose-500'}`}><${Icon} name="Trash" size=${14}/> <span className="hidden sm:inline">Bin</span></button>
                                 </div>
-                                <button onClick=${function() { setIsSimulating(!isSimulating); setCutIds([]); setZapPopup(false); }} className=${`w-full py-1.5 rounded-xl text-[10px] font-bold mt-2 ${isSimulating ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600'}`}>${isSimulating ? 'Stop Test' : 'Test Cuts'}</button>
                             </div>
                         </div>
 
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-2 rounded-2xl border border-slate-200 sticky top-4 z-40 shadow-sm">
-                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto px-1">
-                                <button onClick=${function() { setSelectedCat('All'); }} className=${`px-4 py-2 rounded-xl text-[10px] font-black uppercase whitespace-nowrap transition-all ${selectedCat === 'All' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'}`}>All Records</button>
-                                ${categories.map(function(c) { return html`<button key=${c} onClick=${function() { setSelectedCat(c); }} className=${`px-4 py-2 rounded-xl text-[10px] font-black uppercase whitespace-nowrap transition-all ${selectedCat === c ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-50 text-slate-400'}`}>${c}</button>`; })}
-                            </div>
-                            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
-                                <button onClick=${function() { setView('board'); }} className=${`p-2 rounded-lg ${view === 'board' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Grid" size=${14}/></button>
-                                <button onClick=${function() { setView('list'); }} className=${`p-2 rounded-lg ${view === 'list' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="List" size=${14}/></button>
-                                <button onClick=${function() { setView('calendar'); }} className=${`p-2 rounded-lg ${view === 'calendar' ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'}`}><${Icon} name="Calendar" size=${14}/></button>
-                            </div>
-                        </div>
-
-                        ${view === 'board' && html`<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${filteredSubs.map(function(sub) {
-                            const stat = getStatus(sub); const isP = cutIds.indexOf(sub.id) !== -1;
-                            return html`<div key=${sub.id} id=${'bill-' + sub.id} onClick=${function() { if(isSimulating) { if(isP) setCutIds(cutIds.filter(function(i){ return i !== sub.id })); else setCutIds(cutIds.concat(sub.id)); } }}
-                                className=${`group relative bg-white p-5 rounded-[2.5rem] border-2 transition-all cursor-pointer ${focusedId === sub.id ? 'bill-focus ring-2 ring-indigo-500' : ''} ${isP && isSimulating ? 'opacity-40 grayscale border-dashed' : 'border-transparent shadow-sm'}`}>
-                                <div className=${`absolute top-4 right-4 px-2 py-1 rounded-lg flex items-center gap-1 ${stat.color}`}><${Icon} name=${stat.icon} size=${10}/><span className="text-[8px] font-bold uppercase tracking-widest leading-none">${stat.label}</span></div>
-                                <div className="flex items-center gap-3 mb-6"><div className=${`p-3 rounded-2xl ${sub.color} text-white shadow-sm`}><${Icon} name=${sub.icon} size=${18}/></div><div><h4 className="font-bold text-sm text-slate-800 leading-tight">${sub.name}</h4><p className="text-[9px] font-bold text-slate-300 uppercase">${sub.cat}</p></div></div>
-                                <div className="flex items-end justify-between"><div><span className="text-xl font-bold tracking-tight text-slate-900">₹${sub.amount.toLocaleString()}</span><p className="text-[8px] font-bold text-slate-400 uppercase mt-1">Recur Day ${sub.day}</p></div>
-                                <div className="flex flex-col items-end gap-1">${sub.fields && sub.fields.map(function(f, i) { return html`<div key=${i} className="text-[8px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100"><span>${f.label}: </span><span className="text-slate-600">${f.value}</span></div>`; })}</div></div>
-                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100"><button onClick=${function(e) {e.stopPropagation(); setModal(sub);}} className="p-3 bg-white text-blue-600 rounded-full shadow-xl border border-blue-50 hover:scale-110 active:scale-95 transition-all"><${Icon} name="Edit" size=${16}/></button><button onClick=${function(e) {e.stopPropagation(); setSubs(subs.filter(function(s){return s.id!==sub.id;}));}} className="p-3 bg-white text-rose-600 rounded-full shadow-xl border border-rose-50 hover:scale-110 active:scale-95 transition-all"><${Icon} name="Trash" size=${16}/></button></div>
-                            </div>`;
-                        })}</div>`}
-
-                        ${view === 'list' && html`<div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-                            <table className="w-full text-left table-fixed">
-                                <thead className="bg-slate-50 border-b"><tr><th className="w-[35%] px-4 py-4 text-[9px] font-bold uppercase tracking-widest">Detail</th><th className="w-[15%] px-2 py-4 text-center text-[9px] font-bold uppercase">Day</th><th className="w-[50%] px-4 py-4 text-right text-[9px] font-bold uppercase">Note & Cost</th></tr></thead>
-                                <tbody className="divide-y divide-slate-50">${filteredSubs.map(function(s) { return html`<tr key=${s.id} onClick=${function() { setModal(s); }} className="hover:bg-slate-50/50 cursor-pointer"><td className="px-4 py-3"><div className="flex items-center gap-2 overflow-hidden"><div className=${`p-1.5 rounded-lg ${s.color} text-white shrink-0 shadow-sm`}><${Icon} name=${s.icon} size=${10}/></div><span className="font-bold text-[11px] truncate text-slate-800">${s.name}</span></div></td><td className="px-2 py-3 text-center text-[10px] text-slate-400 font-bold">${s.day}</td><td className="px-4 py-3 text-right"><div className="flex flex-col items-end"><span className="font-bold text-indigo-600 text-xs">₹${s.amount.toLocaleString()}</span><div className="flex flex-wrap justify-end gap-1 mt-1">${s.fields && s.fields.slice(0,1).map(function(f){ return html`<span className="text-[7px] text-slate-400 font-black uppercase truncate bg-slate-50 px-1 py-0.5 rounded border border-slate-100">${f.label}: ${f.value}</span>`; })}</div></div></td></tr>`; })}</tbody>
-                            </table>
-                        </div>`}
-
-                        ${view === 'calendar' && html`<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pb-10"><div className="lg:col-span-3 bg-white p-6 rounded-[2.5rem] border border-slate-200 relative shadow-sm overflow-visible"><div className="grid grid-cols-7 gap-2">
-                            ${['S','M','T','W','T','F','S'].map(function(d) { return html`<div key=${d} className="text-center text-[10px] font-bold text-slate-300 py-3 uppercase">${d}</div>`; })}
-                            ${Array.from({ length: 31 }, function(_, i) { return i + 1; }).map(function(d) { const dSubs = subs.filter(function(s) { return s.day === d; });
-                                return html`<div key=${d} onClick=${function() { if(dSubs.length) setCalPopup(d); }} className=${`aspect-square border-2 rounded-2xl p-1 relative flex flex-col transition-all cursor-pointer ${dSubs.length ? 'bg-indigo-50 border-indigo-100 shadow-sm' : 'border-slate-50'}`}>
-                                    <span className="text-[10px] font-bold text-slate-300">${d}</span><div className="flex gap-0.5 mt-auto flex-wrap">${dSubs.map(function(s) { return html`<div key=${s.id} className=${`w-1.5 h-1.5 rounded-full ${s.color}`} />`; })}</div>
-                                    ${calPopup === d && html`<div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-48 bg-slate-900 text-white rounded-2xl p-4 shadow-2xl z-50 animate-in zoom-in-95">
-                                        <div className="flex justify-between items-center mb-2 border-b border-white/10 pb-1"><span className="text-[9px] font-black uppercase text-indigo-400">Day ${d} Notes</span><button onClick=${function(e){e.stopPropagation(); setCalPopup(null);}}><${Icon} name="Close" size=${10}/></button></div>
-                                        <div className="space-y-1">${dSubs.map(function(s) { return html`<div key=${s.id} onClick=${function() { navigateToBill(s.id); }} className="flex justify-between text-[10px] items-center py-2 active:bg-white/10 px-1 rounded transition-colors cursor-pointer">
-                                            <div className="flex items-center gap-2"><div className=${`p-1 rounded-sm ${s.color} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon} size=${8} /></div> <span className="truncate w-20">${s.name}</span></div>
-                                            <span className="font-bold text-xs">₹${s.amount}</span>
-                                        </div>`; })}</div><div className="absolute top-full left-1/2 -translate-x-1/2 border-[8px] border-transparent border-t-slate-900"></div></div>`}
-                                </div>`;
-                            })}</div></div>
-                            <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm space-y-4 h-fit"><h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-3">Coming Up Next</h4>
-                                <div className="space-y-2 max-h-64 overflow-y-auto no-scrollbar">${subs.sort(function(a,b){return a.day-b.day;}).map(function(s) { return html`<div key=${s.id} onClick=${function() { navigateToBill(s.id); }} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl active:bg-slate-100 transition-all cursor-pointer"><div className="flex items-center gap-3"><div className=${`p-1.5 rounded-lg ${s.color} text-white shadow-sm shrink-0`}><${Icon} name=${s.icon} size=${12}/></div><span className="text-[11px] font-bold text-slate-700 truncate w-24">${s.name}</span></div><span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Day ${s.day}</span></div>`; })}</div>
-                            </div></div>`}
-
-                        <div className="py-20 text-center opacity-30 flex flex-col items-center"><${Icon} name="Heart" size=${16} className="text-rose-500 fill-rose-500 mb-2" /><p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Built with love for you</p></div>
-                    </main>
-
-                    ${modal && html`<div className="fixed inset-0 z-[200] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
-                        <div className="bg-white w-full max-w-[325px] rounded-[2.5rem] shadow-2xl overflow-hidden border-[6px] border-white my-auto animate-in zoom-in-95">
-                            <div className="p-4 bg-slate-50 border-b flex justify-between items-center shrink-0"><h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Record Note</h3><button onClick=${function() { setModal(null); }} className="p-1"><${Icon} name="Close" size=${20} className="text-slate-400" /></button></div>
-                            <div className="p-4 space-y-4 max-h-[75vh] overflow-y-auto no-scrollbar">
-                                <div className="space-y-3">
-                                    <div><label className="text-[9px] font-bold uppercase text-slate-400 ml-1">Name</label><input value=${modal.name} onChange=${e => setModal(Object.assign({}, modal, {name: e.target.value}))} className="w-full bg-slate-100 rounded-xl px-3 py-2.5 font-bold outline-none text-base border-2 border-transparent focus:border-indigo-100" placeholder="Netflix, Rent..." /></div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div><label className="text-[9px] font-bold uppercase text-slate-400 ml-1">Amount</label><input type="number" value=${modal.amount || ""} onChange=${e => setModal(Object.assign({}, modal, {amount: e.target.value}))} className="w-full bg-slate-100 rounded-xl px-3 py-2.5 font-bold outline-none text-base" placeholder="₹" /></div>
-                                        <div><label className="text-[9px] font-bold uppercase text-slate-400 ml-1">Date</label><input type="date" value=${modal.rawDate || ""} className="w-full bg-slate-100 rounded-xl px-2 py-2.5 font-bold outline-none text-[10px]" onChange=${e => { if(e.target.value) { const d = new Date(e.target.value); setModal(Object.assign({}, modal, {day: d.getDate(), rawDate: e.target.value})); } }} /></div>
-                                    </div>
+                        <div className="space-y-4">
+                            ${isRendering ? html`<div className="space-y-4 animate-pulse">${[1,2,3].map(function(i){ return html`<div key=${i} className="glass-card rounded-[2rem] p-5 h-32 border border-[var(--sys-border)] flex flex-col justify-between"><div className="flex gap-4"><div className="w-12 h-12 bg-[var(--sys-solid)] rounded-2xl"></div><div className="w-1/2 h-6 bg-[var(--sys-solid)] rounded"></div></div><div className="w-full h-8 bg-[var(--sys-solid)] rounded mt-4"></div></div>`;})}</div>` 
+                            : view === 'bin' ? html`
+                                <div>
+                                    <p className="text-[10px] font-bold text-[var(--sys-muted)] mb-4 uppercase tracking-widest border-b border-[var(--sys-border)] pb-2 flex justify-between">Deleted Bills <span>Kept for 30 Days</span></p>
+                                    ${displayBinSubs.length === 0 ? html`<div className="text-center p-8 border border-dashed border-[var(--sys-border)] rounded-[2rem] text-[var(--sys-muted)] text-sm font-semibold">Bin is empty.</div>` : displayBinSubs.map(function(sub, i) { return html`<div key=${sub.id} style=${{animationDelay:(i*0.05)+'s'}} onClick=${function(){setModal(Object.assign({},sub,{isBinPreview:true})); setIsEditMode(false);}} className="animate-fade-up ticket-card glass-card border border-[var(--sys-border)] rounded-[1.5rem] shadow-sm opacity-60 mb-3 cursor-pointer"><div className="p-5 flex justify-between items-center"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-[var(--sys-solid)] text-[var(--sys-muted)] flex items-center justify-center"><${Icon} name=${sub.icon} size=${16}/></div><div><h4 className="font-bold text-base text-[var(--sys-text)] line-through">${sub.name}</h4><span className="text-[8px] font-bold text-[var(--sys-muted)] uppercase tracking-widest mt-1 block">Del: ${formatDate(sub.deletedAt)}</span></div></div><div className="flex gap-2"><button onClick=${function(e){e.stopPropagation(); updateActiveWS({subs:(activeWS.subs||[]).concat([Object.assign({},sub,{deletedAt:undefined})]), deletedSubs:(activeWS.deletedSubs||[]).filter(function(s){return s.id!==sub.id;})}); triggerToast("Bill Restored!");}} className="p-3 bg-[var(--sys-solid)] rounded-xl text-emerald-500 border border-[var(--sys-border)] shadow-sm active:scale-95 transition-colors"><${Icon} name="RotateCcw" size=${14}/></button></div></div></div>`; })}
                                 </div>
-                                <div className="p-3 bg-indigo-50 rounded-xl flex justify-between items-center"><span className="text-[10px] font-black uppercase text-indigo-900">Auto-Pay</span><button onClick=${function() { setModal(Object.assign({}, modal, {isAutoPay: !modal.isAutoPay})); }} className=${`px-4 py-1.5 rounded-lg text-[9px] font-black ${modal.isAutoPay ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white border-2'}`}>${modal.isAutoPay ? 'ON' : 'OFF'}</button></div>
-                                
-                                <div className="space-y-3 pt-3 border-t border-slate-100"><label className="text-[9px] font-black uppercase text-slate-400 block text-center">Visuals</label>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="grid grid-cols-4 gap-1 bg-slate-50 p-1.5 rounded-xl">${ICON_LIST.map(function(k) { return html`<button key=${k} onClick=${function() { setModal(Object.assign({}, modal, {icon: k})); }} className=${`p-1.5 rounded-lg flex items-center justify-center transition-all ${modal.icon === k ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-300'}`}><${Icon} name=${k} size=${10}/></button>`; })}</div>
-                                        <div className="flex flex-col gap-1.5">
-                                            ${modal.isCustomMode ? html`<input autoFocus className="w-full bg-white border-2 border-indigo-200 rounded-xl px-2 py-2 text-[9px] font-bold" placeholder="Label..." onBlur=${function(e) { if(e.target.value) setModal(Object.assign({}, modal, {cat: e.target.value, isCustomMode: false})); else setModal(Object.assign({}, modal, {isCustomMode: false})); }} />` : html`<select value=${modal.cat} onChange=${function(e) { if(e.target.value === 'NEW') setModal(Object.assign({}, modal, {isCustomMode: true})); else setModal(Object.assign({}, modal, {cat: e.target.value})); }} className="w-full bg-slate-100 rounded-xl px-2 py-2 text-[9px] font-black uppercase outline-none shadow-sm">${categories.map(function(c){ return html`<option key=${c} value=${c}>${c}</option>`; })}<option value="NEW">+ Custom...</option></select>`}
-                                            <div className="flex flex-wrap gap-1 justify-center">${COLOR_PALETTE.map(function(c) { return html`<button key=${c} onClick=${function() { setModal(Object.assign({}, modal, {color: c})); }} className=${`w-4 h-4 rounded-full ${c} ${modal.color === c ? 'ring-2 ring-indigo-200 shadow-sm' : 'opacity-40'}`} />`; })}</div>
+                            `
+                            : displaySubs.length === 0 ? html`<div className="text-center p-8 border border-dashed border-[var(--sys-border)] rounded-[2rem] text-[var(--sys-muted)] text-sm font-semibold">No records found.</div>` 
+                            : view === 'board' ? displaySubs.map(function(s) {
+                                var isCut = cutIds.indexOf(s.id) !== -1;
+                                var today = new Date().getDate();
+                                var statusText = s.isPaidManual ? "Paid ✓" : (s.isAutoPay ? "Auto-Pay" : (s.day == today ? "Due Today" : (s.day < today ? "Overdue" : "In " + (s.day - today) + "d")));
+                                var statusColor = s.isPaidManual ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" : (s.isAutoPay ? "text-[var(--sys-accent)] bg-[var(--sys-accent-soft)] border border-[var(--sys-accent)]/20" : (s.day <= today ? "text-rose-400 bg-rose-500/10 border border-rose-500/20" : "text-[var(--sys-muted)] bg-[var(--sys-solid)] border border-[var(--sys-border)]"));
+
+                                return html`
+                                    <div key=${s.id} className=${`ticket-card glass-card rounded-[2rem] shadow-lg animate-fade-up transition-all ${isCut && isSimulating ? 'opacity-40 grayscale' : ''}`}>
+                                        <div className="p-5 pb-4 flex flex-col relative">
+                                            <div className="flex items-start justify-between pr-1">
+                                                <div className="flex items-center gap-4 min-w-0 pr-2 flex-1">
+                                                    <div className=${`w-12 h-12 rounded-2xl ${s.color||'bg-indigo-600'} text-white flex items-center justify-center shadow-inner shrink-0`}><${Icon} name=${s.icon} size=${20}/></div>
+                                                    <div className="min-w-0"><h4 className="font-bold text-[15px] text-[var(--sys-text)] leading-tight truncate">${s.name}</h4><span className="text-[8px] font-black uppercase tracking-widest text-[var(--sys-accent)] mt-1 block">${s.cat}</span></div>
+                                                </div>
+                                                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                                    <div className="font-black text-xl tracking-tight text-[var(--sys-text)]">₹${(parseFloat(s.amount)||0).toLocaleString()}</div>
+                                                    <div className="flex gap-3">
+                                                        <span onClick=${function(e){e.stopPropagation(); setModal(Object.assign({},s)); setIsEditMode(false);}} className="text-[10px] font-black uppercase tracking-widest text-sky-400 cursor-pointer active:opacity-50 transition-opacity">See More</span>
+                                                        ${s.isAutoPay ? html`<span className="text-[10px] font-black uppercase tracking-widest text-[var(--sys-accent)]">Auto</span>` : html`<span onClick=${function(e){e.stopPropagation(); togglePaid(s.id);}} className=${`text-[10px] font-black uppercase tracking-widest cursor-pointer active:opacity-50 transition-opacity ${s.isPaidManual ? 'text-emerald-400' : 'text-rose-400'}`}>${s.isPaidManual ? 'Paid ✓' : 'Pay'}</span>`}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ticket-divider-wrap"><div className="ticket-cut-l"></div><div className="ticket-divider"></div><div className="ticket-cut-r"></div></div>
+                                        <div className="p-3 px-5 flex justify-between items-center bg-[var(--sys-solid)]/30 rounded-b-[2rem] border-t border-[var(--sys-border)]">
+                                            <span className="text-[10px] font-black tracking-widest uppercase text-[var(--sys-muted)]">Day ${s.day}</span>
+                                            <span className=${`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${statusColor}`}>${statusText}</span>
                                         </div>
                                     </div>
+                                `;
+                            }) : html`
+                                <div className="glass-card rounded-[1.5rem] border border-[var(--sys-border)] shadow-sm overflow-hidden animate-fade-up">
+                                    <table className="w-full text-left table-fixed text-[11px]"><tbody className="divide-y divide-[var(--sys-border)]">${displaySubs.map(function(s){ return html`<tr key=${s.id} onClick=${function(){setModal(Object.assign({},s)); setIsEditMode(false);}} className="hover:bg-[var(--sys-solid)] cursor-pointer transition-colors"><td className="px-5 py-4"><div className="font-bold text-[13px] text-[var(--sys-text)] truncate">${s.name}</div><div className="text-[9px] font-black text-[var(--sys-muted)] uppercase mt-1 tracking-widest">${s.cat}</div></td><td className="px-2 py-4 text-center text-[var(--sys-muted)] font-black text-[10px] uppercase tracking-widest">Day ${s.day}</td><td className="px-5 py-4 text-right"><div className="font-black text-[var(--sys-accent)] text-base mb-1">₹${(parseFloat(s.amount)||0).toLocaleString()}</div><div className=${`text-[8px] font-bold uppercase tracking-widest ${s.isPaidManual?'text-emerald-400':'text-[var(--sys-muted)]'}`}>${s.isPaidManual?'Paid':'Pending'}</div></td></tr>`;})}</tbody></table>
                                 </div>
+                            `}
+                        </div>
+                        <div className="text-center pb-8 pt-12 text-[10px] text-[var(--sys-muted)] font-black uppercase tracking-widest">Made with <span className="text-rose-500">❤️</span> by Luminous</div>
+                    </div>
+                `;
+            };
 
-                                <div className="space-y-2 pt-3 border-t border-slate-100"><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase text-slate-400">Notes</span><button onClick=${function() { setModal(Object.assign({}, modal, {fields: (modal.fields || []).concat({label: 'Note', value: '', isCustom: false})})); }} className="text-indigo-600 text-[9px] font-bold bg-indigo-50 px-2 py-1 rounded shadow-sm">+ Row</button></div>
-                                    ${modal.fields && modal.fields.map(function(f, i) { return html`<div key=${i} className="flex gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100 items-center">
-                                        <select value=${f.isCustom ? "Custom" : f.label} onChange=${function(e) { const n = JSON.parse(JSON.stringify(modal.fields)); if(e.target.value === "Custom") { n[i].isCustom = true; n[i].label = ""; } else { n[i].isCustom = false; n[i].label = e.target.value; } setModal(Object.assign({}, modal, {fields: n})); }} className="w-[30%] bg-white rounded-lg px-1 py-1 text-[8px] font-bold border outline-none">${PRESET_KEYS.map(function(pk){ return html`<option value=${pk}>${pk}</option>`; })}<option value="Custom">Other</option></select>
-                                        ${f.isCustom ? html`<input autoFocus className="w-[30%] bg-white rounded-lg px-1 py-1 text-[8px] font-bold border" placeholder="Key..." value=${f.label} onChange=${function(e) { const n = JSON.parse(JSON.stringify(modal.fields)); n[i].label = e.target.value; setModal(Object.assign({}, modal, {fields: n})); }} />` : null}
-                                        <input value=${f.value} onChange=${function(e) { const n = JSON.parse(JSON.stringify(modal.fields)); n[i].value = e.target.value; setModal(Object.assign({}, modal, {fields: n})); }} className="flex-1 bg-white rounded-lg px-1.5 py-1.5 text-[8px] font-bold border" placeholder="Info" />
-                                        <button onClick=${function() { setModal(Object.assign({}, modal, {fields: modal.fields.filter(function(_, idx){ return idx !== i; })})); }} className="p-1"><${Icon} name="Trash" size=${14} className="text-rose-400" /></button>
-                                    </div>`; })}
+            var renderLab = function() {
+                if (!activeWS) return html`<div className="flex-1 flex flex-col items-center justify-center p-8 animate-fade-up h-full"><div className="w-20 h-20 bg-[var(--sys-solid)] rounded-full flex items-center justify-center text-[var(--sys-accent)] mb-6 border border-[var(--sys-border)]"><${Icon} name="Zap" size=${32}/></div><h2 className="text-2xl font-bold mb-2 text-[var(--sys-text)]">Simulation Lab Offline</h2><p className="text-[var(--sys-muted)] text-center mb-8 text-sm">Select a map from the library to simulate cuts.</p><button onClick=${function(){setNav('maps');}} className="bg-[var(--sys-accent)] px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-[var(--sys-accent)]/20 active:scale-95 transition-transform text-white">Open Library</button></div>`;
+                return html`
+                    <div className="p-6 space-y-6 animate-fade-up pb-32">
+                        <div>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-[var(--sys-accent)] mb-1 block">Reduction Simulation</span>
+                            <h1 className="text-3xl font-bold tracking-tight leading-tight text-[var(--sys-text)]">Optimize ${activeWS.name}</h1>
+                            <p className="text-xs text-[var(--sys-muted)] mt-3 font-semibold leading-relaxed pr-4">Experiment with cutting recurring liabilities to see immediate impact on your savings. Toggle bills below to simulate a "Zap".</p>
+                        </div>
+                        <div className="glass-card rounded-[2.5rem] p-6 relative overflow-hidden border-[var(--sys-accent)]/30">
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--sys-accent)]/20 rounded-full blur-3xl pointer-events-none"></div>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-muted)] mb-2 block relative z-10 flex items-center gap-1">Potential Monthly Savings <${Icon} name="Zap" size=${10} className="text-emerald-400"/></span>
+                            <div className="flex items-end gap-3 mb-6 relative z-10">
+                                <div className="text-5xl font-black tracking-tighter glow-text text-[var(--sys-text)]">₹${metrics.simSaved.toLocaleString()}</div>
+                                ${metrics.simSaved > 0 ? html`<div className="text-xs font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-1 rounded-md mb-2">+${metrics.spend > 0 ? ((metrics.simSaved/metrics.spend)*100).toFixed(0) : 0}%</div>` : null}
+                            </div>
+                            <div className="h-2 w-full bg-[var(--sys-solid)] rounded-full overflow-hidden relative z-10 mb-6">
+                                <div className="h-full bg-emerald-400 transition-all duration-500 ease-out" style=${{width: (metrics.spend > 0 ? Math.min(100, (metrics.simSaved / metrics.spend) * 100) : 0) + '%'}}></div>
+                            </div>
+                            <button onClick=${function(){
+                                if(cutIds.length === 0) return triggerAlert("Notice", "Toggle bills to cut first!");
+                                requestConfirm("Zap Savings?", "Permanently remove selected bills?", function(){ updateActiveWS({subs: activeWS.subs.filter(function(s){return cutIds.indexOf(s.id) === -1;})}); setCutIds([]); setNav('dash'); triggerToast("Bills Zapped!"); });
+                            }} className=${`w-full py-4 rounded-2xl font-bold text-sm transition-all ${cutIds.length > 0 ? 'bg-[var(--sys-accent)] shadow-lg shadow-[var(--sys-accent)]/30 text-white' : 'bg-[var(--sys-solid)] text-[var(--sys-muted)] cursor-not-allowed border border-[var(--sys-border)]'}`}>Confirm & Zap Savings</button>
+                        </div>
+                        <div className="flex justify-between items-center mt-8 mb-4"><h3 className="text-sm font-bold uppercase tracking-widest text-[var(--sys-muted)]">Active Recurring Bills</h3></div>
+                        <div className="space-y-3">
+                            ${displaySubs.map(function(s) {
+                                var isCut = cutIds.indexOf(s.id) !== -1;
+                                return html`
+                                    <div key=${s.id} className=${`glass-card rounded-[1.5rem] p-4 flex items-center justify-between transition-all duration-300 ${isCut ? 'opacity-40 grayscale border-rose-500/30' : ''}`}>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-[var(--sys-solid)] border border-[var(--sys-border)] flex items-center justify-center"><${Icon} name=${s.icon} size=${16} className="text-[var(--sys-muted)]"/></div>
+                                            <div><h4 className="font-bold text-sm text-[var(--sys-text)] ${isCut ? 'line-through' : ''}">${s.name}</h4><div className="text-xs font-semibold text-[var(--sys-muted)] mt-0.5">₹${s.amount}</div></div>
+                                        </div>
+                                        <div className="cursor-pointer p-2" onClick=${function(){setCutIds(isCut ? cutIds.filter(function(id){return id!==s.id;}) : cutIds.concat([s.id]));}}>
+                                            <div className=${`toggle-switch ${isCut ? 'off' : 'on'}`}><div className="toggle-thumb"></div></div>
+                                        </div>
+                                    </div>
+                                `;
+                            })}
+                        </div>
+                        <div className="mt-8 gradient-bg rounded-[2rem] p-6 shadow-xl shadow-[var(--sys-accent)]/20 relative overflow-hidden">
+                            <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4"><${Icon} name="Zap" size=${120} className="text-white"/></div>
+                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mb-4 relative z-10"><${Icon} name="Star" size=${14} className="text-white"/></div>
+                            <h3 className="text-lg font-bold text-white mb-2 relative z-10">Smart Analysis</h3>
+                            <p className="text-xs text-indigo-100 font-medium leading-relaxed relative z-10">${generateSmartAnalysis()}</p>
+                        </div>
+                        <div className="mt-8 p-6 glass-card rounded-[2rem]">
+                            <h3 className="text-sm font-bold mb-1 text-[var(--sys-text)]">Simulation Impact Projection</h3>
+                            <p className="text-[10px] text-[var(--sys-muted)] mb-6 font-semibold">Real-time delta in wealth accumulation over 6 months.</p>
+                            <div className="h-32 flex items-end justify-between gap-2 border-b border-[var(--sys-border)] pb-2">
+                                ${[1,2,3,4,5,6].map(function(m) {
+                                    var base = 20; var ratio = m/6; var h = base + (metrics.simSaved > 0 ? (ratio * 80) : 0);
+                                    return html`<div key=${m} className="flex-1 flex flex-col items-center gap-2"><div className="w-full bg-[var(--sys-accent)]/20 rounded-t-sm relative group transition-all duration-500" style=${{height: h+'%'}}>${metrics.simSaved > 0 ? html`<div className="absolute bottom-0 left-0 right-0 bg-emerald-400 rounded-t-sm transition-all duration-500" style=${{height: (ratio * 100)+'%'}}></div>` : null}</div><span className="text-[8px] text-[var(--sys-muted)] font-bold uppercase">M${m}</span></div>`;
+                                })}
+                            </div>
+                            <div className="text-center mt-6">
+                                <span className="text-[9px] font-black uppercase text-[var(--sys-muted)] tracking-widest">6 Mo. Net Savings</span>
+                                <div className="text-2xl font-bold mt-1 text-emerald-400 glow-text">₹${(metrics.simSaved * 6).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div className="text-center pb-8 pt-12 text-[10px] text-[var(--sys-muted)] font-black uppercase tracking-widest">Made with <span className="text-rose-500">❤️</span> by Luminous</div>
+                    </div>
+                `;
+            };
+
+            var renderCalendar = function() {
+                if(!activeWS) return html`<div className="flex-1 flex flex-col items-center justify-center p-8 animate-fade-up h-full"><div className="w-20 h-20 bg-[var(--sys-solid)] rounded-full flex items-center justify-center text-[var(--sys-accent)] mb-6 border border-[var(--sys-border)]"><${Icon} name="Calendar" size=${32}/></div><h2 className="text-2xl font-bold mb-2 text-[var(--sys-text)]">No Timeline Available</h2><p className="text-[var(--sys-muted)] text-center mb-8 text-sm">Select a map from the library to view your schedule.</p><button onClick=${function(){setNav('maps');}} className="bg-[var(--sys-accent)] px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-[var(--sys-accent)]/20 active:scale-95 transition-transform text-white">Go to Map Library</button></div>`;
+                return html`
+                    <div className="p-6 animate-fade-up pb-32">
+                        <div className="flex items-center gap-3 mb-6 cursor-pointer" onClick=${function(){setNav('dash');}}>
+                            <div className="w-8 h-8 rounded-full bg-[var(--sys-solid)] flex items-center justify-center border border-[var(--sys-border)]"><${Icon} name="Back" size=${14}/></div>
+                            <h2 className="text-xl font-bold text-[var(--sys-text)]">Timeline</h2>
+                        </div>
+                        <div className="glass-card p-6 rounded-[2rem] mb-8 relative z-10">
+                            <div className="grid grid-cols-7 gap-2 mb-4">${['S','M','T','W','T','F','S'].map(function(d,i){ return html`<div key=${i} className="text-center text-[10px] font-bold text-[var(--sys-muted)]">${d}</div>`; })}</div>
+                            <div className="grid grid-cols-7 gap-2">
+                                ${Array.from({length:31}, function(_,i){return i+1;}).map(function(dInt){
+                                    var daySubs = activeWS.subs.filter(function(s){return parseInt(s.day) === dInt;});
+                                    var isToday = new Date().getDate() === dInt;
+                                    return html`<div key=${dInt} onClick=${function(e){ e.stopPropagation(); if(daySubs.length) setCalPopup(dInt);}} className=${`aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-bold relative transition-colors ${isToday ? 'bg-[var(--sys-accent)] text-white shadow-lg' : (daySubs.length ? 'bg-[var(--sys-solid)] border border-[var(--sys-border)] text-[var(--sys-text)] cursor-pointer hover:border-[var(--sys-accent)]' : 'text-[var(--sys-muted)]')}`}>
+                                        ${dInt}
+                                        ${daySubs.length && !isToday ? html`<div className="absolute bottom-1 w-1 h-1 bg-[var(--sys-accent)] rounded-full"></div>` : null}
+                                    </div>`;
+                                })}
+                            </div>
+                        </div>
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--sys-muted)] mb-4">Upcoming Schedule</h3>
+                        <div className="space-y-3">
+                            ${displaySubs.slice().sort(function(a,b){return parseFloat(a.day||0)-parseFloat(b.day||0);}).slice(0, 10).map(function(s){
+                                return html`
+                                    <div key=${s.id} onClick=${function(){setModal(s); setIsEditMode(false);}} className="glass-card p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[var(--sys-accent)]/50 transition-colors">
+                                        <div className="flex items-center gap-4"><div className="w-10 h-10 rounded-xl bg-[var(--sys-solid)] border border-[var(--sys-border)] flex items-center justify-center text-[var(--sys-accent)]"><${Icon} name=${s.icon} size=${16}/></div><div><h4 className="font-bold text-sm text-[var(--sys-text)]">${s.name}</h4><p className="text-[10px] font-semibold text-[var(--sys-muted)] mt-0.5">₹${s.amount}</p></div></div>
+                                        <div className="text-right"><div className="text-xs font-bold text-[var(--sys-text)]">Day ${s.day}</div>${s.isPaidManual ? html`<span className="text-[8px] uppercase tracking-widest text-emerald-400 font-bold">Paid</span>` : html`<span className="text-[8px] uppercase tracking-widest text-[var(--sys-muted)] font-bold">Pending</span>`}</div>
+                                    </div>
+                                `;
+                            })}
+                            ${displaySubs.length === 0 ? html`<div className="text-center text-[10px] uppercase tracking-widest font-bold text-[var(--sys-muted)] py-8 border border-dashed border-[var(--sys-border)] rounded-2xl">No upcoming bills</div>` : null}
+                        </div>
+                        <div className="text-center pb-8 pt-12 text-[10px] text-[var(--sys-muted)] font-black uppercase tracking-widest">Made with <span className="text-rose-500">❤️</span> by Luminous</div>
+                    </div>
+                `;
+            };
+
+            var renderMaps = function() {
+                var activeList = workspaces.filter(function(w){return !w.deletedAt;});
+                return html`
+                    <div className="p-6 animate-fade-up pb-32">
+                        <div className="flex justify-between items-end mb-8">
+                            <div><h1 className="text-3xl font-bold tracking-tight text-[var(--sys-text)]">Your Maps</h1><p className="text-xs text-[var(--sys-muted)] mt-1 font-semibold uppercase tracking-widest">Financial environments.</p></div>
+                        </div>
+                        <div className="space-y-4">
+                            ${isRendering ? html`<div className="space-y-4 animate-pulse">${[1,2,3].map(function(i){ return html`<div key=${i} className="glass-card rounded-[2rem] p-5 h-24 border border-[var(--sys-border)] flex items-center gap-4"><div className="w-14 h-14 bg-[var(--sys-solid)] rounded-2xl"></div><div className="flex-1 space-y-2"><div className="h-5 bg-[var(--sys-solid)] rounded w-1/2"></div><div className="h-3 bg-[var(--sys-solid)] rounded w-1/3"></div></div></div>`;})}</div>` 
+                            : activeList.length === 0 ? html`<div className="flex-1 flex flex-col items-center justify-center p-8 animate-fade-up h-full mt-10"><div className="w-20 h-20 bg-[var(--sys-solid)] rounded-full flex items-center justify-center text-[var(--sys-accent)] mb-6 border border-[var(--sys-border)]"><${Icon} name="Briefcase" size=${32}/></div><h2 className="text-2xl font-bold mb-2 text-[var(--sys-text)]">Library Empty</h2><p className="text-[var(--sys-muted)] text-center mb-8 text-sm">You need a financial map to start tracking.</p><span onClick=${function(){setWsName(''); setWsIcon('Briefcase'); setShowWsModal(true);}} className="text-[var(--sys-accent)] cursor-pointer text-lg font-black tracking-widest uppercase">Create Map <${Icon} name="Plus" size=${16} className="inline mb-1"/></span></div>` 
+                            : activeList.map(function(ws) {
+                                return html`
+                                    <div key=${ws.id} onClick=${function(){handleMapSelect(ws.id);}} className="glass-card p-5 rounded-[2rem] flex items-center justify-between cursor-pointer group hover:border-[var(--sys-accent)]/50 transition-all">
+                                        <div className="flex items-center gap-4"><div className=${`w-14 h-14 rounded-2xl ${ws.color || 'bg-indigo-600'} flex items-center justify-center shadow-inner text-white`}><${Icon} name=${ws.icon} size=${24} /></div><div><h3 className="font-bold text-lg text-[var(--sys-text)]">${ws.name}</h3><p className="text-[10px] uppercase tracking-widest text-[var(--sys-muted)] font-bold mt-1">${(ws.subs||[]).length} Records</p></div></div>
+                                        <button onClick=${function(e){e.stopPropagation(); requestConfirm("Archive Map?", "Move map to recycle bin?", function(){setWorkspaces(workspaces.map(function(w){return w.id===ws.id?Object.assign({},w,{deletedAt:Date.now()}):w})); triggerToast("Map Archived!");}); }} className="p-3 bg-[var(--sys-solid)] border border-[var(--sys-border)] rounded-xl text-[var(--sys-muted)] hover:text-rose-400 transition-colors"><${Icon} name="Archive" size=${16}/></button>
+                                    </div>
+                                `;
+                            })}
+                        </div>
+                        <div className="text-center pb-8 pt-12 text-[10px] text-[var(--sys-muted)] font-black uppercase tracking-widest">Made with <span className="text-rose-500">❤️</span> by Luminous</div>
+                    </div>
+                `;
+            };
+
+            var renderBin = function() {
+                var binWorkspaces = workspaces.filter(function(w) { return w.deletedAt; });
+                return html`
+                    <div className="p-6 animate-fade-up pb-32">
+                        <div className="flex items-center gap-3 mb-6 cursor-pointer" onClick=${function(){setNav('settings');}}>
+                            <div className="w-8 h-8 rounded-full bg-[var(--sys-solid)] flex items-center justify-center border border-[var(--sys-border)]"><${Icon} name="Back" size=${14}/></div>
+                            <h2 className="text-xl font-bold text-[var(--sys-text)]">Recycle Bin</h2>
+                        </div>
+                        <p className="text-[10px] font-bold text-[var(--sys-muted)] mb-6 uppercase tracking-widest border-b border-[var(--sys-border)] pb-4">Deleted maps are kept for 30 days.</p>
+                        <div className="space-y-4">
+                            ${binWorkspaces.length === 0 ? html`<div className="text-center p-12 border border-dashed border-[var(--sys-border)] rounded-[2rem] text-[var(--sys-muted)] font-semibold text-sm">Bin is empty.</div>` : binWorkspaces.map(function(ws) {
+                                return html`
+                                    <div key=${ws.id} className="glass-card p-5 rounded-[1.5rem] flex items-center justify-between transition-all opacity-60 grayscale hover:grayscale-0">
+                                        <div className="flex items-center gap-4"><div className=${`w-12 h-12 rounded-xl ${ws.color || 'bg-indigo-600'} flex items-center justify-center text-white`}><${Icon} name=${ws.icon} size=${20}/></div><div><h4 className="font-bold text-base text-[var(--sys-text)] line-through">${ws.name}</h4><p className="text-[10px] text-rose-500 font-bold uppercase mt-1 tracking-widest">Del: ${formatDate(ws.deletedAt)}</p></div></div>
+                                        <div className="flex gap-2"><button onClick=${function(){setWorkspaces(workspaces.map(function(w){if(w.id===ws.id){var r=Object.assign({},w);delete r.deletedAt;return r;}return w;})); triggerToast("Map Restored!");}} className="p-3 bg-[var(--sys-solid)] text-emerald-500 rounded-xl border border-[var(--sys-border)] shadow-sm"><${Icon} name="RotateCcw" size=${16}/></button><button onClick=${function(){requestConfirm("Delete Forever?", "This map cannot be recovered.", function(){setWorkspaces(workspaces.filter(function(w){return w.id!==ws.id;})); triggerAlert("Deleted", "Map completely removed.");});}} className="p-3 bg-[var(--sys-solid)] text-rose-500 rounded-xl border border-[var(--sys-border)] shadow-sm"><${Icon} name="Trash" size=${16}/></button></div>
+                                    </div>
+                                `;
+                            })}
+                        </div>
+                    </div>
+                `;
+            };
+            
+            var renderSettings = function() {
+                var binWorkspaces = workspaces.filter(function(w) { return w.deletedAt; });
+                return html`
+                    <div className="p-6 animate-fade-up pb-32">
+                        <div className="flex items-center justify-between mb-8">
+                            <h1 className="text-3xl font-bold tracking-tight text-[var(--sys-text)]">Settings</h1>
+                        </div>
+                        
+                        <div className="space-y-6">
+                            <div className="glass-card rounded-[1.5rem] p-4 flex items-center justify-between cursor-pointer active:scale-95 transition-transform group" onClick=${function(){setProfDraft(profile||{salutation:'Namaste',name:'',icon:'😎'});setShowProfileEdit(true);}}>
+                                <div className="flex items-center gap-4"><div className="w-12 h-12 rounded-xl bg-[var(--sys-accent-soft)] flex items-center justify-center text-2xl border border-[var(--sys-accent)]/20">${profile?profile.icon:'👤'}</div><div><h4 className="font-bold text-[var(--sys-text)] text-base">${profile?profile.salutation+' '+profile.name:'Setup Profile'}</h4><p className="text-[9px] text-[var(--sys-muted)] font-bold uppercase tracking-widest mt-1">Tap to edit profile</p></div></div>
+                                <${Icon} name="ArrowRight" size=${16} className="text-[var(--sys-muted)] group-hover:text-[var(--sys-text)] transition-colors"/>
+                            </div>
+                            <div className="glass-card rounded-[1.5rem] p-4 cursor-pointer active:scale-95 transition-transform bg-gradient-to-r from-amber-500/10 to-rose-500/10 border-amber-500/30" onClick=${function(){setPremiumModal(true);}}>
+                                <div className="flex justify-between items-center"><div className="flex items-center gap-3"><span className="text-2xl">👑</span><div><h4 className="font-bold text-[var(--sys-text)] text-sm">Luminous Pro</h4><p className="text-[9px] text-amber-500 font-black uppercase tracking-widest mt-0.5">Unlock Premium Features</p></div></div><${Icon} name="ArrowRight" size=${16} className="text-amber-500"/></div>
+                            </div>
+                            <div>
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-muted)] mb-3 ml-2">Appearance</h3>
+                                <div className="glass-card rounded-[1.5rem] p-4 flex overflow-x-auto no-scrollbar gap-3 mb-4">${THEMES.map(function(t){return html`<button key=${t.id} onClick=${function(){ requestSafeNav('settings'); setTheme(t.id);}} className=${`flex flex-col items-center justify-center gap-2 min-w-[70px] p-3 rounded-xl transition-all border relative ${theme===t.id?'bg-[var(--sys-accent)] text-white border-[var(--sys-accent)] shadow-md':'bg-[var(--sys-solid)] border-[var(--sys-border)] text-[var(--sys-muted)]'}`}><span className="text-[9px] font-black uppercase tracking-widest">${t.name}</span> ${t.p ? html`<span className="absolute top-1 right-1 text-[8px]">🔒</span>` : null}</button>`;})}</div>
+                                <div className="glass-card rounded-[1.5rem] p-4 flex overflow-x-auto no-scrollbar gap-3">${FONTS.map(function(f){return html`<button key=${f.id} onClick=${function(){ requestSafeNav('settings'); setFont(f.id);}} className=${`flex flex-col items-center justify-center gap-2 min-w-[120px] p-3 rounded-xl transition-all border relative ${font===f.id?'bg-[var(--sys-accent)] text-white border-[var(--sys-accent)]':'bg-[var(--sys-solid)] border-[var(--sys-border)] text-[var(--sys-muted)]'}`} style=${{fontFamily:f.id}}><span className="text-sm font-bold whitespace-nowrap">${f.id}</span> ${f.p ? html`<span className="absolute top-1 right-1 text-[8px]">🔒</span>` : null}</button>`;})}</div>
+                            </div>
+                            <div>
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-muted)] mb-3 ml-2">Data & Backup</h3>
+                                <div className="glass-card rounded-[1.5rem] p-2 flex flex-col gap-1">
+                                    <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[var(--sys-solid)] rounded-xl transition-colors" onClick=${function(){var dName="Luminous_"+new Date().getFullYear()+(new Date().getMonth()+1)+new Date().getDate()+"_"+new Date().getHours()+new Date().getMinutes(); setBackupName(dName); setShowBackupModal(true);}}>
+                                        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] flex items-center justify-center"><${Icon} name="Download" size=${18}/></div><div className="font-semibold text-sm">Backup Map File</div></div><${Icon} name="ArrowRight" size=${16} className="text-[var(--sys-muted)]"/>
+                                    </div>
+                                    <div className="h-[1px] bg-white/5 mx-4"></div>
+                                    <label className="flex items-center justify-between p-3 cursor-pointer hover:bg-[var(--sys-solid)] rounded-xl transition-colors">
+                                        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center"><${Icon} name="Upload" size=${18}/></div><div className="font-semibold text-sm">Restore from File</div></div><${Icon} name="ArrowRight" size=${16} className="text-[var(--sys-muted)]"/>
+                                        <input type="file" accept=".txt" onChange=${handleRestore} className="hidden"/>
+                                    </label>
                                 </div>
-                                <button onClick=${function() { handleSave(modal); }} className="w-full font-black py-4 bg-indigo-600 text-white rounded-[1.5rem] shadow-xl text-base active:scale-95 transition-all shadow-indigo-100">${modal.id ? "Update Note" : "Save Note"}</button>
-                            </div></div></div>`}
+                            </div>
+                            <div>
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-muted)] mb-3 ml-2">System</h3>
+                                <div className="glass-card rounded-[1.5rem] p-2 flex flex-col gap-1">
+                                    <!-- Bin Pinned Down -->
+                                    <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[var(--sys-solid)] rounded-xl transition-colors" onClick=${function(){setNav('bin');}}>
+                                        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center"><${Icon} name="Archive" size=${18}/></div><div><h4 className="font-semibold text-sm text-amber-500">Recycle Bin</h4><p className="text-[8px] font-bold text-amber-400 uppercase tracking-widest">${binWorkspaces.length} Maps Deleted</p></div></div><${Icon} name="ArrowRight" size=${16} className="text-[var(--sys-muted)]"/>
+                                    </div>
+                                    <div className="h-[1px] bg-white/5 mx-4"></div>
+                                    <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-rose-500/10 rounded-xl transition-colors" onClick=${function(){requestConfirm("Factory Reset?", "This will completely wipe all data from your device.", function(){ localStorage.clear(); sessionStorage.clear(); window.location.reload(); });}}>
+                                        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center"><${Icon} name="Alert" size=${18}/></div><div className="font-semibold text-sm text-rose-500">Factory Reset</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-center pb-8 pt-12 text-[10px] text-[var(--sys-muted)] font-black uppercase tracking-widest">Made with <span className="text-rose-500">❤️</span> by Luminous</div>
+                    </div>
+                `;
+            };
 
-                    ${showPrint && html`<div className="fixed inset-0 z-[300] bg-slate-900/95 flex flex-col p-4 no-print overflow-hidden"><div className="max-w-4xl mx-auto w-full flex-1 flex flex-col border rounded-[3rem] overflow-hidden bg-white shadow-2xl">
-                        <div className="p-6 bg-slate-50 border-b flex justify-between items-center shrink-0"><h3 className="font-bold flex items-center gap-2">Report Summary</h3><div className="flex gap-2"><button onClick=${function() { window.print(); }} className="px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold text-[10px] shadow-lg active:scale-95 transition-all">Print PDF</button><button onClick=${function() { setShowPrint(false); }} className="p-2 bg-slate-100 rounded-xl active:bg-slate-200 transition-all"><${Icon} name="Close" size=${18} /></button></div></div>
-                        <div className="flex-1 overflow-y-auto p-10 bg-white"><h1 className="text-2xl font-black text-slate-900 tracking-tighter">RECORDS STATEMENT</h1><p className="text-[10px] border-b pb-4 mb-8 tracking-widest text-slate-500 uppercase underline decoration-indigo-200 underline-offset-4">Holder: ${userName}</p>
-                            <div className="grid grid-cols-2 gap-4 mb-10"><div className="p-6 bg-slate-50 rounded-2xl border text-center"><p className="text-[8px] font-bold uppercase opacity-50 tracking-[0.2em] mb-1">Total Commit</p><p className="text-2xl font-black">₹${metrics.total.toLocaleString()}</p></div><div className="p-6 bg-slate-50 rounded-2xl border text-center"><p className="text-[8px] font-bold uppercase opacity-50 tracking-[0.2em] mb-1">Daily Burn</p><p className="text-2xl font-black text-indigo-600">₹${metrics.daily}</p></div></div>
-                            <table className="w-full text-left"><thead><tr className="bg-slate-50 border-b-2 border-slate-900"><th className="py-4 px-2 text-[9px] font-black uppercase">Service Identity</th><th className="py-4 text-center text-[9px] font-black uppercase">Pay Day</th><th className="py-4 px-2 text-right text-[9px] font-black uppercase">Amount</th></tr></thead>
-                            <tbody>${subs.map(function(s) { return html`<tr key=${s.id} className="border-b"><td className="py-4 px-2 font-bold text-sm text-slate-800">${s.name}<br/><span className="text-[7px] text-indigo-600 uppercase font-black tracking-[0.1em]">${s.cat}</span></td><td className="py-4 text-center text-xs font-bold text-slate-400">Day ${s.day}</td><td className="py-4 px-2 text-right font-black text-sm">₹${s.amount.toLocaleString()}</td></tr>`; })}</tbody></table>
-                        </div></div></div>`}
+            // --- Floating Bottom Navigation & Quick Add Bar ---
+            var renderBottomNav = function() {
+                var tabs = [{id:'dash',icon:'LayoutGrid',label:'Overview'}, {id:'calendar',icon:'Calendar',label:'Schedule'}, {id:'lab',icon:'Zap',label:'Optimize'}, {id:'maps',icon:'Map',label:'Maps'}, {id:'settings',icon:'Settings',label:'Settings'}];
+                var showQaBar = nav === 'dash' && view !== 'bin' && activeWS;
+                
+                return html`
+                    <div className="fixed bottom-0 left-0 right-0 pb-safe z-50 flex flex-col pointer-events-none">
+                        ${showQaBar ? html`
+                            <div className=${`max-w-md mx-auto w-full px-4 relative z-10 pointer-events-auto quick-note-wrap ${showQuickAdd ? 'quick-note-expanded' : 'quick-note-collapsed'}`}>
+                                <div className="glass-card rounded-[1.5rem] p-2 flex items-center gap-3 border border-[var(--sys-border)] bg-[var(--sys-solid)] shadow-[0_0_40px_rgba(99,102,241,0.15)] mx-1">
+                                    <button onClick=${openFullModal} className="w-10 h-10 rounded-xl bg-[var(--sys-bg)] flex items-center justify-center text-[var(--sys-accent)] hover:text-white transition-colors active:scale-95"><${Icon} name="Plus" size=${16}/></button>
+                                    <div className="flex-1 flex flex-col justify-center">
+                                        <input value=${qaName} onChange=${function(e){setQaName(e.target.value);}} placeholder="Quick Bill..." className="w-full bg-transparent text-xs font-bold text-[var(--sys-text)] outline-none placeholder:text-[var(--sys-muted)]" />
+                                    </div>
+                                    <input value=${qaAmount} type="number" onChange=${function(e){setQaAmount(e.target.value);}} placeholder="₹0" className="w-16 bg-transparent text-sm font-black text-[var(--sys-text)] text-right outline-none placeholder:text-[var(--sys-muted)]" />
+                                    <button onClick=${handleDirectQuickAdd} className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center active:scale-95 shadow-lg shadow-emerald-500/20"><${Icon} name="Check" size=${16}/></button>
+                                </div>
+                            </div>
+                        ` : html`<div className="h-4"></div>`}
+                        <div className="max-w-md mx-auto w-full px-4 pt-1 pb-2 relative z-20 pointer-events-auto">
+                            <div className="glass-card rounded-full p-2 flex justify-between items-center shadow-2xl border border-[var(--sys-border)] bg-[var(--sys-card)]">
+                                ${tabs.map(function(t) {
+                                    var isActive = nav === t.id && (view === 'board' || view === 'list' || t.id !== 'dash');
+                                    return html`<div key=${t.id} onClick=${function(){if(t.id==='dash'&&!activeWS){setNav('maps');return;} if(t.id==='dash'){if(nav==='dash'){setActiveId(null); setNav('maps'); return;} setView('board');} setNav(t.id);}} className=${`flex-1 flex flex-col items-center justify-center gap-1.5 py-1 cursor-pointer transition-colors ${isActive ? 'text-[var(--sys-accent)]' : 'text-[var(--sys-muted)] hover:text-[var(--sys-text)]'}`}><${Icon} name=${t.icon} size=${20} className=${isActive ? '' : 'opacity-70'}/><span className="text-[8px] font-bold uppercase tracking-widest">${t.label}</span></div>`;
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
 
-                    <button onClick=${function() { setModal({ name: '', amount: '', day: 1, cat: categories[0], icon: 'Home', color: 'bg-indigo-600', isAutoPay: false, fields: [] }); }} 
-                        className="fixed bottom-10 right-8 w-16 h-16 bg-indigo-600/80 backdrop-blur-md text-white rounded-[2rem] shadow-2xl flex items-center justify-center z-40 no-print active:scale-95 transition-all shadow-indigo-200">
-                        <${Icon} name="Plus" size=${28} />
-                    </button>
-                </div>
+            // --- Component Renders: Forms & Modals Array Builder ---
+            var renderModals = function() {
+                var mList = [];
+
+                if (toast) {
+                    mList.push(html`<div key="toast" className="fixed top-8 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-[10px] uppercase tracking-widest px-4 py-2.5 rounded-full shadow-lg animate-toast flex items-center gap-2 backdrop-blur-md"><${Icon} name="Check" size=${12}/> ${toast}</div>`);
+                }
+
+                if (confirmDialog) {
+                    mList.push(html`
+                        <div key="confirm" className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="glass-card w-full max-w-[300px] p-6 rounded-[2rem] border border-[var(--sys-border)] text-center shadow-2xl">
+                                <div className="w-16 h-16 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center mx-auto mb-4"><${Icon} name="Alert" size=${32}/></div>
+                                <h2 className="text-xl font-black text-[var(--sys-text)] mb-2">${confirmDialog.title}</h2>
+                                <p className="text-xs font-bold text-[var(--sys-muted)] mb-6 uppercase tracking-widest">${confirmDialog.message}</p>
+                                <div className="flex gap-3">
+                                    <button onClick=${function(){setConfirmDialog(null);}} className="flex-1 py-3.5 bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-xl font-black text-[10px] uppercase tracking-widest border border-[var(--sys-border)] active:scale-95">Cancel</button>
+                                    <button onClick=${function(){confirmDialog.action(); setConfirmDialog(null);}} className="flex-1 py-3.5 bg-[var(--sys-accent)] text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (alertPopup) {
+                    mList.push(html`
+                        <div key="alert" className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="glass-card w-full max-w-[300px] p-6 rounded-[2rem] border border-[var(--sys-border)] text-center shadow-2xl">
+                                <div className="w-16 h-16 rounded-full bg-indigo-500/10 text-[var(--sys-accent)] border border-indigo-500/20 flex items-center justify-center mx-auto mb-4"><${Icon} name="Check" size=${32}/></div>
+                                <h2 className="text-xl font-black text-[var(--sys-text)] mb-2">${alertPopup.title}</h2>
+                                <p className="text-xs font-bold text-[var(--sys-muted)] mb-6 uppercase tracking-widest">${alertPopup.message}</p>
+                                <button onClick=${function(){setAlertPopup(null);}} className="w-full py-4 bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-xl font-black text-xs uppercase tracking-widest border border-[var(--sys-border)] active:scale-95">Dismiss</button>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (premiumModal) {
+                    mList.push(html`
+                        <div key="premium" className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="glass-card w-full max-w-[320px] p-8 rounded-[2.5rem] border border-amber-500/30 text-center shadow-2xl bg-gradient-to-b from-amber-500/5 to-transparent relative overflow-hidden">
+                                <button onClick=${function(){setPremiumModal(false); setTheme(safeParse('lum_theme_v130','dark')); setFont(safeParse('lum_font_v130','Plus Jakarta Sans')); setPendingNav(null);}} className="absolute top-4 right-4 p-2 text-[var(--sys-muted)] bg-[var(--sys-solid)] rounded-full border border-[var(--sys-border)] z-20"><${Icon} name="Close" size=${12}/></button>
+                                <div className="absolute -top-10 -left-10 w-32 h-32 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                                <span className="text-6xl block mb-4">👑</span>
+                                <h2 className="text-2xl font-black text-[var(--sys-text)] mb-2">Luminous Pro</h2>
+                                <p className="text-xs font-bold text-[var(--sys-muted)] mb-8 leading-relaxed">Unlock premium fonts, exclusive Japanese/Anime avatars, movie themes, and advanced cloud sync for <span className="text-amber-400 font-black">$4.99/mo</span>.</p>
+                                <button onClick=${function(){setPremiumModal(false); triggerAlert("Simulated","This is a sandbox. Pro features remain locked."); setTheme(safeParse('lum_theme_v130','dark')); setFont(safeParse('lum_font_v130','Plus Jakarta Sans')); if(pendingNav) setNav(pendingNav); setPendingNav(null);}} className="w-full py-4 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-500/30 active:scale-95 transition-transform">Subscribe Now</button>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (salaryModal) {
+                    mList.push(html`
+                        <div key="salary" className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="glass-card w-full max-w-[300px] p-6 rounded-[2.5rem] border border-[var(--sys-border)] shadow-2xl">
+                                <div className="flex justify-between items-center mb-6 border-b border-[var(--sys-border)] pb-3">
+                                    <h3 className="text-xs font-black uppercase tracking-widest text-[var(--sys-text)]">Update Salary</h3>
+                                    <button onClick=${function(){setSalaryModal(false);}} className="p-1.5 bg-[var(--sys-solid)] rounded-full shadow-sm border border-[var(--sys-border)] text-[var(--sys-muted)]"><${Icon} name="Close" size=${14}/></button>
+                                </div>
+                                <div className="mb-6">
+                                    <label className="text-[9px] font-black uppercase tracking-widest text-[var(--sys-muted)] mb-2 block ml-1">Monthly Base Income (₹)</label>
+                                    <input type="number" value=${salaryDraft} onChange=${function(e){setSalaryDraft(e.target.value);}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] text-2xl font-black p-4 rounded-2xl outline-none border border-[var(--sys-border)] focus:border-[var(--sys-accent)] text-center shadow-inner" placeholder="0" />
+                                </div>
+                                <button onClick=${function(){updateActiveWS({salary:parseFloat(salaryDraft)||0}); setSalaryModal(false); triggerToast("Salary updated!");}} className="w-full py-4 bg-[var(--sys-accent)] text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg active:scale-95">Save Income</button>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (singleCatEdit) {
+                    mList.push(html`
+                        <div key="singleCatEdit" className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in" onClick=${function(){setSingleCatEdit(null);}}>
+                            <div className="glass-card w-full max-w-[280px] p-5 rounded-[2rem] border border-[var(--sys-border)] shadow-2xl" onClick=${function(e){e.stopPropagation();}}>
+                                <div className="flex justify-between items-center mb-4 border-b border-[var(--sys-border)] pb-3">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--sys-text)]">Edit Category</h3>
+                                    <button onClick=${function(){setSingleCatEdit(null);}} className="p-1.5 bg-[var(--sys-solid)] rounded-full shadow-sm border border-[var(--sys-border)] text-[var(--sys-muted)]"><${Icon} name="Close" size=${14}/></button>
+                                </div>
+                                <input value=${singleCatEdit.newName} onChange=${function(e){setSingleCatEdit(Object.assign({}, singleCatEdit, {newName: e.target.value}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] px-4 py-3.5 font-bold rounded-xl border border-[var(--sys-accent)] outline-none shadow-inner mb-4 text-sm" />
+                                <div className="flex gap-2">
+                                    <button onClick=${function(){ requestConfirm("Delete Category?", "Notes will be marked 'General'.", function() { var newCats = activeWS.categories.filter(function(cat){ return cat !== singleCatEdit.oldName; }); var newSubs = activeWS.subs.map(function(s){ return s.cat === singleCatEdit.oldName ? Object.assign({}, s, {cat: 'General'}) : s; }); if(newCats.indexOf('General') === -1) newCats.push('General'); updateActiveWS({ categories: newCats, subs: newSubs }); if(selectedCat === singleCatEdit.oldName) setSelectedCat('All'); setSingleCatEdit(null); triggerToast("Category deleted"); }); }} className="flex-1 p-3.5 bg-[var(--sys-solid)] text-rose-500 rounded-xl shadow-sm border border-[var(--sys-border)] font-bold text-[10px] uppercase tracking-widest">Delete</button>
+                                    <button onClick=${function(){ var oldC = singleCatEdit.oldName; var newC = singleCatEdit.newName.trim(); if(newC && newC !== oldC) { var newCats = activeWS.categories.map(function(cat){ return cat === oldC ? newC : cat; }); var newSubs = activeWS.subs.map(function(s){ return s.cat === oldC ? Object.assign({}, s, {cat: newC}) : s; }); updateActiveWS({ categories: newCats, subs: newSubs }); if(selectedCat === oldC) setSelectedCat(newC); } setSingleCatEdit(null); triggerToast("Category Updated!"); }} className="flex-1 p-3.5 bg-[var(--sys-accent)] text-white rounded-xl shadow-sm font-bold text-[10px] uppercase tracking-widest">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (modal) {
+                    var isBinP = modal.isBinPreview;
+                    var titleText = isBinP ? 'Archived Record' : (isEditMode ? (modal.id ? 'Edit Record' : 'Add Record') : 'Record Details');
+                    mList.push(html`
+                        <div key="modal-note" className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-up">
+                            <div className="glass-card w-full max-w-[340px] rounded-[2.5rem] overflow-hidden border border-[var(--sys-border)] shadow-2xl relative flex flex-col max-h-[85vh]">
+                                <div className="p-6 pb-4 border-b border-[var(--sys-border)] flex justify-between items-center shrink-0">
+                                    <h3 className="text-xs font-black uppercase tracking-widest gradient-text">${titleText}</h3>
+                                    <div className="flex gap-2">
+                                        ${!isEditMode && !isBinP ? html`<button onClick=${function(){setIsEditMode(true);}} className="p-2.5 bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] rounded-xl shadow-sm active:scale-95"><${Icon} name="Pen" size=${16}/></button>` : null}
+                                        <button onClick=${function(){setModal(null);}} className="p-2.5 bg-[var(--sys-solid)] border border-[var(--sys-border)] text-[var(--sys-muted)] hover:text-[var(--sys-text)] rounded-xl shadow-sm active:scale-95 transition-colors"><${Icon} name="Close" size=${16}/></button>
+                                    </div>
+                                </div>
+                                
+                                <div className="p-6 overflow-y-auto no-scrollbar flex-1">
+                                    ${!isEditMode ? html`
+                                        <div className="flex items-center gap-4 mb-6 relative">
+                                            ${modal.isAutoPay ? html`<span className="absolute -top-2 -right-2 bg-indigo-500/10 text-[var(--sys-accent)] border border-indigo-500/20 px-2 py-1 rounded-md text-[8px] font-black uppercase tracking-widest">Auto</span>` : null}
+                                            <div className=${`w-14 h-14 rounded-2xl ${modal.color || 'bg-indigo-600'} text-white flex items-center justify-center shadow-lg shrink-0`}><${Icon} name=${modal.icon || 'Home'} size=${24}/></div>
+                                            <div className="min-w-0"><h2 className="text-2xl font-black text-[var(--sys-text)] leading-tight truncate">${modal.name}</h2><span className="text-[10px] font-black text-[var(--sys-accent)] uppercase tracking-widest mt-1 block">${modal.cat}</span></div>
+                                        </div>
+                                        <div className="text-4xl font-black tracking-tight mb-6 text-[var(--sys-text)]">₹${(parseFloat(modal.amount)||0).toLocaleString()}</div>
+                                        <div className="grid grid-cols-2 gap-3 mb-6">
+                                            <div className="bg-[var(--sys-solid)] p-4 rounded-2xl border border-[var(--sys-border)]"><div className="text-[8px] font-bold text-[var(--sys-muted)] uppercase tracking-widest mb-1">Due Day</div><div className="font-semibold text-sm">Day ${modal.day}</div></div>
+                                            <div className="bg-[var(--sys-solid)] p-4 rounded-2xl border border-[var(--sys-border)]"><div className="text-[8px] font-bold text-[var(--sys-muted)] uppercase tracking-widest mb-1">Status</div><div className=${`font-semibold text-sm ${modal.isPaidManual?'text-emerald-400':'text-rose-400'}`}>${modal.isPaidManual?'Paid':'Pending'}</div></div>
+                                        </div>
+                                        ${(modal.fields && modal.fields.length > 0) ? html`<div className="bg-[var(--sys-solid)] p-5 rounded-2xl border border-[var(--sys-border)] space-y-4 shadow-inner">${modal.fields.map(function(f, i){ return html`<div key=${i} className="flex flex-col"><span className="text-[8px] font-black uppercase tracking-widest text-[var(--sys-muted)] mb-1">${f.label}</span><span className="text-sm font-bold text-[var(--sys-text)]">${f.value}</span></div>`; })}</div>` : null}
+                                        ${isBinP ? html`<div className="flex gap-3 mt-8"><button onClick=${function(){updateActiveWS({subs:(activeWS.subs||[]).concat([Object.assign({},modal,{deletedAt:undefined, isBinPreview:undefined})]), deletedSubs:(activeWS.deletedSubs||[]).filter(function(s){return s.id!==modal.id;})}); setModal(null); triggerToast("Bill Restored!");}} className="flex-1 py-4 rounded-xl font-bold text-xs uppercase tracking-widest bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 active:scale-95 transition-all"><${Icon} name="RotateCcw" size=${14} className="inline mr-2 -mt-0.5"/>Restore</button><button onClick=${function(){requestConfirm("Delete Permanently?", "This action cannot be undone.", function(){updateActiveWS({deletedSubs: (activeWS.deletedSubs||[]).filter(function(s){return s.id!==modal.id;})}); setModal(null); triggerAlert("Deleted","Record destroyed permanently.");});}} className="flex-1 py-4 rounded-xl font-bold text-xs uppercase tracking-widest bg-[var(--sys-solid)] text-rose-500 border border-[var(--sys-border)] active:scale-95 transition-all"><${Icon} name="Trash" size=${14} className="inline mr-2 -mt-0.5"/>Delete</button></div>`
+                                        : html`<div className="flex gap-3 mt-8"><button onClick=${function(){requestConfirm("Delete Bill?", "Move to bin for 30 days.", function(){moveToBinNote(modal.id); setModal(null); triggerToast("Moved to bin");});}} className="flex-1 py-4 rounded-xl font-bold text-xs uppercase tracking-widest bg-rose-500/10 text-rose-500 border border-rose-500/20 active:scale-95 transition-all"><${Icon} name="Trash" size=${14} className="inline mr-2 -mt-0.5"/>Delete</button></div>`}
+                                    ` : html`
+                                        <div className="space-y-5 pb-4">
+                                            <div><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] ml-1 block mb-2 tracking-widest">Title</label><input value=${modal.name || ""} onChange=${function(e){setModal(Object.assign({}, modal, {name:e.target.value}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[1.2rem] px-4 py-3.5 font-bold outline-none border border-[var(--sys-border)] focus:border-[var(--sys-accent)] text-[16px] shadow-inner transition-colors" placeholder="Name..." /></div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] ml-1 block mb-2 tracking-widest">Amount (₹)</label><input type="number" value=${modal.amount || ""} onChange=${function(e){setModal(Object.assign({}, modal, {amount:e.target.value}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[1.2rem] px-4 py-3.5 font-bold outline-none border border-[var(--sys-border)] focus:border-[var(--sys-accent)] text-[16px] shadow-inner transition-colors" placeholder="0" /></div>
+                                                <div><label className="text-[9px] font-black uppercase text-[var(--sys-muted)] ml-1 block mb-2 tracking-widest">Due Day</label><input type="number" min="1" max="31" value=${modal.day || 1} onChange=${function(e){setModal(Object.assign({}, modal, {day:parseInt(e.target.value)||1}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[1.2rem] px-3 py-3.5 font-bold outline-none text-[16px] shadow-inner border border-[var(--sys-border)] focus:border-[var(--sys-accent)] transition-colors" /></div>
+                                            </div>
+                                            <div className="flex items-center justify-between bg-[var(--sys-solid)] p-4 rounded-xl border border-[var(--sys-border)]">
+                                                <div className="flex items-center gap-2"><span className="text-[10px] font-black uppercase tracking-widest text-[var(--sys-muted)]">Auto-Pay</span></div>
+                                                <div className=${`toggle-switch ${modal.isAutoPay ? 'on' : 'off'}`} onClick=${function(){setModal(Object.assign({}, modal, {isAutoPay: !modal.isAutoPay}));}}><div className="toggle-thumb"></div></div>
+                                            </div>
+                                            <div>
+                                                <label className="text-[9px] font-black uppercase text-[var(--sys-muted)] ml-1 block mb-2 tracking-widest">Category</label>
+                                                ${modal.isCustomMode ? html`<div className="flex gap-2 w-full"><input className="flex-1 bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[1rem] px-4 py-3 font-bold border border-[var(--sys-accent)] shadow-inner outline-none" placeholder="New Category" value=${modal.cat} onChange=${function(e){setModal(Object.assign({}, modal, {cat:e.target.value}));}} /><button type="button" onClick=${function(){if(modal.cat.trim()!==''){var cC=modal.cat.trim(); if(activeWS.categories.indexOf(cC)===-1) updateActiveWS({categories: activeWS.categories.concat([cC])}); setModal(Object.assign({}, modal, {isCustomMode:false}));}}} className="p-3 bg-[var(--sys-accent)] text-white rounded-[1rem] shadow-md"><${Icon} name="Check" size=${16}/></button></div>` : html`<select value=${modal.cat || ""} onChange=${function(e){if(e.target.value === 'NEW_CAT') setModal(Object.assign({}, modal, {isCustomMode:true, cat: ''})); else setModal(Object.assign({}, modal, {cat: e.target.value}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[1rem] px-4 py-3 font-bold text-[16px] border border-[var(--sys-border)] focus:border-[var(--sys-accent)] appearance-none">${(activeWS.categories || []).map(function(c){return html`<option key=${c} value=${c} className="bg-[var(--sys-solid)]">${c}</option>`;})}<option value="NEW_CAT">+ Custom...</option></select>`}
+                                            </div>
+                                            <div>
+                                                <label className="text-[9px] font-black uppercase text-[var(--sys-muted)] ml-1 block mb-2 tracking-widest">Icon</label>
+                                                <div className="grid grid-cols-5 gap-2 bg-[var(--sys-solid)] p-2 rounded-xl border border-[var(--sys-border)] h-[120px] overflow-y-auto no-scrollbar">${ICONS.map(function(k){return html`<button key=${k} type="button" onClick=${function(){setModal(Object.assign({}, modal, {icon:k}));}} className=${`p-2 rounded-lg flex items-center justify-center transition-all ${modal.icon === k ? 'bg-[var(--sys-accent)] text-white shadow-md' : 'text-[var(--sys-muted)] hover:bg-[var(--sys-bg)]'}`}><${Icon} name=${k} size=${16}/></button>`;})}</div>
+                                            </div>
+                                            <div className="pt-4 mt-2 border-t border-[var(--sys-border)] space-y-4">
+                                                <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase text-[var(--sys-text)] tracking-widest ml-1">Metadata Rows</span><button type="button" onClick=${function(){setModal(Object.assign({}, modal, {fields: (modal.fields || []).concat([{ label: 'Account', value: '', isCustomMode: false }])}));}} className="text-[var(--sys-accent)] text-[9px] font-black bg-[var(--sys-accent-soft)] px-3 py-1.5 rounded-lg shadow-sm active:scale-95 uppercase tracking-widest">+ Add</button></div>
+                                                ${(modal.fields || []).map(function(f, i){return html`<div key=${i} className="bg-[var(--sys-bg)] p-4 rounded-[1.2rem] border border-[var(--sys-border)] relative shadow-sm flex flex-col gap-3"><button type="button" onClick=${function(){setModal(Object.assign({}, modal, {fields: modal.fields.filter(function(_,idx){return idx!==i;})}));}} className="absolute top-3 right-3 p-2 bg-[var(--sys-solid)] rounded-lg border border-[var(--sys-border)] text-rose-500 shadow-sm active:scale-95"><${Icon} name="Trash" size=${14} /></button><div><label className="text-[8px] font-black uppercase text-[var(--sys-muted)] block mb-1 tracking-widest">Key</label>${f.isCustomMode ? html`<div className="flex gap-2 w-[80%]"><input className="flex-1 bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[0.8rem] px-3 py-2 font-bold border border-[var(--sys-accent)] shadow-inner outline-none" placeholder="Label..." value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].label=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} /><button type="button" onClick=${function(){var n=JSON.parse(JSON.stringify(modal.fields || [])); if(n[i].label.trim()!=='') {n[i].isCustomMode=false; setModal(Object.assign({}, modal, {fields:n}));}}} className="bg-[var(--sys-accent)] text-white px-2 rounded-[0.8rem]"><${Icon} name="Check" size=${14}/></button></div>` : html`<select value=${f.label || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); if(e.target.value === 'CUSTOM_KEY') { n[i].isCustomMode = true; n[i].label = ''; } else { n[i].label = e.target.value; } setModal(Object.assign({}, modal, {fields:n}));}} className="w-[80%] bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[0.8rem] px-3 py-2 font-black uppercase border border-[var(--sys-border)] outline-none cursor-pointer shadow-sm"><option value="Note">Note</option><option value="Account">Account</option><option value="CUSTOM_KEY">Other..</option></select>`}</div><div><label className="text-[8px] font-black uppercase text-[var(--sys-muted)] block mb-1 tracking-widest">Info</label><input value=${f.value || ""} onChange=${function(e){var n=JSON.parse(JSON.stringify(modal.fields || [])); n[i].value=e.target.value; setModal(Object.assign({}, modal, {fields:n}));}} className="w-full bg-[var(--sys-solid)] text-[var(--sys-text)] rounded-[0.8rem] px-3 py-2 font-bold border border-[var(--sys-border)] shadow-sm outline-none focus:border-[var(--sys-accent)] transition-colors" placeholder="Details..." /></div></div>`;})}
+                                            </div>
+                                        </div>
+                                    `}
+                                </div>
+                                ${isEditMode ? html`<div className="p-4 border-t border-[var(--sys-border)] shrink-0 bg-[var(--sys-card)]"><button onClick=${handleSaveNote} className="w-full font-black py-4 bg-[var(--sys-accent)] text-white rounded-2xl shadow-xl shadow-[var(--sys-accent)]/30 text-sm active:scale-95 transition-all uppercase tracking-widest">Save Record</button></div>` : null}
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (calPopup !== null) {
+                    mList.push(html`
+                        <div key="modal-cal" className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in" onClick=${function(){setCalPopup(null);}}>
+                            <div className="bg-[var(--sys-solid)] w-full max-w-[300px] rounded-[2rem] shadow-2xl border border-[var(--sys-border)] overflow-hidden" onClick=${function(e){e.stopPropagation();}}>
+                                <div className="p-4 bg-[var(--sys-bg)] border-b border-[var(--sys-border)] flex justify-between items-center">
+                                    <h3 className="text-xs font-black uppercase tracking-widest text-[var(--sys-text)]">Day ${calPopup}</h3>
+                                    <button onClick=${function(){setCalPopup(null);}} className="p-1.5 bg-[var(--sys-solid)] rounded-full shadow-sm border border-[var(--sys-border)]"><${Icon} name="Close" size=${14} className="text-rose-500" /></button>
+                                </div>
+                                <div className="p-5 space-y-3 max-h-[50vh] overflow-y-auto no-scrollbar">
+                                    ${activeWS?activeWS.subs.filter(function(s){return parseInt(s.day) === calPopup;}).map(function(s){ return html`<div key=${s.id} onClick=${function(){setCalPopup(null); setModal(s); setIsEditMode(false);}} className="flex justify-between items-center py-3 px-4 rounded-xl bg-[var(--sys-bg)] cursor-pointer transition-colors active:scale-95 border border-[var(--sys-border)] shadow-sm"><div className="flex items-center gap-3"><div className=${`w-2 h-2 rounded-full ${s.color || 'bg-indigo-600'} shadow-sm`}></div><div className="flex flex-col"><span className="truncate w-24 text-xs font-bold text-[var(--sys-text)] leading-tight">${s.name || ''}</span><span className="text-[8px] font-black uppercase text-[var(--sys-muted)] tracking-widest mt-1">${s.cat || ''}</span></div></div><span className="font-black text-sm text-[var(--sys-text)]">₹${(parseFloat(s.amount)||0).toLocaleString()}</span></div>`; }):null}
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (catManageModal) {
+                    mList.push(html`
+                        <div key="modal-cat" className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="bg-[var(--sys-solid)] w-full max-w-[320px] rounded-[2rem] shadow-2xl border border-[var(--sys-border)] overflow-hidden">
+                                <div className="p-4 bg-[var(--sys-bg)] border-b border-[var(--sys-border)] flex justify-between items-center">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--sys-text)]">Categories</h3>
+                                    <button onClick=${function(){setCatManageModal(false); setCatEditTarget(null);}} className="p-1.5 bg-[var(--sys-solid)] rounded-full shadow-sm border border-[var(--sys-border)]"><${Icon} name="Close" size=${14} className="text-rose-500" /></button>
+                                </div>
+                                <div className="p-5 space-y-3 max-h-[60vh] overflow-y-auto no-scrollbar">
+                                    ${activeWS?(activeWS.categories || []).map(function(c, i) { var isEditing = catEditTarget && catEditTarget.oldName === c; return html`<div key=${i} className="flex items-center gap-2 bg-[var(--sys-bg)] p-2 rounded-[1rem] border border-[var(--sys-border)] shadow-sm">${isEditing ? html`<input autoFocus value=${catEditTarget.newName} onChange=${function(e){setCatEditTarget(Object.assign({}, catEditTarget, {newName: e.target.value}));}} className="flex-1 bg-[var(--sys-solid)] text-[var(--sys-text)] px-3 py-2.5 font-bold rounded-[0.8rem] border border-[var(--sys-accent)] outline-none shadow-inner min-w-0" /><button onClick=${function(){ var oldC = catEditTarget.oldName; var newC = catEditTarget.newName.trim(); if(newC && newC !== oldC) { var newCats = activeWS.categories.map(function(cat){ return cat === oldC ? newC : cat; }); var newSubs = activeWS.subs.map(function(s){ return s.cat === oldC ? Object.assign({}, s, {cat: newC}) : s; }); updateActiveWS({ categories: newCats, subs: newSubs }); if(selectedCat === oldC) setSelectedCat(newC); } setCatEditTarget(null); }} className="p-2.5 bg-emerald-500 text-white rounded-[0.8rem] shadow-sm active:scale-95 shrink-0"><${Icon} name="Check" size=${14} /></button>` : html`<span className="flex-1 text-[11px] font-black uppercase tracking-widest text-[var(--sys-text)] pl-3 truncate min-w-0">${c}</span><button onClick=${function(){setCatEditTarget({oldName: c, newName: c});}} className="p-2.5 text-[var(--sys-accent)] bg-[var(--sys-solid)] rounded-[0.8rem] shadow-sm border border-[var(--sys-border)] active:scale-95 shrink-0"><${Icon} name="Edit" size=${14} /></button><button onClick=${function(){ requestConfirm("Delete Category?", "Notes will be marked 'General'.", function() { var newCats = activeWS.categories.filter(function(cat){ return cat !== c; }); var newSubs = activeWS.subs.map(function(s){ return s.cat === c ? Object.assign({}, s, {cat: 'General'}) : s; }); if(newCats.indexOf('General') === -1) newCats.push('General'); updateActiveWS({ categories: newCats, subs: newSubs }); if(selectedCat === c) setSelectedCat('All'); }); }} className="p-2.5 text-rose-500 bg-[var(--sys-solid)] rounded-[0.8rem] shadow-sm border border-[var(--sys-border)] active:scale-95 shrink-0"><${Icon} name="Trash" size=${14} /></button>`}</div>`; }):null}
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (showWsModal) {
+                    mList.push(html`
+                        <div key="modal-ws" className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="bg-[var(--sys-solid)] rounded-[2.5rem] p-6 w-full max-w-[320px] shadow-2xl border border-[var(--sys-border)]">
+                                <div className="flex justify-between items-center mb-5 border-b border-[var(--sys-border)] pb-3">
+                                    <h3 className="text-[11px] font-black uppercase text-[var(--sys-text)] tracking-widest">New Map</h3>
+                                    <button onClick=${function(){setShowWsModal(false);}} className="p-1.5 bg-[var(--sys-bg)] rounded-full border border-[var(--sys-border)] text-[var(--sys-muted)] hover:text-white"><${Icon} name="Close" size=${14}/></button>
+                                </div>
+                                <input value=${wsName} onChange=${function(e){setWsName(e.target.value);}} className="w-full bg-[var(--sys-bg)] text-[var(--sys-text)] p-4 rounded-2xl font-bold outline-none mb-6 border border-[var(--sys-border)] focus:border-[var(--sys-accent)] transition-colors" placeholder="e.g. Office, Vacation..." />
+                                <div className="space-y-4 mb-8">
+                                    <div className="grid grid-cols-4 gap-3 bg-[var(--sys-bg)] p-3 rounded-[1.5rem] border border-[var(--sys-border)] h-[120px] overflow-y-auto no-scrollbar">${ICONS.map(function(k){return html`<button key=${k} onClick=${function(){setWsIcon(k);}} className=${`p-3.5 rounded-xl flex items-center justify-center transition-all ${wsIcon === k ? 'bg-[var(--sys-accent)] text-white shadow-md' : 'bg-[var(--sys-solid)] text-[var(--sys-muted)] border border-[var(--sys-border)]'}`}><${Icon} name=${k} size=${20}/></button>`;})}</div>
+                                    <div className="flex flex-wrap gap-3 justify-center bg-[var(--sys-bg)] p-4 rounded-[1.5rem] border border-[var(--sys-border)]">${COLOR_PALETTE.map(function(c){return html`<button key=${c} onClick=${function(){setWsColor(c);}} className=${`w-7 h-7 rounded-full ${c} ${wsColor === c ? 'ring-4 ring-[var(--sys-border)] scale-110 shadow-md' : 'opacity-40'} transition-all`} />`;})}</div>
+                                </div>
+                                <button onClick=${function(){if(!wsName)return; var nm={id:'ws-'+Date.now(), name:wsName, icon:wsIcon, color:wsColor, salary:0, categories:CATEGORIES, subs:[], deletedSubs:[]}; setWorkspaces(workspaces.concat([nm])); setShowWsModal(false); handleMapSelect(nm.id); setWsName(''); triggerToast("Map Created!"); }} className="w-full py-4 bg-[var(--sys-accent)] text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all">Create Map</button>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (showBackupModal) {
+                    mList.push(html`
+                        <div key="modal-backup" className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in">
+                            <div className="bg-[var(--sys-solid)] rounded-[2.5rem] p-8 w-full max-w-[320px] shadow-2xl border border-[var(--sys-border)] text-center">
+                                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-[var(--sys-accent-soft)] text-[var(--sys-accent)] border border-[var(--sys-accent)]/20"><${Icon} name="Download" size=${28} /></div>
+                                <h3 className="text-2xl font-black text-[var(--sys-text)] mb-2">Backup Data</h3>
+                                <p className="text-[11px] font-bold text-[var(--sys-muted)] mb-6 uppercase tracking-widest leading-relaxed">Store this encrypted file safely.</p>
+                                <input value=${backupName} onChange=${function(e){setBackupName(e.target.value);}} className="w-full bg-[var(--sys-bg)] text-[var(--sys-text)] p-4 rounded-2xl font-bold outline-none mb-6 border border-[var(--sys-border)] focus:border-[var(--sys-accent)] text-center" placeholder="File Name" />
+                                <div className="flex gap-3">
+                                    <button onClick=${function(){setShowBackupModal(false);}} className="flex-1 py-4 bg-[var(--sys-bg)] text-[var(--sys-text)] rounded-2xl font-black text-[11px] active:scale-95 transition-all uppercase tracking-widest border border-[var(--sys-border)]">Cancel</button>
+                                    <button onClick=${confirmBackup} className="flex-1 py-4 bg-[var(--sys-accent)] text-white rounded-2xl font-black text-[11px] active:scale-95 transition-all uppercase tracking-widest shadow-lg">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (showPrint) {
+                    mList.push(html`
+                        <div key="modal-print" className="fixed inset-0 z-[9999] bg-[var(--sys-bg)] flex flex-col p-4 animate-in">
+                            <div className="no-print p-4 bg-[var(--sys-solid)] border-b flex justify-between items-center max-w-4xl mx-auto w-full rounded-t-[2.5rem] border border-[var(--sys-border)] shadow-sm mt-4"><h3 className="font-black text-base text-[var(--sys-text)] flex items-center gap-2 ml-2"><${Icon} name="Printer" size=${18}/> Download</h3><div className="flex gap-2"><button id="pdf-btn" onClick=${downloadPDF} className="px-6 py-3.5 bg-[var(--sys-accent)] text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">Save PDF</button><button onClick=${function(){setShowPrint(false);}} className="px-6 py-3.5 bg-[var(--sys-bg)] text-[var(--sys-text)] border border-[var(--sys-border)] rounded-xl font-black text-[11px] uppercase tracking-widest active:scale-95">Close</button></div></div>
+                            <div id="pdf-document-content" className="max-w-4xl mx-auto p-8 w-full bg-[var(--sys-card)] h-full overflow-y-auto border-x border-b border-[var(--sys-border)] text-[var(--sys-text)]">
+                                <h1 className="text-4xl font-black tracking-tighter uppercase leading-none glow-text">OFFICIAL RECORDS</h1>
+                                <p className="text-[11px] border-b-2 border-[var(--sys-text)] pb-4 mb-8 tracking-widest text-[var(--sys-muted)] uppercase mt-4">Map: ${activeWS?activeWS.name:''} | Holder: ${profile?profile.name:''} | Generated: ${new Date().toLocaleDateString()}</p>
+                                <div className="grid grid-cols-4 gap-4 mb-8">
+                                    <div className="p-5 bg-[var(--sys-solid)] rounded-2xl border border-[var(--sys-border)]"><p className="text-[8px] font-bold uppercase text-[var(--sys-muted)] mb-1 tracking-widest">Income</p><p className="text-xl font-black">₹${metrics.income}</p></div>
+                                    <div className="p-5 bg-[var(--sys-solid)] rounded-2xl border border-[var(--sys-border)]"><p className="text-[8px] font-bold uppercase text-[var(--sys-muted)] mb-1 tracking-widest">Net Balance</p><p className="text-xl font-black text-[var(--sys-accent)]">₹${metrics.balance}</p></div>
+                                    <div className="p-5 bg-[var(--sys-solid)] rounded-2xl border border-[var(--sys-border)]"><p className="text-[8px] font-bold uppercase text-[var(--sys-muted)] mb-1 tracking-widest">Spend (${selectedCat})</p><p className="text-xl font-black text-rose-400">₹${metrics.spend}</p></div>
+                                    <div className="p-5 bg-[var(--sys-solid)] rounded-2xl border border-[var(--sys-border)]"><p className="text-[8px] font-bold uppercase text-[var(--sys-muted)] mb-1 tracking-widest">Reduction</p><p className="text-xl font-black text-emerald-400">₹${metrics.simSaved}</p></div>
+                                </div>
+                                <table className="w-full text-left border-collapse">
+                                    <thead><tr className="border-b-2 border-[var(--sys-text)]"><th className="py-4 px-2 text-[10px] font-black uppercase tracking-widest text-[var(--sys-muted)]">Detail Name</th><th className="py-4 text-center text-[10px] font-black uppercase tracking-widest text-[var(--sys-muted)]">Day</th><th className="py-4 px-2 text-right text-[10px] font-black uppercase tracking-widest text-[var(--sys-muted)]">Amount</th></tr></thead>
+                                    <tbody className="divide-y divide-[var(--sys-border)]">
+                                        ${displaySubs.map(function(s){ return html`<tr><td className="py-4 px-2 font-bold text-sm leading-tight">${s.name || ''}<br/><span className="text-[8px] text-[var(--sys-accent)] uppercase font-black tracking-widest mt-1 inline-block">${s.cat || ''}</span><div className="mt-1.5 flex flex-wrap gap-1">${(s.fields||[]).map(function(f){ return html`<span className="text-[8px] text-[var(--sys-muted)] bg-[var(--sys-bg)] border border-[var(--sys-border)] px-2 py-1 rounded-lg mr-1 shadow-sm"><span className="uppercase opacity-60">${f.label}:</span> ${f.value}</span>`;})}</div></td><td className="py-4 text-center text-xs font-bold text-[var(--sys-muted)] uppercase">Day ${s.day || 1}</td><td className="py-4 px-2 text-right font-black text-lg">₹${(parseFloat(s.amount)||0).toLocaleString()}</td></tr>`; })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                return mList.length > 0 ? html`<${React.Fragment}>${mList}</${React.Fragment}>` : null;
+            };
+
+            // --- MASTER RENDER PIPELINE ---
+            
+            if (isAppLoading) return html`<div className="native-container justify-center items-center bg-[var(--sys-bg)] z-[500] fixed inset-0"><div className="w-24 h-24 rounded-3xl gradient-bg flex items-center justify-center shadow-[0_0_50px_rgba(99,102,241,0.5)] mb-6 animate-scale-in"><${Icon} name="LayoutGrid" size=${48} className="text-white"/></div><h1 className="text-3xl font-black tracking-tight text-[var(--sys-text)] glow-text animate-fade-up">Luminous<span className="text-[var(--sys-accent)]">Finance</span></h1></div>`;
+            if (!hasSeenOnboard) return html`<${React.Fragment}>${renderOnboarding()}</${React.Fragment}>`;
+            if (!profile || showProfileEdit) return html`<${React.Fragment}>${renderProfileSetup()}</${React.Fragment}>`;
+            
+            var viewContent = null;
+            if (nav === 'dash') viewContent = renderDashboard();
+            else if (nav === 'lab') viewContent = renderLab();
+            else if (nav === 'calendar') viewContent = renderCalendar();
+            else if (nav === 'maps') viewContent = renderMaps();
+            else if (nav === 'settings') viewContent = renderSettings();
+            else if (nav === 'bin') viewContent = renderBin();
+
+            return html`
+                <${ErrorBoundary}>
+                    <div className="native-container bg-[var(--sys-bg)]">
+                        ${renderTopNav()}
+                        <div className="scroll-area" onTouchStart=${handleGlobalTouchStart} onTouchEnd=${handleGlobalTouchEnd}>
+                            ${viewContent}
+                        </div>
+                        ${renderBottomNav()}
+                        ${renderModals()}
+                    </div>
+                </${ErrorBoundary}>
             `;
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
+        var rootElement = document.getElementById('root');
+        var root = ReactDOM.createRoot(rootElement);
         root.render(html`<${App} />`);
     </script>
 </body>
